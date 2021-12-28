@@ -1,5 +1,5 @@
 # project name
-PROJECT_NAME:=capp
+PROJECT_NAME:=httpparser
 
 # this is the place where we download in your system
 DOWNLOAD_DIR:=/usr/local
@@ -7,7 +7,7 @@ DOWNLOAD_DIR:=/usr/local
 # we may download all the public headers
 
 # list of public api headers (only these headers will be installed)
-PUBLIC_HEADERS:=${PROJECT_NAME}.h print_temp.h
+PUBLIC_HEADERS:=http_parser.h http_serializer.h http_request.h http_response.h
 # the library, which we will create
 LIBRARY:=lib${PROJECT_NAME}.a
 # the binary, which will use the created library
@@ -25,7 +25,7 @@ CC:=gcc
 # compiler flags
 CFLAGS:=-Wall -O3 -I${INC_DIR}
 # linker flags, this will used to compile the binary
-LFLAGS:=-L${LIB_DIR} -l${PROJECT_NAME}
+LFLAGS:=-L${LIB_DIR} -l${PROJECT_NAME} -lcutlery
 # Archiver
 AR:=ar rcs
 
@@ -65,9 +65,9 @@ ${BIN_DIR}/${BINARY} : ./main.c ${LIB_DIR}/${LIBRARY} | ${BIN_DIR}
 	${CC} ${CFLAGS} $< ${LFLAGS} -o $@
 
 # to build the binary along with the library, if your project has a binary aswell
-all : ${BIN_DIR}/${BINARY}
+#all : ${BIN_DIR}/${BINARY}
 # else if your project is only a library use this
-#all : ${LIB_DIR}/${LIBRARY}
+all : ${LIB_DIR}/${LIBRARY}
 
 # clean all the build, in this directory
 clean :
@@ -86,8 +86,8 @@ install : uninstall all
 	${CP} ${PUBLIC_HEADERS_TO_INSTALL} ${DOWNLOAD_DIR}/include
 	${MK} ${DOWNLOAD_DIR}/lib
 	${CP} ${LIB_DIR}/${LIBRARY} ${DOWNLOAD_DIR}/lib
-	${MK} ${DOWNLOAD_DIR}/bin
-	${CP} ${BIN_DIR}/${BINARY} ${DOWNLOAD_DIR}/bin
+	#${MK} ${DOWNLOAD_DIR}/bin
+	#${CP} ${BIN_DIR}/${BINARY} ${DOWNLOAD_DIR}/bin
 
 PUBLIC_HEADERS_TO_UNINSTALL=$(patsubst %.h, ${DOWNLOAD_DIR}/include/%.h, ${PUBLIC_HEADERS})
 
@@ -97,4 +97,4 @@ PUBLIC_HEADERS_TO_UNINSTALL=$(patsubst %.h, ${DOWNLOAD_DIR}/include/%.h, ${PUBLI
 uninstall : 
 	${RM} ${PUBLIC_HEADERS_TO_UNINSTALL}
 	${RM} ${DOWNLOAD_DIR}/lib/${LIBRARY}
-	${RM} ${DOWNLOAD_DIR}/bin/${BINARY}
+	#${RM} ${DOWNLOAD_DIR}/bin/${BINARY}
