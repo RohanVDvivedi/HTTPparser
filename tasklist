@@ -1,0 +1,16 @@
+ * implement dmap
+ * implement http_request and http_response structs
+
+ * implement parse_http_request_line   serialize_http_request_line
+ * implement parse_http_response_line  serialize_http_response_line
+
+ * implement parse_http_header  serialize_http_header
+ * implement parse_http_headers serialize_http_headers
+
+ * implement parse_http_headers serialize_http_headers
+
+ * implement parse_request_head parse_response_head
+ * implement parse_request_body parse_response_body
+
+ * implement serialize_request_head serialize_response_head
+ * implement serialize_request_body serialize_response_body
