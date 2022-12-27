@@ -1,0 +1,4 @@
+#ifndef HTTP_SERIALIZER_H
+#define HTTP_SERIALIZER_H
+
+#endif
