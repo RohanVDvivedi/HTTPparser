@@ -4,10 +4,11 @@
 typedef struct dmap_entry dmap_entry;
 struct dmap_entry
 {
-	unsigned int hashvalue;
 	dstring key;
 
-	array values;
+	unsigned int values_capacity;
+	unsigned int values_count;
+	dstring* values;
 };
 
 void init_dmap_entry(dmap_entry* dmap_entry_p);
