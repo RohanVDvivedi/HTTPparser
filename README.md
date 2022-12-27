@@ -1,9 +1,10 @@
 # HTTPparser
-A C library to build parse tree for HTTP protocol.
+A C library to build parse tree for HTTP protocol. It contains a (ConnMan based) stream parsing and serializing api.
 
 ## Setup instructions
 **Install dependencies :**
  * [Cutlery](https://github.com/RohanVDvivedi/Cutlery)
+ * [ConnMan](https://github.com/RohanVDvivedi/ConnMan)
 
 **Download source code :**
  * `git clone https://github.com/RohanVDvivedi/HTTPparser.git`
