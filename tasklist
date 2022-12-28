@@ -1,5 +1,4 @@
- * implement dmap
- * implement http_request and http_response structs
+ * add declarations for all the below functions
 
  * implement parse_http_request_line   serialize_http_request_line
  * implement parse_http_response_line  serialize_http_response_line
