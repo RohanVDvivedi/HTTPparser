@@ -96,4 +96,15 @@ int delete_from_dmap(dmap* dmap_p, const dstring* key)
 	return 1;
 }
 
-void deinit_dmap(dmap* dmap_p);
+static void destroy_dmap_entries_in_dmap(const void* data, const void* additional_params)
+{
+	dmap_entry* e = (dmap_entry*) data;
+	deinit_dmap_entry(e);
+	free(e);
+}
+
+void deinit_dmap(dmap* dmap_p)
+{
+	for_each_in_hashmap(dmap_p, destroy_dmap_entries_in_dmap, NULL);
+	deinitialize_hashmap(dmap_p);
+}
