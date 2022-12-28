@@ -67,14 +67,20 @@ dmap_entry* get_from_dmap(const dmap* dmap_p, const dstring* key)
 
 dmap_entry* insert_in_dmap(const dmap* dmap_p, const dstring* key)
 {
-
-}
-
-dmap_entry* get_or_insert_in_dmap(const dmap* dmap_p, const dstring* key)
-{
 	dmap_entry* e = get_from_dmap(dmap_p, key);
 	if(e == NULL)
-		e = insert_in_dmap(dmap_p, key);
+	{
+		e = malloc(sizeof(dmap_entry));
+		init_dmap_entry(e, key);
+
+		// insert the new dmap_entry in hashmap
+		// if it fails then expand the hashmap and retry insertion
+		if(!insert_in_hashmap(dmap_p, e))
+		{
+			expand_hashmap(dmap_p, 2.0);
+			insert_in_hashmap(dmap_p, e)
+		}
+	}
 	return e;
 }
 
