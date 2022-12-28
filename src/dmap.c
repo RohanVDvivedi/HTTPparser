@@ -60,9 +60,15 @@ void init_dmap(dmap* dmap_p, int ignore_case_for_key)
 		initialize_hashmap(dmap_p, ROBINHOOD_HASHING, 8, dstring_key_hash, (int (*)(const void*, const void*))compare_dstring, 0);
 }
 
-dmap_entry* get_from_dmap(const dmap* dmap_p, const dstring* key);
+dmap_entry* get_from_dmap(const dmap* dmap_p, const dstring* key)
+{
+	return (dmap_entry*) find_equals_in_hashmap(dmap_p, &((dmap_entry){.key = (*key)}));
+}
 
-dmap_entry* insert_in_dmap(const dmap* dmap_p, const dstring* key);
+dmap_entry* insert_in_dmap(const dmap* dmap_p, const dstring* key)
+{
+
+}
 
 dmap_entry* get_or_insert_in_dmap(const dmap* dmap_p, const dstring* key)
 {
