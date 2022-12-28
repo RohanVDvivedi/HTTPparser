@@ -1,6 +1,9 @@
 #ifndef DMAP_H
 #define DMAP_H
 
+#include<dstring.h>
+#include<hashmap.h>
+
 typedef struct dmap_entry dmap_entry;
 struct dmap_entry
 {
@@ -11,7 +14,7 @@ struct dmap_entry
 	dstring* values;
 };
 
-void init_dmap_entry(dmap_entry* dmap_entry_p);
+void init_dmap_entry(dmap_entry* dmap_entry_p, const dstring* key);
 
 void insert_in_dmap_entry(dmap_entry* dmap_entry_p, const dstring* value);
 
