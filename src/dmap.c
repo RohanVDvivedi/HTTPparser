@@ -65,7 +65,7 @@ dmap_entry* get_from_dmap(const dmap* dmap_p, const dstring* key)
 	return (dmap_entry*) find_equals_in_hashmap(dmap_p, &((dmap_entry){.key = (*key)}));
 }
 
-dmap_entry* insert_in_dmap(const dmap* dmap_p, const dstring* key)
+dmap_entry* insert_in_dmap(dmap* dmap_p, const dstring* key)
 {
 	dmap_entry* e = get_from_dmap(dmap_p, key);
 	if(e == NULL)
@@ -78,12 +78,22 @@ dmap_entry* insert_in_dmap(const dmap* dmap_p, const dstring* key)
 		if(!insert_in_hashmap(dmap_p, e))
 		{
 			expand_hashmap(dmap_p, 2.0);
-			insert_in_hashmap(dmap_p, e)
+			insert_in_hashmap(dmap_p, e);
 		}
 	}
 	return e;
 }
 
-int delete_from_dmap(const dmap* dmap_p, const dstring* key);
+int delete_from_dmap(dmap* dmap_p, const dstring* key)
+{
+	dmap_entry* e = get_from_dmap(dmap_p, key);
+	if(e == NULL)
+		return 0;
+
+	remove_from_hashmap(dmap_p, e);
+	deinit_dmap_entry(e);
+	free(e);
+	return 1;
+}
 
 void deinit_dmap(dmap* dmap_p);
