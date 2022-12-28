@@ -64,6 +64,14 @@ dmap_entry* get_from_dmap(const dmap* dmap_p, const dstring* key);
 
 dmap_entry* insert_in_dmap(const dmap* dmap_p, const dstring* key);
 
+dmap_entry* get_or_insert_in_dmap(const dmap* dmap_p, const dstring* key)
+{
+	dmap_entry* e = get_from_dmap(dmap_p, key);
+	if(e == NULL)
+		e = insert_in_dmap(dmap_p, key);
+	return e;
+}
+
 int delete_from_dmap(const dmap* dmap_p, const dstring* key);
 
 void deinit_dmap(dmap* dmap_p);

@@ -31,6 +31,8 @@ dmap_entry* get_from_dmap(const dmap* dmap_p, const dstring* key);
 // inserts a new dmap_entry in dmap with the given key and returns the inserted dmap
 dmap_entry* insert_in_dmap(const dmap* dmap_p, const dstring* key);
 
+dmap_entry* get_or_insert_in_dmap(const dmap* dmap_p, const dstring* key);
+
 int delete_from_dmap(const dmap* dmap_p, const dstring* key);
 
 void deinit_dmap(dmap* dmap_p);
