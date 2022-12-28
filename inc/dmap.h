@@ -24,7 +24,7 @@ void deinit_dmap_entry(dmap_entry* dmap_entry_p);
 
 typedef hashmap dmap;
 
-void init_dmap(dmap* dmap_p, int case_in_sensitive_key);
+void init_dmap(dmap* dmap_p, int ignore_case_for_key);
 
 dmap_entry* get_from_dmap(const dmap* dmap_p, const dstring* key);
 

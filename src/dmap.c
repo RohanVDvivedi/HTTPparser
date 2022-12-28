@@ -1,6 +1,7 @@
 #include<dmap.h>
 
 #include<stdlib.h>
+#include<ctype.h>
 
 void init_dmap_entry(dmap_entry* dmap_entry_p, const dstring* key)
 {
@@ -29,7 +30,35 @@ void deinit_dmap_entry(dmap_entry* dmap_entry_p)
 		free(dmap_entry_p->values);
 }
 
-void init_dmap(dmap* dmap_p, int case_in_sensitive_key);
+static unsigned int dstring_key_hash_case(const void* element)
+{
+	const dmap_entry* ent = element;
+	const char* key_data = get_byte_array_dstring(&(ent->key));
+	unsigned int key_size = get_char_count_dstring(&(ent->key));
+	unsigned int hash = 0;
+	for(unsigned int i = 0; i < key_size; i++)
+		hash += (((((unsigned int)(tolower(key_data[i]))) * i) ^ 0xf0) & 0xffffff);
+	return hash;
+}
+
+static unsigned int dstring_key_hash(const void* element)
+{
+	const dmap_entry* ent = element;
+	const char* key_data = get_byte_array_dstring(&(ent->key));
+	unsigned int key_size = get_char_count_dstring(&(ent->key));
+	unsigned int hash = 0;
+	for(unsigned int i = 0; i < key_size; i++)
+		hash += (((((unsigned int)(key_data[i])) * i) ^ 0xf0) & 0xffffff);
+	return hash;
+}
+
+void init_dmap(dmap* dmap_p, int ignore_case_for_key)
+{
+	if(ignore_case_for_key)
+		initialize_hashmap(dmap_p, ROBINHOOD_HASHING, 8, dstring_key_hash_case, (int (*)(const void*, const void*))case_compare_dstring, 0);
+	else
+		initialize_hashmap(dmap_p, ROBINHOOD_HASHING, 8, dstring_key_hash, (int (*)(const void*, const void*))compare_dstring, 0);
+}
 
 dmap_entry* get_from_dmap(const dmap* dmap_p, const dstring* key);
 
