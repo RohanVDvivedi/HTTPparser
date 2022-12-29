@@ -2,6 +2,7 @@
 #define HTTP_REQUEST_H
 
 #include<http_method.h>
+#include<http_version.h>
 #include<dmap.h>
 
 typedef struct http_request http_request;
@@ -13,9 +14,7 @@ struct http_request
 
 	dmap path_params;
 
-	// version number
-	int major;
-	int minor;
+	http_version version;
 
 	dmap headers;
 
