@@ -12,6 +12,6 @@ char* get_http_status_line(int status);
 int parse_http_status_line(stream* rs, int* s);
 
 // returns -1 for error and 0 for success
-int serialize_http_status_line(stream* ws, int with_reason, const int* s);
+int serialize_http_status_line(stream* ws, const int* s);
 
 #endif

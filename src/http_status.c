@@ -254,32 +254,91 @@ int parse_http_status(stream* rs, int* s)
 	unsigned int byte_read = 0;
 	int error = 0;
 
-	byte_read = read_from_stream(rs, &byte, 1, &error);
-	if(byte_read == 0 || error != 0)
+	(*s) = 0;
+
+	for(int i = 0; i < 3; i++)
+	{
+		byte_read = read_from_stream(rs, &byte, 1, &error);
+		if(byte_read == 0 || error != 0)
+			return -1;
+
+		if(('0' <= byte) && (byte <= '9'))
+			(*s) = (*s) * 10 + (byte - '0');
+		else
+			return -1;
+	}
+
+	const char* status_reason_string = get_http_status_line((*s));
+	if(status_reason_string == NULL) // this check ensures that it is a valid status code
+		return -1;
+
+	int max_spaces = 3;
+
+	unsigned int spaces_seen = 0;
+	while(spaces_seen <= max_spaces)
+	{
+		byte_read = read_from_stream(rs, &byte, 1, &error);
+		if(byte_read == 0 || error != 0)
+			return -1;
+
+		if(byte == ' ')
+			spaces_seen++;
+		else
+		{
+			unread_from_stream(rs, &byte, 1);
+			break;
+		}
+	}
+
+	if(spaces_seen > max_spaces)
+		return -1;
+
+	int largest_reason_phrase = 50;
+
+	int last_char_CR = 0;
+	unsigned int reason_phrase_bytes_read = 0;
+	int status_line_end_reached = 0;
+
+	while(reason_phrase_bytes_read < largest_reason_phrase)
+	{
+		byte_read = read_from_stream(rs, &byte, 1, &error);
+		if(byte_read == 0 || error != 0)
+			return -1;
+
+		if(byte == '\n' && last_char_CR)
+		{
+			status_line_end_reached = 1;
+			char* CRLF = "\r\n";
+			unread_from_stream(rs, CRLF, 2);
+			break;
+		}
+
+		last_char_CR = (byte == '\r');
+		reason_phrase_bytes_read++;
+	}
+
+	if(!status_line_end_reached)
 		return -1;
 
 	return 0;
 }
 
-int serialize_http_status(stream* ws, int with_reason, const int* s)
+int serialize_http_status(stream* ws, const int* s)
 {
 	int error = 0;
 
 	const char* status_reason_string = get_http_status_line((*s));
-	if(status_string == NULL) // this check ensures that it is a valid status code
+	if(status_reason_string == NULL) // this check ensures that it is a valid status code
 		return -1;
 
-	if(with_reason)
-	{
-		char SP = ' ';
-		write_to_stream(ws, &SP, 1, &error);
-		if(error)
-			return -1;
+	char SP = ' ';
+	write_to_stream(ws, &SP, 1, &error);
+	if(error)
+		return -1;
 
-		write_to_stream(ws, status_reason_string, strlen(status_reason_string), &error);
-		if(error)
-			return -1;
-	}
+	write_to_stream(ws, status_reason_string, strlen(status_reason_string), &error);
+	if(error)
+		return -1;
 
 	return 0;
 }
