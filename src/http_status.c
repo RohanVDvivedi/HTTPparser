@@ -313,7 +313,7 @@ int parse_http_status_line(stream* rs, int* s)
 			break;
 		}
 
-		last_char_CR = (byte == 'X');
+		last_char_CR = (byte == '\r');
 		reason_phrase_bytes_read++;
 	}
 
