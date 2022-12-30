@@ -6,9 +6,7 @@
 const http_version valid_http_versions[] = 
 {
 	{1,0},
-	{1,1},
-	{2,0},
-	{3,0}
+	{1,1}
 };
 
 int are_identical_http_versions(const http_version* v1, const http_version* v2)

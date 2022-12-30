@@ -254,45 +254,9 @@ int parse_http_status(stream* rs, int* s)
 	unsigned int byte_read = 0;
 	int error = 0;
 
-	int status_count = sizeof(http_status_code_reason_strings)/sizeof(char*);
-
-	int can_be_count = sizeof(http_status_code_reason_strings)/sizeof(char*);
-	int can_not_be[sizeof(http_status_code_reason_strings)/sizeof(char*)] = {};
-
-	unsigned int bytes_matched = 0;
-
-	int res = -1;
-
-	while(can_be_count > 0 && res == -1)
-	{
-		byte_read = read_from_stream(rs, &byte, 1, &error);
-		if(byte_read == 0 || error != 0)
-			return -1;
-
-		for(int i = 0; i < status_count; i++)
-		{
-			if(can_not_be[i])
-				continue;
-
-			if(byte != http_status_code_reason_strings[i][bytes_matched])
-			{
-				can_not_be[i] = 1;
-				can_be_count--;
-			}
-			else if(http_status_code_reason_strings[i][bytes_matched+1] == '\0')
-			{
-				res = i;
-				break;
-			}
-		}
-
-		bytes_matched++;
-	}
-
-	if(res == -1)
+	byte_read = read_from_stream(rs, &byte, 1, &error);
+	if(byte_read == 0 || error != 0)
 		return -1;
-
-	(*s) = http_status_codes[res];
 
 	return 0;
 }
@@ -301,13 +265,21 @@ int serialize_http_status(stream* ws, int with_reason, const int* s)
 {
 	int error = 0;
 
-	const char* status_string = get_http_status_line((*s));
-	if(status_string == NULL)
+	const char* status_reason_string = get_http_status_line((*s));
+	if(status_string == NULL) // this check ensures that it is a valid status code
 		return -1;
 
-	write_to_stream(ws, status_string, strlen(status_string), &error);
-	if(error)
-		return -1;
+	if(with_reason)
+	{
+		char SP = ' ';
+		write_to_stream(ws, &SP, 1, &error);
+		if(error)
+			return -1;
+
+		write_to_stream(ws, status_reason_string, strlen(status_reason_string), &error);
+		if(error)
+			return -1;
+	}
 
 	return 0;
 }
