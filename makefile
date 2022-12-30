@@ -7,7 +7,7 @@ DOWNLOAD_DIR:=/usr/local
 # we may download all the public headers
 
 # list of public api headers (only these headers will be installed)
-PUBLIC_HEADERS:=http_parser.h http_serializer.h http_request.h http_response.h
+PUBLIC_HEADERS:=http_request.h http_response.h http_method.h http_status.h http_version.h
 # the library, which we will create
 LIBRARY:=lib${PROJECT_NAME}.a
 # the binary, which will use the created library
