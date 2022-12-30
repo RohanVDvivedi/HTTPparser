@@ -1,5 +1,7 @@
 #include<http_method.h>
 
+#include<string.h>
+
 const char* http_method_strings[] = {
 	"GET",
 	"POST",
