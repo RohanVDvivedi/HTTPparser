@@ -248,7 +248,7 @@ char* get_http_status_line(int status)
 	}
 }
 
-int parse_http_status(stream* rs, int* s)
+int parse_http_status_line(stream* rs, int* s)
 {
 	char byte;
 	unsigned int byte_read = 0;
@@ -313,7 +313,7 @@ int parse_http_status(stream* rs, int* s)
 			break;
 		}
 
-		last_char_CR = (byte == '\r');
+		last_char_CR = (byte == 'X');
 		reason_phrase_bytes_read++;
 	}
 
@@ -323,7 +323,7 @@ int parse_http_status(stream* rs, int* s)
 	return 0;
 }
 
-int serialize_http_status(stream* ws, const int* s)
+int serialize_http_status_line(stream* ws, const int* s)
 {
 	int error = 0;
 

@@ -13,13 +13,13 @@ int main()
 	
 	int s = 53;
 
-	if(parse_http_status(&rs, &s))
+	if(parse_http_status_line(&rs, &s))
 	{
 		printf("parse error\n");
 		return 0;
 	}
 
-	if(serialize_http_status(&ws, &s))
+	if(serialize_http_status_line(&ws, &s))
 	{
 		printf("serliazation error\n");
 		return 0;
