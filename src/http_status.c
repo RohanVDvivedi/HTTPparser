@@ -323,12 +323,30 @@ int parse_http_status_line(stream* rs, int* s)
 	return 0;
 }
 
+static int serialize_int(stream* ws, const int* i)
+{
+	int error = 0;
+
+	char int_string[33] = {};
+	unsigned int int_string_size = snprintf(int_string, 32, "%d", (*i));
+
+	write_to_stream(ws, int_string, int_string_size, &error);
+	if(error)
+		return -1;
+
+	return 0;
+}
+
 int serialize_http_status_line(stream* ws, const int* s)
 {
 	int error = 0;
 
 	const char* status_reason_string = get_http_status_line((*s));
 	if(status_reason_string == NULL) // this check ensures that it is a valid status code
+		return -1;
+
+	error = serialize_int(ws, s);
+	if(error)
 		return -1;
 
 	char SP = ' ';
