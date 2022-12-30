@@ -1,7 +1,7 @@
 #include<stdio.h>
 #include<stdlib.h>
 
-#include<http_version.h>
+#include<http_method.h>
 
 #include<file_descriptor_stream.h>
 
@@ -11,15 +11,15 @@ int main()
 	initialize_stream_for_fd(&rs, 0);
 	initialize_stream_for_fd(&ws, 1);
 	
-	http_version v = {5,3};
+	http_method m = 3;
 
-	if(parse_http_version(&rs, &v))
+	if(parse_http_method(&rs, &m))
 	{
 		printf("parse error\n");
 		return 0;
 	}
 
-	if(serialize_http_version(&ws, &v))
+	if(serialize_http_method(&ws, &m))
 	{
 		printf("serliazation error\n");
 		return 0;
