@@ -1,7 +1,7 @@
 #include<http_status.h>
 
-#include<stddef.h>
 #include<string.h>
+#include<stdio.h>
 
 const int http_status_codes[] =
 {
