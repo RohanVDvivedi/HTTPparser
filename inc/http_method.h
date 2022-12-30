@@ -11,15 +11,15 @@
 typedef enum http_method http_method;
 enum http_method
 {
-	GET,
-	POST,
-	PUT,
-	HEAD,
-	DELETE,
-	PATCH,
-	OPTIONS,
-	TRACE,
-	CONNECT
+	GET     = 0,
+	POST    = 1,
+	PUT     = 2,
+	HEAD    = 3,
+	DELETE  = 4,
+	PATCH   = 5,
+	OPTIONS = 6,
+	TRACE   = 7,
+	CONNECT = 8
 };
 
 extern const char* http_method_strings[];

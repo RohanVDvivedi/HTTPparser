@@ -1,6 +1,8 @@
 #ifndef HTTP_VERSION_H
 #define HTTP_VERSION_H
 
+#include<stream.h>
+
 typedef struct http_version http_version;
 struct http_version
 {
