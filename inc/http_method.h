@@ -24,8 +24,10 @@ enum http_method
 
 extern const char* http_method_strings[];
 
-http_method parse_http_method(stream* rs, int* error);
+// returns -1 for error and 0 for success
+int parse_http_method(stream* rs, http_method* m);
 
-int serialize_http_method(stream* ws, http_method m);
+// returns -1 for error and 0 for success
+int serialize_http_method(stream* ws, const http_method* m);
 
 #endif
