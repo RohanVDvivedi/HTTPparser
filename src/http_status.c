@@ -1,6 +1,7 @@
 #include<http_status.h>
 
 #include<stddef.h>
+#include<string.h>
 
 const int http_status_codes[] =
 {
@@ -249,4 +250,17 @@ char* get_http_status_line(int status)
 
 int parse_http_status(stream* rs, int* s);
 
-int serialize_http_status(stream* ws, const int* s);
+int serialize_http_status(stream* ws, const int* s)
+{
+	int error = 0;
+
+	const char* status_string = get_http_status_line((*s));
+	if(status_string == NULL)
+		return -1;
+
+	write_to_stream(ws, status_string, strlen(status_string), &error);
+	if(error)
+		return -1;
+
+	return 0;
+}

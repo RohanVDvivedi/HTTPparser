@@ -1,6 +1,8 @@
 #ifndef HTTP_STATUS_H
 #define HTTP_STATUS_H
 
+#include<stream.h>
+
 extern const int http_status_codes[];
 extern const char* http_status_code_strings[];
 
