@@ -248,7 +248,54 @@ char* get_http_status_line(int status)
 	}
 }
 
-int parse_http_status(stream* rs, int* s);
+int parse_http_status(stream* rs, int* s)
+{
+	char byte;
+	unsigned int byte_read = 0;
+	int error = 0;
+
+	int status_count = sizeof(http_status_code_strings)/sizeof(char*);
+
+	int can_be_count = sizeof(http_status_code_strings)/sizeof(char*);
+	int can_not_be[sizeof(http_status_code_strings)/sizeof(char*)] = {};
+
+	unsigned int bytes_matched = 0;
+
+	int res = -1;
+
+	while(can_be_count > 0 && res == -1)
+	{
+		byte_read = read_from_stream(rs, &byte, 1, &error);
+		if(byte_read == 0 || error != 0)
+			return -1;
+
+		for(int i = 0; i < status_count; i++)
+		{
+			if(can_not_be[i])
+				continue;
+
+			if(byte != http_status_code_strings[i][bytes_matched])
+			{
+				can_not_be[i] = 1;
+				can_be_count--;
+			}
+			else if(http_status_code_strings[i][bytes_matched+1] == '\0')
+			{
+				res = i;
+				break;
+			}
+		}
+
+		bytes_matched++;
+	}
+
+	if(res == -1)
+		return -1;
+
+	(*s) = http_status_codes[res];
+
+	return 0;
+}
 
 int serialize_http_status(stream* ws, const int* s)
 {
