@@ -22,3 +22,53 @@ int is_valid_http_version(const http_version* vsn)
 	}
 	return 0;
 }
+
+const char* http_version_prefix = "HTTP/";
+
+static int parse_unsigned_int(stream* rs, unsigned int* u)
+{
+	// TODO
+	return -1;
+}
+
+int parse_http_version(stream* rs, http_version* v)
+{
+	char byte;
+	unsigned int byte_read = 0;
+	int error = 0;
+
+	unsigned int prefix_bytes_match = 0;
+	while(1)
+	{
+		if(http_version_prefix[prefix_bytes_match] == '\0')
+			break;
+
+		byte_read = read_from_stream(rs, &byte, 1, &error);
+		if(byte_read == 0 || error != 0)
+			return -1;
+
+		if(byte != http_version_prefix[prefix_bytes_match++])
+			return -1;
+	}
+
+	error = parse_unsigned_int(rs, &(v->major));
+	if(error)
+		return -1;
+
+	byte_read = read_from_stream(rs, &byte, 1, &error);
+	if(byte_read == 0 || error != 0)
+		return -1;
+	if(byte != '.')
+		return -1;
+
+	error = parse_unsigned_int(rs, &(v->major));
+	if(error)
+		return -1;
+
+	return 0;
+}
+
+void serialize_http_version(stream* ws, const http_version* v)
+{
+
+}
