@@ -19,6 +19,7 @@ int is_valid_http_version(const http_version* vsn);
 // returns -1 for error, 0 for success
 int parse_http_version(stream* rs, http_version* v);
 
-void serialize_http_version(stream* ws, const http_version* v);
+// returns -1 for error, 0 for success
+int serialize_http_version(stream* ws, const http_version* v);
 
 #endif

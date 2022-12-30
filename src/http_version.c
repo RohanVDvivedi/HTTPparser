@@ -1,5 +1,8 @@
 #include<http_version.h>
 
+#include<string.h>
+#include<stdio.h>
+
 const http_version valid_http_versions[] = 
 {
 	{1,0},
@@ -95,14 +98,47 @@ int parse_http_version(stream* rs, http_version* v)
 	if(byte != '.')
 		return -1;
 
-	error = parse_unsigned_int(rs, &(v->major));
+	error = parse_unsigned_int(rs, &(v->minor));
 	if(error)
 		return -1;
 
 	return 0;
 }
 
-void serialize_http_version(stream* ws, const http_version* v)
+static int serialize_unsigned_int(stream* ws, const unsigned int* u)
 {
+	int error = 0;
 
+	char unsigned_int_string[33] = {};
+	unsigned int unsigned_int_string_size = snprintf(unsigned_int_string, 32, "%u", (*u));
+
+	write_to_stream(ws, unsigned_int_string, unsigned_int_string_size, &error);
+	if(error)
+		return -1;
+
+	return 0;
+}
+
+int serialize_http_version(stream* ws, const http_version* v)
+{
+	int error = 0;
+
+	write_to_stream(ws, http_version_prefix, strlen(http_version_prefix), &error);
+	if(error)
+		return -1;
+
+	error = serialize_unsigned_int(ws, &(v->major));
+	if(error)
+		return -1;
+
+	static const char DOT = '.';
+	write_to_stream(ws, &DOT, 1, &error);
+	if(error)
+		return -1;
+
+	error = serialize_unsigned_int(ws, &(v->minor));
+	if(error)
+		return -1;
+
+	return 0;
 }
