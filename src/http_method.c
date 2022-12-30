@@ -58,6 +58,8 @@ int parse_http_method(stream* rs, http_method* m)
 	if(res == -1)
 		return -1;
 
+	(*m) = res;
+
 	return 0;
 }
 
