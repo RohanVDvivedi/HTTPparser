@@ -246,3 +246,7 @@ char* get_http_status_line(int status)
 			return NULL;
 	}
 }
+
+int parse_http_status(stream* rs, int* s);
+
+int serialize_http_status(stream* ws, const int* s);
