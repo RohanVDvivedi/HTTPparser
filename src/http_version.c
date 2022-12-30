@@ -27,8 +27,42 @@ const char* http_version_prefix = "HTTP/";
 
 static int parse_unsigned_int(stream* rs, unsigned int* u)
 {
-	// TODO
-	return -1;
+	char byte;
+	unsigned int byte_read = 0;
+	int error = 0;
+
+	*u = 0;
+	unsigned int total_bytes_read = 0;
+
+	while(1)
+	{
+		byte_read = read_from_stream(rs, &byte, 1, &error);
+		if(error != 0)
+			return -1;
+
+		if(byte_read > 0)
+		{
+			if(('0' <= byte) && (byte <= '9'))
+			{
+				if(total_bytes_read > 0 && (*u) == 0 && byte == '0')
+					return -1;
+				total_bytes_read += byte_read;
+				(*u) = ((*u) * 10) + (byte - '0');
+			}
+			else
+			{
+				unread_from_stream(rs, &byte, 1);
+				break;
+			}
+		}
+		else
+			break;
+	}
+
+	if(total_bytes_read == 0)
+		return -1;
+
+	return 0;
 }
 
 int parse_http_version(stream* rs, http_version* v)
