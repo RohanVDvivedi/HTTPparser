@@ -273,7 +273,7 @@ int parse_http_status_line(stream* rs, int* s)
 	// skip spaces
 	{
 		#define MAX_SPACES 5
-		unsigned int space_bytes = skip_whitespaces_from_stream(rs, MAX_SPACE, &error);
+		unsigned int space_bytes = skip_whitespaces_from_stream(rs, MAX_SPACES, &error);
 		if(space_bytes == 0 || error)
 			return -1;
 	}
