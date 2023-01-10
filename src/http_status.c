@@ -1,5 +1,7 @@
 #include<http_status.h>
 
+#include<stream_util.h>
+
 #include<string.h>
 #include<stdio.h>
 

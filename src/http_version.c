@@ -1,7 +1,10 @@
 #include<http_version.h>
 
+#include<stream_util.h>
+
 #include<string.h>
 #include<stdio.h>
+#include<stdint.h>
 
 const http_version valid_http_versions[] = 
 {
@@ -26,46 +29,6 @@ int is_valid_http_version(const http_version* vsn)
 
 const char* http_version_prefix = "HTTP/";
 
-static int parse_unsigned_int(stream* rs, unsigned int* u)
-{
-	char byte;
-	unsigned int byte_read = 0;
-	int error = 0;
-
-	*u = 0;
-	unsigned int total_bytes_read = 0;
-
-	while(1)
-	{
-		byte_read = read_from_stream(rs, &byte, 1, &error);
-		if(error != 0)
-			return -1;
-
-		if(byte_read > 0)
-		{
-			if(('0' <= byte) && (byte <= '9'))
-			{
-				if(total_bytes_read > 0 && (*u) == 0 && byte == '0')
-					return -1;
-				total_bytes_read += byte_read;
-				(*u) = ((*u) * 10) + (byte - '0');
-			}
-			else
-			{
-				unread_from_stream(rs, &byte, 1);
-				break;
-			}
-		}
-		else
-			break;
-	}
-
-	if(total_bytes_read == 0)
-		return -1;
-
-	return 0;
-}
-
 int parse_http_version(stream* rs, http_version* v)
 {
 	char byte;
@@ -86,9 +49,16 @@ int parse_http_version(stream* rs, http_version* v)
 			return -1;
 	}
 
-	error = parse_unsigned_int(rs, &(v->major));
-	if(error)
-		return -1;
+	// parse version major
+	{
+		uint64_t v_major;
+		unsigned int v_major_bytes = read_uint64_from_stream(rs, &v_major, &error);
+		if(v_major > 100)
+			return -1;
+		if(v_major_bytes == 0 || error)
+			return -1;
+		v->major = v_major;
+	}
 
 	byte_read = read_from_stream(rs, &byte, 1, &error);
 	if(byte_read == 0 || error != 0)
@@ -96,9 +66,16 @@ int parse_http_version(stream* rs, http_version* v)
 	if(byte != '.')
 		return -1;
 
-	error = parse_unsigned_int(rs, &(v->minor));
-	if(error)
-		return -1;
+	// parse version minor
+	{
+		uint64_t v_minor;
+		unsigned int v_minor_bytes = read_uint64_from_stream(rs, &v_minor, &error);
+		if(v_minor > 1000)
+			return -1;
+		if(v_minor_bytes == 0 || error)
+			return -1;
+		v->minor = v_minor;
+	}
 
 	return 0;
 }
