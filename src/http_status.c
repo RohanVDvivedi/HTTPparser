@@ -276,11 +276,20 @@ int parse_http_status_line(stream* rs, int* s)
 		unsigned int space_bytes = skip_whitespaces_from_stream(rs, MAX_SPACES, &error);
 		if(space_bytes == 0 || error)
 			return -1;
+
+		// make sure that the next byte is not a whitespace
+		{
+			char byte;
+			unsigned int byte_read = read_from_stream(rs, &byte, 1, &error);
+			if(byte_read == 0 || error || isspace(byte))
+				return -1;
+			unread_from_stream(rs, &byte, 1);
+		}
 	}
 
 	// skip all of the status reason
 
-	int largest_reason_phrase = 50;
+	#define largest_reason_phrase 50
 
 	int last_char_CR = 0;
 	unsigned int reason_phrase_bytes_read = 0;
@@ -289,7 +298,7 @@ int parse_http_status_line(stream* rs, int* s)
 	while(reason_phrase_bytes_read < largest_reason_phrase)
 	{
 		byte_read = read_from_stream(rs, &byte, 1, &error);
-		if(byte_read == 0 || error != 0)
+		if(byte_read == 0 || error)
 			return -1;
 
 		if(byte == '\n' && last_char_CR)
