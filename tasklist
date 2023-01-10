@@ -1,15 +1,17 @@
- * add declarations for all the below functions
-
  * implement parse_http_request_line   serialize_http_request_line
  * implement parse_http_response_line  serialize_http_response_line
 
  * implement parse_http_header  serialize_http_header
  * implement parse_http_headers serialize_http_headers
 
- * implement parse_http_headers serialize_http_headers
+ * implement parse_http_path_and_path_params  serialize_http_path_and_path_params
+
+ * implement parse_http_path  serialize_http_path
+ * implement parse_http_path_params  serialize_http_path_params
+ * transform method to convert path to and from serialized format
 
  * implement parse_request_head parse_response_head
- * implement parse_request_body parse_response_body
-
  * implement serialize_request_head serialize_response_head
+
+ * implement parse_request_body parse_response_body
  * implement serialize_request_body serialize_response_body
