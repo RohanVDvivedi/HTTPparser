@@ -256,44 +256,29 @@ int parse_http_status_line(stream* rs, int* s)
 	unsigned int byte_read = 0;
 	int error = 0;
 
-	(*s) = 0;
-
-	for(int i = 0; i < 3; i++)
+	// parse status code and check if it is valid
 	{
-		byte_read = read_from_stream(rs, &byte, 1, &error);
-		if(byte_read == 0 || error != 0)
+		(*s) = 0;
+		uint64_t status_code_val;
+		unsigned int status_code_bytes = read_uint64_from_stream(rs, &status_code_val, &error);
+		if(status_code_val > 1000 || status_code_bytes == 0 || error)
 			return -1;
+		(*s) = status_code_val;
 
-		if(('0' <= byte) && (byte <= '9'))
-			(*s) = (*s) * 10 + (byte - '0');
-		else
+		const char* status_reason_string = get_http_status_line((*s));
+		if(status_reason_string == NULL) // this check ensures that it is a valid status code
 			return -1;
 	}
 
-	const char* status_reason_string = get_http_status_line((*s));
-	if(status_reason_string == NULL) // this check ensures that it is a valid status code
-		return -1;
-
-	int max_spaces = 3;
-
-	unsigned int spaces_seen = 0;
-	while(spaces_seen <= max_spaces)
+	// skip spaces
 	{
-		byte_read = read_from_stream(rs, &byte, 1, &error);
-		if(byte_read == 0 || error != 0)
+		#define MAX_SPACES 5
+		unsigned int space_bytes = skip_whitespaces_from_stream(rs, MAX_SPACE, &error);
+		if(space_bytes == 0 || error)
 			return -1;
-
-		if(byte == ' ')
-			spaces_seen++;
-		else
-		{
-			unread_from_stream(rs, &byte, 1);
-			break;
-		}
 	}
 
-	if(spaces_seen > max_spaces)
-		return -1;
+	// skip all of the status reason
 
 	int largest_reason_phrase = 50;
 
