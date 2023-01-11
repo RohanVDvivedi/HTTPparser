@@ -31,21 +31,13 @@ const char* http_version_prefix = "HTTP/";
 
 int parse_http_version(stream* rs, http_version* v)
 {
-	char byte;
-	unsigned int byte_read = 0;
 	int error = 0;
 
-	unsigned int prefix_bytes_match = 0;
-	while(1)
+	// skip reading the http version prefix
 	{
-		if(http_version_prefix[prefix_bytes_match] == '\0')
-			break;
-
-		byte_read = read_from_stream(rs, &byte, 1, &error);
-		if(byte_read == 0 || error != 0)
-			return -1;
-
-		if(byte != http_version_prefix[prefix_bytes_match++])
+		dstring http_version_prefix_dstring = get_literal_cstring(http_version_prefix);
+		unsigned int http_version_prefix_read = skip_dstring_from_stream(rs, &http_version_prefix_dstring, &error);
+		if(http_version_prefix == 0 || error)
 			return -1;
 	}
 
@@ -60,10 +52,9 @@ int parse_http_version(stream* rs, http_version* v)
 		v->major = v_major;
 	}
 
-	byte_read = read_from_stream(rs, &byte, 1, &error);
-	if(byte_read == 0 || error != 0)
-		return -1;
-	if(byte != '.')
+	char byte;
+	unsigned int byte_read = read_from_stream(rs, &byte, 1, &error);
+	if(byte_read == 0 || error != 0 || byte != '.')
 		return -1;
 
 	// parse version minor
