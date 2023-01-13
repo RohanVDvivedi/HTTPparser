@@ -1,9 +1,13 @@
 #include<stdio.h>
 #include<stdlib.h>
 
-#include<http_status.h>
+#include<http_request_line.h>
+#include<http_response_line.h>
 
 #include<file_descriptor_stream.h>
+
+#define TEST_REQUEST
+#define TEST_RESPONSE
 
 int main()
 {
@@ -11,19 +15,45 @@ int main()
 	initialize_stream_for_fd(&rs, 0);
 	initialize_stream_for_fd(&ws, 1);
 	
-	int s = 53;
-
-	if(parse_http_status_line(&rs, &s))
+	#if defined TEST_REQUEST
 	{
-		printf("parse error\n");
-		return 0;
-	}
+		http_request hr;
+		init_http_request(&hr);
 
-	if(serialize_http_status_line(&ws, &s))
-	{
-		printf("serliazation error\n");
-		return 0;
+		if(parse_http_request_line(&rs, &hr))
+		{
+			printf("parse error\n");
+			return 0;
+		}
+
+		if(serialize_http_request_line(&ws, &hr))
+		{
+			printf("serliazation error\n");
+			return 0;
+		}
+
+		deinit_http_request(&hr);
 	}
+	#elif defined TEST_RESPONSE
+	{
+		http_response hr;
+		init_http_response(&hr);
+
+		if(parse_http_response_line(&rs, &hr))
+		{
+			printf("parse error\n");
+			return 0;
+		}
+
+		if(serialize_http_response_line(&ws, &hr))
+		{
+			printf("serliazation error\n");
+			return 0;
+		}
+
+		deinit_http_response(&hr);
+	}
+	#endif
 
 	deinitialize_stream(&rs);
 	deinitialize_stream(&ws);
