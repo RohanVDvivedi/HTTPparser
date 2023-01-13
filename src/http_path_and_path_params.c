@@ -73,7 +73,7 @@ int parse_http_path_and_path_params(stream* rs, http_request* hr_p)
 			remaining = split_dstring(&remaining, &delim_1, &param);
 
 			dstring param_key;
-			dstring param_value = split_dstring(&remaining, &delim_2, &param_key);
+			dstring param_value = split_dstring(&param, &delim_2, &param_key);
 
 			// param key can not be empty
 			if(is_empty_dstring(&param_key))
