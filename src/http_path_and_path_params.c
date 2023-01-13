@@ -63,7 +63,30 @@ int parse_http_path_and_path_params(stream* rs, http_request* hr_p)
 	// insert params to the hr_p->path_params
 	if(!is_empty_dstring(&params))
 	{
-		// TODO
+		dstring delim_1 = get_literal_cstring("&");
+		dstring delim_2 = get_literal_cstring("=");
+
+		dstring remaining = params;
+		while(!is_empty_dstring(&remaining))
+		{
+			dstring param;
+			remaining = split_dstring(&remaining, &delim_1, &param);
+
+			dstring param_key;
+			dstring param_value = split_dstring(&remaining, &delim_2, &param_key);
+
+			// param key can not be empty
+			if(is_empty_dstring(&param_key))
+			{
+				deinit_dstring(&path_and_params);
+				deinit_dstring(&path);
+				deinit_dstring(&params);
+				return -1;
+			}
+
+			// insert param_key and param_value into path_params
+			insert_in_dmap(&(hr_p->path_params), &param_key, &param_value);
+		}
 	}
 
 	return 0;
