@@ -12,9 +12,6 @@ int parse_http_response_line(stream* rs, http_response* hr_p)
 	if(parse_http_version(rs, &(hr_p->version)) == -1)
 		return -1;
 
-	if(!is_valid_http_version(&(hr_p->version)))
-		return -1;
-
 	int error = 0;
 
 	// skip spaces
