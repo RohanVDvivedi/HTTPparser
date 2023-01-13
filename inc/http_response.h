@@ -17,6 +17,8 @@ struct http_response
 	// body stream
 };
 
+void init_http_response(http_response* hr_p);
+
 // returns -1 for error and 0 for success
 int parse_http_response_head(stream* rs, http_response* hr_p);
 
