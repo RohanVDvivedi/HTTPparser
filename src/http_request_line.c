@@ -31,7 +31,8 @@ int parse_http_request_line(stream* rs, http_request* hr_p)
 		}
 	}
 
-	// TODO parse path and path params
+	if(parse_http_path_and_path_params(rs, hr_p) == -1)
+		return -1;
 
 	// skip spaces
 	{
@@ -75,7 +76,8 @@ int serialize_http_request_line(stream* ws, const http_request* hr_p)
 	if(error)
 		return -1;
 
-	// TODO serialize path and path params
+	if(serialize_http_path_and_path_params(ws, hr_p) == -1)
+		return -1;
 
 	write_to_stream(ws, &space, 1, &error);
 	if(error)
