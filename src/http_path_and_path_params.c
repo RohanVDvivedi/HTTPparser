@@ -94,6 +94,35 @@ int parse_http_path_and_path_params(stream* rs, http_request* hr_p)
 
 int serialize_http_path_and_path_params(stream* ws, const http_request* hr_p)
 {
-	// TODO
+	int error = 0;
+
+	write_to_stream(ws, get_byte_array_dstring(&(hr_p->path)), get_char_count_dstring(&(hr_p->path)), &error);
+	if(error)
+		return -1;
+
+	char between_params = '?';
+	static const char after_key = '=';
+
+	for(const dmap_entry* e = get_first_of_in_hashmap(&(hr_p->path_params), FIRST_OF_HASHMAP); e != NULL; e = get_next_of_in_hashmap(&(hr_p->path_params), e, ANY_IN_HASHMAP))
+	{
+		write_to_stream(ws, &between_params, 1, &error);
+		if(error)
+			return -1;
+
+		write_to_stream(ws, get_byte_array_dstring(&(e->key)), get_char_count_dstring(&(e->key)), &error);
+		if(error)
+			return -1;
+
+		write_to_stream(ws, &after_key, 1, &error);
+		if(error)
+			return -1;
+
+		write_to_stream(ws, get_byte_array_dstring(&(e->value)), get_char_count_dstring(&(e->value)), &error);
+		if(error)
+			return -1;
+
+		between_params = '&';
+	}
+
 	return 0;
 }
