@@ -6,7 +6,7 @@
 
 #include<file_descriptor_stream.h>
 
-#define TEST_REQUEST
+//#define TEST_REQUEST
 #define TEST_RESPONSE
 
 int main()
