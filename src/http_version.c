@@ -74,7 +74,7 @@ int serialize_http_version(stream* ws, const http_version* v)
 {
 	int error = 0;
 
-	write_to_stream_formatted(ws, "%s%d.%d", &error, http_version_prefix, (v->major), &(v->minor));
+	write_to_stream_formatted(ws, "%s%d.%d", &error, http_version_prefix, v->major, v->minor);
 	if(error)
 		return -1;
 
