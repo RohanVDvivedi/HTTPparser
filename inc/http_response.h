@@ -17,4 +17,10 @@ struct http_response
 	// body stream
 };
 
+// returns -1 for error and 0 for success
+int parse_http_response_head(stream* rs, http_response* hr_p);
+
+// returns -1 for error and 0 for success
+int serialize_http_response_head(stream* ws, const http_response* hr_p);
+
 #endif
