@@ -28,6 +28,15 @@ int parse_http_headers(stream* rs, dmap* headers)
 		dstring header_key;
 		dstring header_value = split_dstring(&header, &SPCL, &header_key);
 
+		// header key must not be empty
+		if(is_empty_dstring(&header_key))
+		{
+			deinit_dstring(&header_key);
+			deinit_dstring(&header_value);
+			deinit_dstring(&header);
+			return -1;
+		}
+
 		insert_in_dmap(headers, &header_key, &header_value);
 
 		deinit_dstring(&header_key);
