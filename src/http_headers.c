@@ -6,7 +6,37 @@
 
 int parse_http_headers(stream* rs, dmap* headers)
 {
-	// TODO
+	int error = 0;
+
+	dstring CRLF = get_literal_cstring("\r\n");
+	unsigned int CRLF_spml[3];
+	get_prefix_suffix_match_lengths(&CRLF, CRLF_spml);
+
+	dstring SPCL = get_literal_cstring(": ");
+
+	while(1)
+	{
+		dstring header = read_dstring_until_from_stream(rs, &CRLF, CRLF_spml, 2048, &error);
+		if(error || is_empty_dstring(&header))
+			return -1;
+
+		if(compare_dstring(&header, &CRLF) == 0)
+			return 0;
+
+		discard_chars_dstring(&header, get_char_count_dstring(&header) - 2, get_char_count_dstring(&header) - 1);
+
+		dstring header_key;
+		dstring header_value = split_dstring(&header, &SPCL, &header_key);
+
+		insert_in_dmap(headers, &header_key, &header_value);
+
+		deinit_dstring(&header_key);
+		deinit_dstring(&header_value);
+
+		deinit_dstring(&header);
+	}
+
+	return 0;
 }
 
 int serialize_http_headers(stream* ws, const dmap* headers)
