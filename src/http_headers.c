@@ -16,15 +16,19 @@ int parse_http_headers(stream* rs, dmap* headers)
 
 	while(1)
 	{
+		// read from stream until CRLF
 		dstring header = read_dstring_until_from_stream(rs, &CRLF, CRLF_spml, 2048, &error);
 		if(error || is_empty_dstring(&header))
 			return -1;
 
+		// if we read just CRLF then it is end of headers and start of body
 		if(compare_dstring(&header, &CRLF) == 0)
 			return 0;
 
+		// discard the last 2 bytes from header string, which must be CRLF
 		discard_chars_dstring(&header, get_char_count_dstring(&header) - 2, get_char_count_dstring(&header) - 1);
 
+		// split header into its corrsponding key and value
 		dstring header_key;
 		dstring header_value = split_dstring(&header, &SPCL, &header_key);
 
@@ -37,7 +41,10 @@ int parse_http_headers(stream* rs, dmap* headers)
 			return -1;
 		}
 
+		// insert then both in the headers dmap
 		insert_in_dmap(headers, &header_key, &header_value);
+
+		// deinitialize all dstrings you generated
 
 		deinit_dstring(&header_key);
 		deinit_dstring(&header_value);
