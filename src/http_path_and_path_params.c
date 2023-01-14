@@ -120,8 +120,15 @@ int parse_http_path_and_path_params(stream* rs, http_request* hr_p)
 		return -1;
 	}
 
-	make_dstring_empty(&(hr_p->path));
-	concatenate_dstring(&(hr_p->path), &path);
+	// populate path
+	{
+		make_dstring_empty(&(hr_p->path));
+		dstring path_dstring = to_dstring_format(&path);
+		concatenate_dstring(&(hr_p->path), &path_dstring);
+		deinit_dstring(&path_dstring);
+	}
+
+	deinit_dstring(&path);
 
 	// insert params to the hr_p->path_params
 	if(!is_empty_dstring(&params))
@@ -141,16 +148,30 @@ int parse_http_path_and_path_params(stream* rs, http_request* hr_p)
 			// param key can not be empty
 			if(is_empty_dstring(&param_key))
 			{
-				deinit_dstring(&path_and_params);
-				deinit_dstring(&path);
+				deinit_dstring(&param_key);
+				deinit_dstring(&param_value);
 				deinit_dstring(&params);
+				deinit_dstring(&path_and_params);
 				return -1;
 			}
 
 			// insert param_key and param_value into path_params
-			insert_in_dmap(&(hr_p->path_params), &param_key, &param_value);
+			{
+				dstring param_key_dstring = to_dstring_format(&param_key);
+				dstring param_value_dstring = to_dstring_format(&param_value);
+				insert_in_dmap(&(hr_p->path_params), &param_key_dstring, &param_value_dstring);
+				deinit_dstring(&param_key_dstring);
+				deinit_dstring(&param_value_dstring);
+			}
+
+			deinit_dstring(&param_key);
+			deinit_dstring(&param_value);
 		}
 	}
+
+	deinit_dstring(&params);
+
+	deinit_dstring(&path_and_params);
 
 	return 0;
 }
