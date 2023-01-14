@@ -26,6 +26,10 @@ int main()
 			return 0;
 		}
 
+		printf("path : " printf_dstring_format "\n", printf_dstring_params(&(hr.path)));
+		printf("params : \n");
+		print_dmap(&ws, &(hr.path_params));
+
 		if(serialize_http_request_line(&ws, &hr))
 		{
 			printf("serliazation error\n");
