@@ -2,6 +2,26 @@
 
 #include<stream_util.h>
 
+static char char_to_hex(char c)
+{
+	if( '0' <= c && c <= '9' )
+		return c - '0';
+	else if('a' <= c && c <= 'f')
+		return c - 'a' + 10;
+	else if('A' <= c && c <= 'F')
+		return c - 'A' + 10;
+	else
+		return 'N';
+}
+
+static char hex_to_char(char hex)
+{
+	hex = hex & 0x0f;
+	if( 0 <= hex && hex <= 9 )
+		return hex + '0';
+	return (hex - 10) + 'a';
+}
+
 static int path_and_path_params_characters_allowed_on_stream(char c)
 {
 	if( ('0'<=c && c<='9') || ('a'<=c && c<='z') || ('A'<=c && c<='Z') )
@@ -15,6 +35,49 @@ static int path_and_path_params_characters_allowed_on_stream(char c)
 		default :
 			return 0;
 	}
+}
+
+dstring to_serializable_format(const dstring* str)
+{
+	const char* str_data = get_byte_array_dstring(str);
+	unsigned int str_size = get_char_count_dstring(str);
+
+	dstring res;
+	init_empty_dstring(&res, str_size);
+
+	for(unsigned int i = 0; i < str_size; i++)
+	{
+		if(path_and_path_params_characters_allowed_on_stream(str_data[i]))
+			concatenate_char(&res, str_data[i]);
+		else
+			snprintf_dstring(&res, "%%%c%c", hex_to_char((str_data[i] >> 4) & 0x0f), hex_to_char(str_data[i] & 0x0f));
+	}
+
+	return res;
+}
+
+static dstring to_dstring_format(const dstring* str)
+{
+	const char* str_data = get_byte_array_dstring(str);
+	unsigned int str_size = get_char_count_dstring(str);
+
+	dstring res;
+	init_empty_dstring(&res, str_size);
+
+	for(unsigned int i = 0; i < str_size;)
+	{
+		if(str_data[i] == '%' && (str_size - i) >= 3)
+		{
+			i++;
+			char c = (char_to_hex(str_data[i++]) << 4) & 0xf0;
+			c = c | (char_to_hex(str_data[i++]) & 0x0f);
+			concatenate_char(&res, c);
+		}
+		else
+			concatenate_char(&res, str_data[i++]);
+	}
+
+	return res;
 }
 
 int parse_http_path_and_path_params(stream* rs, http_request* hr_p)
