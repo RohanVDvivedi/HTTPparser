@@ -32,6 +32,10 @@ dmap_entry* insert_in_dmap(dmap* dmap_p, const dstring* key, const dstring* valu
 
 int delete_from_dmap(dmap* dmap_p, const dmap_entry* dmap_entry_p);
 
+#include<stream.h>
+
+void print_dmap(stream* ws, const dmap* dmap_p);
+
 void deinit_dmap(dmap* dmap_p);
 
 #endif

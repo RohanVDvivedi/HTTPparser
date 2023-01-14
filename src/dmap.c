@@ -78,6 +78,19 @@ int delete_from_dmap_key(dmap* dmap_p, dmap_entry* dmap_entry_p)
 	return 0;
 }
 
+#include<stream_util.h>
+
+void print_dmap(stream* ws, const dmap* dmap_p)
+{
+	int error = 0;
+	for(const dmap_entry* e = get_first_of_in_hashmap(dmap_p, FIRST_OF_HASHMAP); e != NULL; e = get_next_of_in_hashmap(dmap_p, e, ANY_IN_HASHMAP))
+	{
+		write_to_stream_formatted(ws, "<" printf_dstring_format "> -> <" printf_dstring_format ">\n", &error, printf_dstring_params(&(e->key)), printf_dstring_params(&(e->value)));
+		if(error)
+			break;
+	}
+}
+
 static void destroy_dmap_entries_in_dmap(const void* data, const void* additional_params)
 {
 	dmap_entry* e = (dmap_entry*) data;
