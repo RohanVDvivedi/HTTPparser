@@ -22,22 +22,23 @@ static char hex_to_char(char hex)
 	return (hex - 10) + 'a';
 }
 
-static int path_and_path_params_characters_allowed_on_stream(char c)
+static int path_and_path_params_characters_allowed_on_stream_unencoded(char c)
 {
 	if( ('0'<=c && c<='9') || ('a'<=c && c<='z') || ('A'<=c && c<='Z') )
 		return 1;
 	switch(c)
 	{
-		case '$' :	case '-' :	case '_' :	case '.' :
-		case '+' :	case '!' :	case '*' :	case '\'' :
-		case '(' :	case ')' :	case ',' :
+		case '-' :	case '_' :	case '.' :	case '~' :
+		case '+' :	case '!' :	case '*' :
+		case ',' :	case ':' :
 			return 1;
 		default :
 			return 0;
 	}
 }
 
-dstring to_serializable_format(const dstring* str)
+// if is_path is set then '/' is left unencoded
+static dstring to_serializable_format(const dstring* str, int is_path)
 {
 	const char* str_data = get_byte_array_dstring(str);
 	unsigned int str_size = get_char_count_dstring(str);
@@ -47,7 +48,7 @@ dstring to_serializable_format(const dstring* str)
 
 	for(unsigned int i = 0; i < str_size; i++)
 	{
-		if(path_and_path_params_characters_allowed_on_stream(str_data[i]))
+		if(path_and_path_params_characters_allowed_on_stream_unencoded(str_data[i]) || (is_path && str_data[i] == '/'))
 			concatenate_char(&res, str_data[i]);
 		else
 			snprintf_dstring(&res, "%%%c%c", hex_to_char((str_data[i] >> 4) & 0x0f), hex_to_char(str_data[i] & 0x0f));
@@ -181,7 +182,7 @@ int serialize_http_path_and_path_params(stream* ws, const http_request* hr_p)
 	int error = 0;
 
 	{
-		dstring path_serializable = to_serializable_format(&(hr_p->path));
+		dstring path_serializable = to_serializable_format(&(hr_p->path), 1);
 		write_to_stream(ws, get_byte_array_dstring(&path_serializable), get_char_count_dstring(&path_serializable), &error);
 		deinit_dstring(&path_serializable);
 		if(error)
@@ -198,7 +199,7 @@ int serialize_http_path_and_path_params(stream* ws, const http_request* hr_p)
 			return -1;
 
 		{
-			dstring key_serializable = to_serializable_format(&(e->key));
+			dstring key_serializable = to_serializable_format(&(e->key), 0);
 			write_to_stream(ws, get_byte_array_dstring(&key_serializable), get_char_count_dstring(&key_serializable), &error);
 			deinit_dstring(&key_serializable);
 			if(error)
@@ -210,7 +211,7 @@ int serialize_http_path_and_path_params(stream* ws, const http_request* hr_p)
 			return -1;
 
 		{
-			dstring value_serializable = to_serializable_format(&(e->value));
+			dstring value_serializable = to_serializable_format(&(e->value), 0);
 			write_to_stream(ws, get_byte_array_dstring(&value_serializable), get_char_count_dstring(&value_serializable), &error);
 			deinit_dstring(&value_serializable);
 			if(error)
