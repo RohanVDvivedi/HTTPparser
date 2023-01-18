@@ -1,5 +1,5 @@
 
  * implement body read and write streams - with chunked and given content length, store content_length and is_chunked in the stream itself, along with the underlying stream to read and write from
- * use zlib based reader and writers from ConnMan over the raw body stream
+ * use zlib_streams from ConnMan over the raw body stream
  * in all store raw_stream, raw_body_stream and body_stream in the http request and response
  * implement read_*_body and write_*_body for http_request and http_response
