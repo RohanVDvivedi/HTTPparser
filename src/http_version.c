@@ -43,7 +43,7 @@ int parse_http_version(stream* rs, http_version* v)
 	// parse version major
 	{
 		uint64_t v_major;
-		unsigned int v_major_bytes = read_uint64_from_stream(rs, &v_major, &error);
+		unsigned int v_major_bytes = read_uint64_from_stream(rs, DECIMAL, &v_major, &error);
 		if(v_major > 100)
 			return -1;
 		if(v_major_bytes == 0 || error)
@@ -59,7 +59,7 @@ int parse_http_version(stream* rs, http_version* v)
 	// parse version minor
 	{
 		uint64_t v_minor;
-		unsigned int v_minor_bytes = read_uint64_from_stream(rs, &v_minor, &error);
+		unsigned int v_minor_bytes = read_uint64_from_stream(rs, DECIMAL, &v_minor, &error);
 		if(v_minor > 1000)
 			return -1;
 		if(v_minor_bytes == 0 || error)
