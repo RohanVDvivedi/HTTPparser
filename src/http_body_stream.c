@@ -3,6 +3,8 @@
 #include<stdlib.h>
 #include<string.h>
 
+#include<cutlery_math.h>
+
 static unsigned int read_body_from_stream_body(void* stream_context, void* data, unsigned int data_size, int* error)
 {
 	http_body_stream_context* stream_context_p = stream_context;
@@ -14,7 +16,12 @@ static unsigned int read_body_from_stream_body(void* stream_context, void* data,
 	{
 		case 0 :
 		{
-			// TODO
+			unsigned int bytes_to_read = min(data_size, stream_context_p->body_bytes);
+			unsigned int bytes_read = read_from_stream(stream_context_p->underlying_stream, data, bytes_to_read, error);
+			stream_context_p->body_bytes -= bytes_read;
+			if(stream_context_p->body_bytes == 0)
+				stream_context_p->is_closed = 1;
+			return bytes_read;
 			break;
 		}
 		case 1 :
@@ -23,6 +30,8 @@ static unsigned int read_body_from_stream_body(void* stream_context, void* data,
 			break;
 		}
 	}
+
+	return 0;
 }
 
 static unsigned int write_body_to_stream_body(void* stream_context, const void* data, unsigned int data_size, int* error)
@@ -42,7 +51,12 @@ static unsigned int write_body_to_stream_body(void* stream_context, const void* 
 	{
 		case 0 :
 		{
-			// TODO
+			unsigned int bytes_to_write = min(data_size, stream_context_p->body_bytes);
+			unsigned int bytes_written = write_to_stream(stream_context_p->underlying_stream, data, bytes_to_write, error);
+			stream_context_p->body_bytes -= bytes_written;
+			if(stream_context_p->body_bytes == 0)
+				stream_context_p->is_closed = 1;
+			return bytes_written;
 			break;
 		}
 		case 1 :
@@ -51,6 +65,8 @@ static unsigned int write_body_to_stream_body(void* stream_context, const void* 
 			break;
 		}
 	}
+
+	return 0;
 }
 
 static void close_writable_stream_context_body_stream(void* stream_context, int* error)
@@ -87,6 +103,12 @@ int initialize_readable_body_stream(stream* strm, stream* underlying_stream, con
 
 	// TODO
 
+	if(!stream_context->is_chunked && stream_context->body_bytes == 0)
+	{
+		free(stream_context);
+		return 0;
+	}
+
 	initialize_stream(strm, stream_context, read_body_from_stream_body, NULL, close_readable_stream_context_body_stream, destroy_stream_context_body_stream);
 
 	return 1;
@@ -100,6 +122,12 @@ int initialize_writable_body_stream(stream* strm, stream* underlying_stream, con
 	stream_context->is_closed = 0;
 
 	// TODO
+
+	if(!stream_context->is_chunked && stream_context->body_bytes == 0)
+	{
+		free(stream_context);
+		return 0;
+	}
 
 	initialize_stream(strm, stream_context, NULL, write_body_to_stream_body, close_writable_stream_context_body_stream, destroy_stream_context_body_stream);
 
