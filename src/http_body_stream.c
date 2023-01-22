@@ -27,6 +27,13 @@ static unsigned int read_body_from_stream_body(void* stream_context, void* data,
 		case 1 :
 		{
 			// TODO
+			// if body_bytes == 0
+			// 		then read hexadecimal body_bytes
+			// 		skip "\r\n", if "\r\n" not read then throw error
+			// read min(body_bytes, data_size)
+			// body_bytes -= bytes_read
+			// if(body_bytes == 0)
+			//		skip "\r\n", if "\r\n" not read then throw error
 			break;
 		}
 	}
@@ -62,6 +69,10 @@ static unsigned int write_body_to_stream_body(void* stream_context, const void* 
 		case 1 :
 		{
 			// TODO
+			// serialize data_size
+			// call below functions in maximum chunks of 4096 bytes in a loop
+			// 		write_formatted_to_stream(underlying_stream, error, "%x\r\n%.*s\r\n", data_size, data_size, data);
+			// return data_size
 			break;
 		}
 	}
