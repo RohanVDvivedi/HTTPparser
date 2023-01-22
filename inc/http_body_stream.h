@@ -1,8 +1,11 @@
 #ifndef HTTP_BODY_STREAM_H
 #define HTTP_BODY_STREAM_H
 
-typedef struct body_stream_context body_stream_context;
-struct body_stream_context
+#include<stream.h>
+#include<dmap.h>
+
+typedef struct http_body_stream_context http_body_stream_context;
+struct http_body_stream_context
 {
 	stream* underlying_stream;
 
