@@ -5,6 +5,8 @@
 
 #include<cutlery_math.h>
 
+#include<stream_util.h>
+
 static unsigned int read_body_from_stream_body(void* stream_context, void* data, unsigned int data_size, int* error)
 {
 	http_body_stream_context* stream_context_p = stream_context;
@@ -41,6 +43,8 @@ static unsigned int read_body_from_stream_body(void* stream_context, void* data,
 	return 0;
 }
 
+#define WRITE_MAX_CHUNK_SIZE 4096
+
 static unsigned int write_body_to_stream_body(void* stream_context, const void* data, unsigned int data_size, int* error)
 {
 	http_body_stream_context* stream_context_p = stream_context;
@@ -68,11 +72,9 @@ static unsigned int write_body_to_stream_body(void* stream_context, const void* 
 		}
 		case 1 :
 		{
-			// TODO
-			// serialize data_size
-			// call below functions in maximum chunks of 4096 bytes in a loop
-			// 		write_formatted_to_stream(underlying_stream, error, "%x\r\n%.*s\r\n", data_size, data_size, data);
-			// return data_size
+			unsigned int bytes_to_write = min(WRITE_MAX_CHUNK_SIZE, data_size);
+			write_to_stream_formatted(stream_context_p->underlying_stream, "%x\r\n%.*s\r\n", error, bytes_to_write, bytes_to_write, data, error);
+			return bytes_to_write;
 			break;
 		}
 	}
