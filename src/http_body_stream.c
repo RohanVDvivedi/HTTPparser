@@ -10,7 +10,19 @@ static unsigned int read_body_from_stream_body(void* stream_context, void* data,
 	if(stream_context_p->is_closed)
 		return 0;
 
-	// TODO
+	switch(stream_context_p->is_chunked)
+	{
+		case 0 :
+		{
+			// TODO
+			break;
+		}
+		case 1 :
+		{
+			// TODO
+			break;
+		}
+	}
 }
 
 static unsigned int write_body_to_stream_body(void* stream_context, const void* data, unsigned int data_size, int* error)
@@ -26,7 +38,19 @@ static unsigned int write_body_to_stream_body(void* stream_context, const void* 
 	if(data_size == 0)
 		return 0;
 
-	// TODO
+	switch(stream_context_p->is_chunked)
+	{
+		case 0 :
+		{
+			// TODO
+			break;
+		}
+		case 1 :
+		{
+			// TODO
+			break;
+		}
+	}
 }
 
 static void close_writable_stream_context_body_stream(void* stream_context, int* error)
