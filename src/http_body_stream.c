@@ -7,12 +7,24 @@ static unsigned int read_body_from_stream_body(void* stream_context, void* data,
 {
 	http_body_stream_context* stream_context_p = stream_context;
 
+	if(stream_context_p->is_closed)
+		return 0;
+
 	// TODO
 }
 
 static unsigned int write_body_to_stream_body(void* stream_context, const void* data, unsigned int data_size, int* error)
 {
 	http_body_stream_context* stream_context_p = stream_context;
+
+	if(stream_context_p->is_closed)
+	{
+		(*error) = -1;
+		return 0;
+	}
+
+	if(data_size == 0)
+		return 0;
 
 	// TODO
 }
@@ -22,14 +34,20 @@ static void close_writable_stream_context_body_stream(void* stream_context, int*
 	http_body_stream_context* stream_context_p = stream_context;
 
 	// if the stream_context is chunked we need to send one last empty chunk
-	if(stream_context_p->is_chunked)
+	if(stream_context_p->is_chunked && !stream_context_p->is_closed)
 	{
 		static const char* last_chunk = "0\r\n\r\n";
 		write_to_stream(stream_context_p->underlying_stream, last_chunk, strlen(last_chunk), error);
+		stream_context_p->is_closed = 1;
 	}
+
+	// a chunked stream is closed after a 0 sized chunk is written to the stream
+	// while a non chunked stream is closed after body_bytes reach 0
 }
 
 static void close_readable_stream_context_body_stream(void* stream_context, int* error){}
+// a readable http body stream is closed only upon reading a chunk of size 0, or when its context length number of bytes are read
+// hence this is a NOP
 
 static void destroy_stream_context_body_stream(void* stream_context)
 {
@@ -41,6 +59,8 @@ int initialize_readable_body_stream(stream* strm, stream* underlying_stream, con
 	http_body_stream_context* stream_context = malloc(sizeof(http_body_stream_context));
 
 	// intialize stream context
+	stream_context->is_closed = 0;
+
 	// TODO
 
 	initialize_stream(strm, stream_context, read_body_from_stream_body, NULL, close_readable_stream_context_body_stream, destroy_stream_context_body_stream);
@@ -53,6 +73,8 @@ int initialize_writable_body_stream(stream* strm, stream* underlying_stream, con
 	http_body_stream_context* stream_context = malloc(sizeof(http_body_stream_context));
 
 	// intialize stream context
+	stream_context->is_closed = 0;
+
 	// TODO
 
 	initialize_stream(strm, stream_context, NULL, write_body_to_stream_body, close_writable_stream_context_body_stream, destroy_stream_context_body_stream);

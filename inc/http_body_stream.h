@@ -9,8 +9,11 @@ struct http_body_stream_context
 {
 	stream* underlying_stream;
 
+	// there can be a closed stream
+	int is_closed:1;
+
 	// whether the body is chunked or not
-	int is_chunked;
+	int is_chunked:1;
 
 	// body_bytes to be read next
 	unsigned int body_bytes;
