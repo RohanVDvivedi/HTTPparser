@@ -13,8 +13,8 @@ struct body_stream_context
 	unsigned int body_bytes;
 };
 
-int initialize_readable_body_stream(stream* underlying_stream, const dmap* headers);
+int initialize_readable_body_stream(stream* strm, stream* underlying_stream, const dmap* headers);
 
-int initialize_writable_body_stream(stream* underlying_stream, const dmap* headers);
+int initialize_writable_body_stream(stream* strm, stream* underlying_stream, const dmap* headers);
 
 #endif
