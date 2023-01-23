@@ -150,10 +150,70 @@ static void destroy_stream_context_body_stream(void* stream_context)
 	free(stream_context);
 }
 
+static unsigned int get_unsigned_int_from_dstring(const dstring* str, int* error)
+{
+	const char* str_data = get_byte_array_dstring(str);
+	unsigned int str_size = get_char_count_dstring(str);
+
+	(*error) = 0;
+
+	unsigned int res = 0;
+	for(unsigned int i = 0; i < str_size && (*error) == 0; i++)
+	{
+		if('0' <= str_data[i] && str_data[i] <= '9')
+		{
+			res *= 10;
+			res += (str_data[i] - '0');
+		}
+		else
+			(*error) = -1;
+	}
+
+	return res;
+}
+
 // returns 1 for success and 0 for error
 static int init_body_stream_context(http_body_stream_context* stream_context_p, const dmap* headers)
 {
-	// TODO
+	stream_context_p->body_bytes = 0;
+	stream_context_p->is_chunked = 0;
+
+	dmap_entry* content_length = get_from_dmap(headers, &get_literal_cstring("content-length"));
+	if(content_length != NULL)
+	{
+		dstring clv = new_copy_dstring(&(content_length->value));
+		trim_dstring(&clv);
+		if(is_empty_dstring(&clv))
+		{
+			deinit_dstring(&clv);
+			return 0;
+		}
+
+		int error = 0;
+		stream_context_p->body_bytes = get_unsigned_int_from_dstring(&clv, &error);
+		if(error)
+		{
+			deinit_dstring(&clv);
+			return 0;
+		}
+
+		return 1;
+	}
+
+	dstring chunked = get_literal_cstring("chunked");
+	unsigned int spml_chunked[8];
+	get_prefix_suffix_match_lengths(&chunked, spml_chunked);
+
+	for(const dmap_entry* transfer_encoding = get_from_dmap(headers, &get_literal_cstring("transfer-encoding")); transfer_encoding != NULL; transfer_encoding = get_next_of_in_hashmap(headers, transfer_encoding, ANY_THAT_EQUALS))
+	{
+		if(contains_dstring_KMP(&(transfer_encoding->value), &chunked, spml_chunked) != INVALID_INDEX)
+		{
+			stream_context_p->is_chunked = 1;
+			return 1;
+		}
+	}
+
+	return 0;
 }
 
 int initialize_readable_body_stream(stream* strm, stream* underlying_stream, const dmap* headers)
