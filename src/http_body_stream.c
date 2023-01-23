@@ -150,6 +150,12 @@ static void destroy_stream_context_body_stream(void* stream_context)
 	free(stream_context);
 }
 
+// returns 1 for success and 0 for error
+static int init_body_stream_context(http_body_stream_context* stream_context_p, const dmap* headers)
+{
+	// TODO
+}
+
 int initialize_readable_body_stream(stream* strm, stream* underlying_stream, const dmap* headers)
 {
 	http_body_stream_context* stream_context = malloc(sizeof(http_body_stream_context));
@@ -157,7 +163,11 @@ int initialize_readable_body_stream(stream* strm, stream* underlying_stream, con
 	// intialize stream context
 	stream_context->is_closed = 0;
 
-	// TODO
+	if(!init_body_stream_context(stream_context, headers))
+	{
+		free(stream_context);
+		return 0;
+	}
 
 	if(!stream_context->is_chunked && stream_context->body_bytes == 0)
 	{
@@ -177,7 +187,11 @@ int initialize_writable_body_stream(stream* strm, stream* underlying_stream, con
 	// intialize stream context
 	stream_context->is_closed = 0;
 
-	// TODO
+	if(!init_body_stream_context(stream_context, headers))
+	{
+		free(stream_context);
+		return 0;
+	}
 
 	if(!stream_context->is_chunked && stream_context->body_bytes == 0)
 	{
