@@ -28,14 +28,57 @@ static unsigned int read_body_from_stream_body(void* stream_context, void* data,
 		}
 		case 1 :
 		{
-			// TODO
-			// if body_bytes == 0
-			// 		then read hexadecimal body_bytes
-			// 		skip "\r\n", if "\r\n" not read then throw error
-			// read min(body_bytes, data_size)
-			// body_bytes -= bytes_read
-			// if(body_bytes == 0)
-			//		skip "\r\n", if "\r\n" not read then throw error
+			dstring CRLF = get_literal_cstring("\r\n");
+
+			if(stream_context_p->body_bytes == 0)
+			{
+				uint64_t body_bytes_val;
+				unsigned int body_bytes_bytes_read = read_uint64_from_stream(stream_context_p->underlying_stream, HEXADECIMAL, &body_bytes_val, error);
+				if(*error)
+					return 0;
+				if(body_bytes_bytes_read == 0 || body_bytes_val > UINT_MAX)
+				{
+					(*error) = -1;
+					return 0;
+				}
+				stream_context_p->body_bytes = body_bytes_val;
+				if(stream_context_p->body_bytes == 0)
+					stream_context_p->is_closed = 1;
+
+				{
+					unsigned int CRLF_spml[3];
+					get_prefix_suffix_match_lengths(&CRLF, CRLF_spml);
+					dstring to_discard = read_dstring_until_from_stream(stream_context_p->underlying_stream, &CRLF, CRLF_spml, 1024, error);
+					if((*error))
+					{
+						deinit_dstring(&to_discard);
+						return 0;
+					}
+					if(get_char_count_dstring(&to_discard) == 0)
+					{
+						deinit_dstring(&to_discard);
+						(*error) = -1;
+						return 0;
+					}
+					deinit_dstring(&to_discard);
+				}
+			}
+
+			unsigned int bytes_to_read = min(stream_context_p->body_bytes, data_size);
+			unsigned int bytes_read = read_from_stream(stream_context_p->underlying_stream, data, bytes_to_read, error);
+			stream_context_p->body_bytes -= bytes_read;
+
+			if(stream_context_p->body_bytes == 0)
+			{
+				unsigned int crlf_bytes_read = skip_dstring_from_stream(stream_context_p->underlying_stream, &CRLF, error);
+				if((*error))
+					return bytes_read;
+				if(crlf_bytes_read == 0)
+				{
+					(*error) = -1;
+					return bytes_read;
+				}
+			}
 			break;
 		}
 	}
