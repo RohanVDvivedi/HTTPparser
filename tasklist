@@ -1,5 +1,4 @@
 
- * implement body read and write streams - with chunked and given content length, store content_length and is_chunked in the stream itself, along with the underlying stream to read and write from
- * use zlib_streams from ConnMan over the raw body stream
- * in all store raw_stream, raw_body_stream and body_stream in the http request and response
- * implement read_*_body and write_*_body for http_request and http_response
+ * test body stream, and move its certain functionalities to parent libraries, like reading an unsigned int from a dstring
+ * build an iterator for http headers to iterate over header values separated by comma
+ * write a function to initialize zlib_streams from ConnMan based on the http headers
