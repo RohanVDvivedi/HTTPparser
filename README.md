@@ -22,6 +22,7 @@ A C library to build parse tree for HTTP protocol. It contains a (ConnMan based)
  * do not forget to include appropriate public api headers as and when needed. this includes
    * `#include<http_parser.h>`
    * `#include<http_serializer.h>`
+   * `#include<http_body_stream.h>`
 
 ## Instructions for uninstalling library
 
