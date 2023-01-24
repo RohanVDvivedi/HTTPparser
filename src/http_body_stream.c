@@ -14,73 +14,65 @@ static unsigned int read_body_from_stream_body(void* stream_context, void* data,
 	if(stream_context_p->is_closed)
 		return 0;
 
-	switch(stream_context_p->is_chunked)
+	if(!stream_context_p->is_chunked)
 	{
-		case 0 :
+		unsigned int bytes_to_read = min(data_size, stream_context_p->body_bytes);
+		unsigned int bytes_read = read_from_stream(stream_context_p->underlying_stream, data, bytes_to_read, error);
+		stream_context_p->body_bytes -= bytes_read;
+		if(stream_context_p->body_bytes == 0)
+			stream_context_p->is_closed = 1;
+		return bytes_read;
+	}
+	else
+	{
+		dstring CRLF = get_literal_cstring("\r\n");
+		if(stream_context_p->body_bytes == 0)
 		{
-			unsigned int bytes_to_read = min(data_size, stream_context_p->body_bytes);
-			unsigned int bytes_read = read_from_stream(stream_context_p->underlying_stream, data, bytes_to_read, error);
-			stream_context_p->body_bytes -= bytes_read;
+			uint64_t body_bytes_val;
+			unsigned int body_bytes_bytes_read = read_uint64_from_stream(stream_context_p->underlying_stream, HEXADECIMAL, &body_bytes_val, error);
+			if(*error)
+				return 0;
+			if(body_bytes_bytes_read == 0 || body_bytes_val > UINT_MAX)
+			{
+				(*error) = -1;
+				return 0;
+			}
+			stream_context_p->body_bytes = body_bytes_val;
 			if(stream_context_p->body_bytes == 0)
 				stream_context_p->is_closed = 1;
-			return bytes_read;
-			break;
-		}
-		case 1 :
-		{
-			dstring CRLF = get_literal_cstring("\r\n");
 
-			if(stream_context_p->body_bytes == 0)
 			{
-				uint64_t body_bytes_val;
-				unsigned int body_bytes_bytes_read = read_uint64_from_stream(stream_context_p->underlying_stream, HEXADECIMAL, &body_bytes_val, error);
-				if(*error)
-					return 0;
-				if(body_bytes_bytes_read == 0 || body_bytes_val > UINT_MAX)
-				{
-					(*error) = -1;
-					return 0;
-				}
-				stream_context_p->body_bytes = body_bytes_val;
-				if(stream_context_p->body_bytes == 0)
-					stream_context_p->is_closed = 1;
-
-				{
-					unsigned int CRLF_spml[3];
-					get_prefix_suffix_match_lengths(&CRLF, CRLF_spml);
-					dstring to_discard = read_dstring_until_from_stream(stream_context_p->underlying_stream, &CRLF, CRLF_spml, 1024, error);
-					if((*error))
-					{
-						deinit_dstring(&to_discard);
-						return 0;
-					}
-					if(get_char_count_dstring(&to_discard) == 0)
-					{
-						deinit_dstring(&to_discard);
-						(*error) = -1;
-						return 0;
-					}
-					deinit_dstring(&to_discard);
-				}
-			}
-
-			unsigned int bytes_to_read = min(stream_context_p->body_bytes, data_size);
-			unsigned int bytes_read = read_from_stream(stream_context_p->underlying_stream, data, bytes_to_read, error);
-			stream_context_p->body_bytes -= bytes_read;
-
-			if(stream_context_p->body_bytes == 0)
-			{
-				unsigned int crlf_bytes_read = skip_dstring_from_stream(stream_context_p->underlying_stream, &CRLF, error);
+				unsigned int CRLF_spml[3];
+				get_prefix_suffix_match_lengths(&CRLF, CRLF_spml);
+				dstring to_discard = read_dstring_until_from_stream(stream_context_p->underlying_stream, &CRLF, CRLF_spml, 1024, error);
 				if((*error))
-					return bytes_read;
-				if(crlf_bytes_read == 0)
 				{
-					(*error) = -1;
-					return bytes_read;
+					deinit_dstring(&to_discard);
+					return 0;
 				}
+				if(get_char_count_dstring(&to_discard) == 0)
+				{
+					deinit_dstring(&to_discard);
+					(*error) = -1;
+					return 0;
+				}
+				deinit_dstring(&to_discard);
 			}
-			break;
 		}
+
+		unsigned int bytes_to_read = min(stream_context_p->body_bytes, data_size);
+		unsigned int bytes_read = read_from_stream(stream_context_p->underlying_stream, data, bytes_to_read, error);
+		stream_context_p->body_bytes -= bytes_read;
+
+		if(stream_context_p->body_bytes == 0)
+		{
+			unsigned int crlf_bytes_read = skip_dstring_from_stream(stream_context_p->underlying_stream, &CRLF, error);
+			if((*error))
+				return bytes_read;
+			if(crlf_bytes_read == 0)
+				(*error) = -1;
+		}
+		return bytes_read;
 	}
 
 	return 0;
@@ -101,25 +93,20 @@ static unsigned int write_body_to_stream_body(void* stream_context, const void* 
 	if(data_size == 0)
 		return 0;
 
-	switch(stream_context_p->is_chunked)
+	if(!stream_context_p->is_chunked)
 	{
-		case 0 :
-		{
-			unsigned int bytes_to_write = min(data_size, stream_context_p->body_bytes);
-			unsigned int bytes_written = write_to_stream(stream_context_p->underlying_stream, data, bytes_to_write, error);
-			stream_context_p->body_bytes -= bytes_written;
-			if(stream_context_p->body_bytes == 0)
-				stream_context_p->is_closed = 1;
-			return bytes_written;
-			break;
-		}
-		case 1 :
-		{
-			unsigned int bytes_to_write = min(WRITE_MAX_CHUNK_SIZE, data_size);
-			write_to_stream_formatted(stream_context_p->underlying_stream, "%x\r\n%.*s\r\n", error, bytes_to_write, bytes_to_write, data, error);
-			return bytes_to_write;
-			break;
-		}
+		unsigned int bytes_to_write = min(data_size, stream_context_p->body_bytes);
+		unsigned int bytes_written = write_to_stream(stream_context_p->underlying_stream, data, bytes_to_write, error);
+		stream_context_p->body_bytes -= bytes_written;
+		if(stream_context_p->body_bytes == 0)
+			stream_context_p->is_closed = 1;
+		return bytes_written;
+	}
+	else
+	{
+		unsigned int bytes_to_write = min(WRITE_MAX_CHUNK_SIZE, data_size);
+		write_to_stream_formatted(stream_context_p->underlying_stream, "%x\r\n%.*s\r\n", error, bytes_to_write, bytes_to_write, data, error);
+		return bytes_to_write;
 	}
 
 	return 0;
