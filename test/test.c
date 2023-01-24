@@ -8,9 +8,14 @@
 #include<comm_address.h>
 #include<client.h>
 #include<ssl_ctx_helper.h>
+#include<file_descriptor_stream.h>
 
 int main()
 {
+	stream rs, ws;
+	initialize_stream_for_fd(&rs, 0);
+	initialize_stream_for_fd(&ws, 1);
+
 	http_request hrq;
 	init_http_request(&hrq);
 	hrq.method = GET;
@@ -42,6 +47,16 @@ int main()
 
 	int error = 0;
 
+	serialize_http_request_head(&raw_stream, &hrq);
+	parse_http_response_head(&raw_stream, &hrp);
+
+	// printing response head
+	{
+		printf("version = %d.%d\n", hrp.version.major, hrp.version.minor);
+		printf("status = %d\n", hrp.status);
+		print_dmap(&ws, &(hrp.headers));
+	}
+
 	close_stream(&raw_stream, &error);
 	deinitialize_stream(&raw_stream);
 
@@ -52,6 +67,9 @@ int main()
 	EXIT_1:;
 	deinit_http_request(&hrq);
 	deinit_http_response(&hrp);
+
+	deinitialize_stream(&rs);
+	deinitialize_stream(&ws);
 
 	return 0;
 }
