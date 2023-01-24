@@ -1,3 +1,9 @@
 
- * build an iterator for http headers to iterate over header values separated by comma
+ * build an iterator for http headers by given key
+ * build an iterator for http header values by a given key and a function to get its q value
+ * build an iterator to iterate over path delimited by "/"
+ * added CRLF SP CSP as constant dstrings, with their constant suffix_prefix_match_length arrays in HTTPparser
+ * add in read me that it currently supports only http 1.1 and http 1.0
+ * implement stream to read/write websocket data
+ * add cookie struct and a function to parse it and serialize it, its values are separated by ";"
  * write a function to initialize zlib_streams from ConnMan based on the http headers
