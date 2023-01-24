@@ -2,18 +2,6 @@
 
 #include<stream_util.h>
 
-static char char_to_hex(char c)
-{
-	if( '0' <= c && c <= '9' )
-		return c - '0';
-	else if('a' <= c && c <= 'f')
-		return c - 'a' + 10;
-	else if('A' <= c && c <= 'F')
-		return c - 'A' + 10;
-	else
-		return 'N';
-}
-
 static char hex_to_char(char hex)
 {
 	hex = hex & 0x0f;
@@ -57,28 +45,34 @@ static dstring to_serializable_format(const dstring* str, int is_path)
 	return res;
 }
 
-static dstring to_dstring_format(const dstring* str)
+// returns 1 for success and 0 for an error
+static int to_dstring_format(const dstring* str, dstring* res)
 {
 	const char* str_data = get_byte_array_dstring(str);
 	unsigned int str_size = get_char_count_dstring(str);
 
-	dstring res;
-	init_empty_dstring(&res, str_size);
+	make_dstring_empty(res);
 
 	for(unsigned int i = 0; i < str_size;)
 	{
 		if(str_data[i] == '%' && (str_size - i) >= 3)
 		{
 			i++;
-			char c = (char_to_hex(str_data[i++]) << 4) & 0xf0;
-			c = c | (char_to_hex(str_data[i++]) & 0x0f);
-			concatenate_char(&res, c);
+			unsigned int digits[2];
+			digits[0] = get_digit_from_char(str_data[i++], 16);
+			digits[1] = get_digit_from_char(str_data[i++], 16);
+			if(digits[0] == INVALID_INDEX || digits[1] == INVALID_INDEX)
+			{
+				make_dstring_empty(res);
+				return 0;
+			}
+			concatenate_char(res, (((digits[0] << 4) & 0xf0) | (digits[1] & 0x0f)));
 		}
 		else
-			concatenate_char(&res, str_data[i++]);
+			concatenate_char(res, str_data[i++]);
 	}
 
-	return res;
+	return 1;
 }
 
 int parse_http_path_and_path_params(stream* rs, http_request* hr_p)
@@ -99,13 +93,10 @@ int parse_http_path_and_path_params(stream* rs, http_request* hr_p)
 			return -1;
 		}
 
-		// put untl_str back into the stream
+		// put until_str back into the stream
 		// and remove until_str from path_and_params
-		if(is_suffix_of_dstring(&path_and_params, &until_str))
-		{
-			unread_from_stream(rs, get_byte_array_dstring(&until_str), get_char_count_dstring(&until_str));
-			discard_chars_dstring(&path_and_params, get_char_count_dstring(&path_and_params) - get_char_count_dstring(&until_str), get_char_count_dstring(&path_and_params) - 1);
-		}
+		unread_from_stream(rs, get_byte_array_dstring(&until_str), get_char_count_dstring(&until_str));
+		discard_chars_dstring(&path_and_params, get_char_count_dstring(&path_and_params) - get_char_count_dstring(&until_str), get_char_count_dstring(&path_and_params) - 1);
 	}
 
 	// separate path and params
@@ -116,61 +107,71 @@ int parse_http_path_and_path_params(stream* rs, http_request* hr_p)
 	if(is_empty_dstring(&path))
 	{
 		deinit_dstring(&path_and_params);
-		deinit_dstring(&path);
-		deinit_dstring(&params);
 		return -1;
 	}
 
 	// populate path
+	make_dstring_empty(&(hr_p->path));
+	if(!to_dstring_format(&path, &(hr_p->path)))
 	{
-		make_dstring_empty(&(hr_p->path));
-		dstring path_dstring = to_dstring_format(&path);
-		concatenate_dstring(&(hr_p->path), &path_dstring);
-		deinit_dstring(&path_dstring);
+		deinit_dstring(&path_and_params);
+		return -1;
 	}
 
-	deinit_dstring(&path);
+	// if there are no params then exit with success
+	if(is_empty_dstring(&params))
+	{
+		deinit_dstring(&path_and_params);
+		return 0;
+	}
 
 	// insert params to the hr_p->path_params
-	if(!is_empty_dstring(&params))
+	dstring delim_1 = get_literal_cstring("&");
+	dstring delim_2 = get_literal_cstring("=");
+
+	dstring remaining = params;
+	while(!is_empty_dstring(&remaining))
 	{
-		dstring delim_1 = get_literal_cstring("&");
-		dstring delim_2 = get_literal_cstring("=");
+		dstring param;
+		remaining = split_dstring(&remaining, &delim_1, &param);
 
-		dstring remaining = params;
-		while(!is_empty_dstring(&remaining))
+		dstring param_key;
+		dstring param_value = split_dstring(&param, &delim_2, &param_key);
+
+		// param key can not be empty
+		if(is_empty_dstring(&param_key))
 		{
-			dstring param;
-			remaining = split_dstring(&remaining, &delim_1, &param);
+			deinit_dstring(&path_and_params);
+			return -1;
+		}
 
-			dstring param_key;
-			dstring param_value = split_dstring(&param, &delim_2, &param_key);
-
-			// param key can not be empty
-			if(is_empty_dstring(&param_key))
+		// insert param_key and param_value into path_params
+		{
+			dstring param_key_dstring;
+			init_empty_dstring(&param_key_dstring, get_char_count_dstring(&param_key));
+			if(!to_dstring_format(&param_key, &param_key_dstring))
 			{
-				deinit_dstring(&param_key);
-				deinit_dstring(&param_value);
-				deinit_dstring(&params);
+				deinit_dstring(&param_key_dstring);
 				deinit_dstring(&path_and_params);
 				return -1;
 			}
 
-			// insert param_key and param_value into path_params
+			dstring param_value_dstring;
+			init_empty_dstring(&param_value_dstring, get_char_count_dstring(&param_value));
+			if(!to_dstring_format(&param_value, &param_value_dstring))
 			{
-				dstring param_key_dstring = to_dstring_format(&param_key);
-				dstring param_value_dstring = to_dstring_format(&param_value);
-				insert_in_dmap(&(hr_p->path_params), &param_key_dstring, &param_value_dstring);
 				deinit_dstring(&param_key_dstring);
 				deinit_dstring(&param_value_dstring);
+				deinit_dstring(&path_and_params);
+				return -1;
 			}
 
-			deinit_dstring(&param_key);
-			deinit_dstring(&param_value);
+			insert_in_dmap(&(hr_p->path_params), &param_key_dstring, &param_value_dstring);
+
+			deinit_dstring(&param_key_dstring);
+			deinit_dstring(&param_value_dstring);
 		}
 	}
-
-	deinit_dstring(&params);
 
 	deinit_dstring(&path_and_params);
 
