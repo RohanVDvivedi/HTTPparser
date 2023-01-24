@@ -186,6 +186,7 @@ int initialize_readable_body_stream(stream* strm, stream* underlying_stream, con
 	http_body_stream_context* stream_context = malloc(sizeof(http_body_stream_context));
 
 	// intialize stream context
+	stream_context->underlying_stream = underlying_stream;
 	stream_context->is_closed = 0;
 
 	if(!init_body_stream_context(stream_context, headers))
@@ -210,6 +211,7 @@ int initialize_writable_body_stream(stream* strm, stream* underlying_stream, con
 	http_body_stream_context* stream_context = malloc(sizeof(http_body_stream_context));
 
 	// intialize stream context
+	stream_context->underlying_stream = underlying_stream;
 	stream_context->is_closed = 0;
 
 	if(!init_body_stream_context(stream_context, headers))
