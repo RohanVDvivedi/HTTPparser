@@ -29,7 +29,7 @@ int main()
 	init_http_response(&hrp);
 
 	comm_address server_address;
-	int res = lookup_by_name("api.dictionaryapi.dev", /*"443"*/ "80", SOCK_STREAM, AF_INET, &server_address, 1);
+	int res = lookup_by_name("api.dictionaryapi.dev", "443", SOCK_STREAM, AF_INET, &server_address, 1);
 	if(res == 0)
 	{
 		printf("no servers found\n");
@@ -37,8 +37,8 @@ int main()
 	}
 
 	stream raw_stream;
-	//ssl_lib_init();
-	SSL_CTX* ssl_ctx = NULL;//get_ssl_ctx_for_client(NULL, NULL);
+	ssl_lib_init();
+	SSL_CTX* ssl_ctx = get_ssl_ctx_for_client(NULL, NULL);
 	if(!make_connection_stream(&raw_stream, &server_address, NULL, ssl_ctx))
 	{
 		printf("failed to make connection");
@@ -55,6 +55,7 @@ int main()
 		printf("version = %d.%d\n", hrp.version.major, hrp.version.minor);
 		printf("status = %d\n", hrp.status);
 		print_dmap(&ws, &(hrp.headers));
+		printf("\n");
 	}
 
 	stream body_stream;
@@ -75,7 +76,10 @@ int main()
 			break;
 		}
 		if(bytes_read == 0)
+		{
+			printf("\n\nbody complete\n");
 			break;
+		}
 
 		write_to_stream(&ws, read_buffer, bytes_read, &error);
 		if(error)
