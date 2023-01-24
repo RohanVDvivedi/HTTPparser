@@ -1,4 +1,3 @@
 
- * test body stream, and move its certain functionalities to parent libraries, like reading an unsigned int from a dstring
  * build an iterator for http headers to iterate over header values separated by comma
  * write a function to initialize zlib_streams from ConnMan based on the http headers
