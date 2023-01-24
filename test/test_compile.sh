@@ -1,1 +1,1 @@
-gcc ./test.c -o test.out -lhttpparser -lconnman -lcutlery
+gcc ./test.c -o test.out -lhttpparser -lconnman -lcutlery -lssl
