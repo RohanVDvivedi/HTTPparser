@@ -57,6 +57,38 @@ int main()
 		print_dmap(&ws, &(hrp.headers));
 	}
 
+	stream body_stream;
+	if(!initialize_readable_body_stream(&body_stream, &raw_stream, &(hrp.headers)))
+	{
+		printf("body stream could not be initialized\n");
+		goto EXIT_3;
+	}
+
+	#define read_buffer_size 64
+	char read_buffer[read_buffer_size];
+	while(1)
+	{
+		unsigned int bytes_read = read_from_stream(&body_stream, read_buffer, read_buffer_size, &error);
+		if(error)
+		{
+			printf("body stream read error\n");
+			break;
+		}
+		if(bytes_read == 0)
+			break;
+
+		write_to_stream(&ws, read_buffer, bytes_read, &error);
+		if(error)
+		{
+			printf("STDOUT threw error\n");
+			break;
+		}
+	}
+
+	close_stream(&body_stream, &error);
+	deinitialize_stream(&body_stream);
+
+	EXIT_3:;
 	close_stream(&raw_stream, &error);
 	deinitialize_stream(&raw_stream);
 
