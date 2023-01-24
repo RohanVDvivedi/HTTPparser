@@ -28,7 +28,7 @@ int parse_http_response_head(stream* rs, http_response* hr_p)
 	return 0;
 }
 
-int serialize_http_request_head(stream* ws, const http_response* hr_p)
+int serialize_http_response_head(stream* ws, const http_response* hr_p)
 {
 	int error = 0;
 
