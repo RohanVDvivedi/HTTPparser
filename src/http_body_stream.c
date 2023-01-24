@@ -150,28 +150,6 @@ static void destroy_stream_context_body_stream(void* stream_context)
 	free(stream_context);
 }
 
-static unsigned int get_unsigned_int_from_dstring(const dstring* str, int* error)
-{
-	const char* str_data = get_byte_array_dstring(str);
-	unsigned int str_size = get_char_count_dstring(str);
-
-	(*error) = 0;
-
-	unsigned int res = 0;
-	for(unsigned int i = 0; i < str_size && (*error) == 0; i++)
-	{
-		if('0' <= str_data[i] && str_data[i] <= '9')
-		{
-			res *= 10;
-			res += (str_data[i] - '0');
-		}
-		else
-			(*error) = -1;
-	}
-
-	return res;
-}
-
 // returns 1 for success and 0 for error
 static int init_body_stream_context(http_body_stream_context* stream_context_p, const dmap* headers)
 {
@@ -181,22 +159,9 @@ static int init_body_stream_context(http_body_stream_context* stream_context_p, 
 	dmap_entry* content_length = get_from_dmap(headers, &get_literal_cstring("content-length"));
 	if(content_length != NULL)
 	{
-		dstring clv = new_copy_dstring(&(content_length->value));
-		trim_dstring(&clv);
-		if(is_empty_dstring(&clv))
-		{
-			deinit_dstring(&clv);
+		dstring clv = get_trimmed_dstring_pointing_to(&(content_length->value));
+		if(is_empty_dstring(&clv) || !get_unsigned_int_from_dstring(&clv, DECIMAL, &(stream_context_p->body_bytes)))
 			return 0;
-		}
-
-		int error = 0;
-		stream_context_p->body_bytes = get_unsigned_int_from_dstring(&clv, &error);
-		if(error)
-		{
-			deinit_dstring(&clv);
-			return 0;
-		}
-
 		return 1;
 	}
 
