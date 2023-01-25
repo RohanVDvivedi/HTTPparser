@@ -47,8 +47,16 @@ int main()
 
 	int error = 0;
 
-	serialize_http_request_head(&raw_stream, &hrq);
-	parse_http_response_head(&raw_stream, &hrp);
+	if(serialize_http_request_head(&raw_stream, &hrq) == -1)
+	{
+		printf("error serializing http request head\n");
+		goto EXIT_3;
+	}
+	if(parse_http_response_head(&raw_stream, &hrp) == -1)
+	{
+		printf("error parsing http response head\n");
+		goto EXIT_3;
+	}
 
 	// printing response head
 	{
