@@ -19,11 +19,11 @@ int main()
 	http_request hrq;
 	init_http_request(&hrq);
 	hrq.method = GET;
-	concatenate_dstring(&(hrq.path), &get_literal_cstring("/?toWww=1&redig=C6A5D09A029446FAA02284B3A374D5F3"));
+	concatenate_dstring(&(hrq.path), &get_dstring_pointing_to_literal_cstring("/?toWww=1&redig=C6A5D09A029446FAA02284B3A374D5F3"));
 	hrq.version.major = 1;
 	hrq.version.minor = 1;
-	insert_in_dmap(&(hrq.headers), &(get_literal_cstring("host")), &(get_literal_cstring("www.bing.com")));
-	insert_in_dmap(&(hrq.headers), &(get_literal_cstring("accept")), &(get_literal_cstring("*/*")));
+	insert_in_dmap(&(hrq.headers), &(get_dstring_pointing_to_literal_cstring("host")), &(get_dstring_pointing_to_literal_cstring("www.bing.com")));
+	insert_in_dmap(&(hrq.headers), &(get_dstring_pointing_to_literal_cstring("accept")), &(get_dstring_pointing_to_literal_cstring("*/*")));
 
 	http_response hrp;
 	init_http_response(&hrp);
