@@ -83,7 +83,7 @@ int parse_http_path_and_path_params(stream* rs, http_request* hr_p)
 
 	// read path and path params from the stream
 	{
-		dstring until_str = get_literal_cstring(" ");
+		dstring until_str = get_dstring_pointing_to_literal_cstring(" ");
 		unsigned int psm_us[2];
 		get_prefix_suffix_match_lengths(&until_str, psm_us);
 		path_and_params = read_dstring_until_from_stream(rs, &until_str, psm_us, 2048, &error);
@@ -101,7 +101,7 @@ int parse_http_path_and_path_params(stream* rs, http_request* hr_p)
 
 	// separate path and params
 	dstring path;
-	dstring params = split_dstring(&path_and_params, &get_literal_cstring("?"), &path);
+	dstring params = split_dstring(&path_and_params, &get_dstring_pointing_to_literal_cstring("?"), &path);
 
 	// path must not be empty
 	if(is_empty_dstring(&path))
@@ -126,8 +126,8 @@ int parse_http_path_and_path_params(stream* rs, http_request* hr_p)
 	}
 
 	// insert params to the hr_p->path_params
-	dstring delim_1 = get_literal_cstring("&");
-	dstring delim_2 = get_literal_cstring("=");
+	dstring delim_1 = get_dstring_pointing_to_literal_cstring("&");
+	dstring delim_2 = get_dstring_pointing_to_literal_cstring("=");
 
 	dstring remaining = params;
 	while(!is_empty_dstring(&remaining))

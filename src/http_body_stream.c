@@ -25,7 +25,7 @@ static unsigned int read_body_from_stream_body(void* stream_context, void* data,
 	}
 	else
 	{
-		dstring CRLF = get_literal_cstring("\r\n");
+		dstring CRLF = get_dstring_pointing_to_literal_cstring("\r\n");
 		if(stream_context_p->body_bytes == 0)
 		{
 			uint64_t body_bytes_val;
@@ -143,20 +143,21 @@ static int init_body_stream_context(http_body_stream_context* stream_context_p, 
 	stream_context_p->body_bytes = 0;
 	stream_context_p->is_chunked = 0;
 
-	dmap_entry* content_length = get_from_dmap(headers, &get_literal_cstring("content-length"));
+	dmap_entry* content_length = get_from_dmap(headers, &get_dstring_pointing_to_literal_cstring("content-length"));
 	if(content_length != NULL)
 	{
-		dstring clv = get_trimmed_dstring_pointing_to(&(content_length->value));
+		dstring clv = get_dstring_pointing_to_dstring(&(content_length->value));
+		trim_dstring(&clv);
 		if(is_empty_dstring(&clv) || !get_unsigned_int_from_dstring(&clv, DECIMAL, &(stream_context_p->body_bytes)))
 			return 0;
 		return 1;
 	}
 
-	dstring chunked = get_literal_cstring("chunked");
+	dstring chunked = get_dstring_pointing_to_literal_cstring("chunked");
 	unsigned int spml_chunked[8];
 	get_prefix_suffix_match_lengths(&chunked, spml_chunked);
 
-	for(const dmap_entry* transfer_encoding = get_from_dmap(headers, &get_literal_cstring("transfer-encoding")); transfer_encoding != NULL; transfer_encoding = get_next_of_in_hashmap(headers, transfer_encoding, ANY_THAT_EQUALS))
+	for(const dmap_entry* transfer_encoding = get_from_dmap(headers, &get_dstring_pointing_to_literal_cstring("transfer-encoding")); transfer_encoding != NULL; transfer_encoding = get_next_of_in_hashmap(headers, transfer_encoding, ANY_THAT_EQUALS))
 	{
 		if(contains_dstring_KMP(&(transfer_encoding->value), &chunked, spml_chunked) != INVALID_INDEX)
 		{

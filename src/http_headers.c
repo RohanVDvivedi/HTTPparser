@@ -8,11 +8,11 @@ int parse_http_headers(stream* rs, dmap* headers)
 {
 	int error = 0;
 
-	dstring CRLF = get_literal_cstring("\r\n");
+	dstring CRLF = get_dstring_pointing_to_literal_cstring("\r\n");
 	unsigned int CRLF_spml[3];
 	get_prefix_suffix_match_lengths(&CRLF, CRLF_spml);
 
-	dstring SPCL = get_literal_cstring(": ");
+	dstring SPCL = get_dstring_pointing_to_literal_cstring(": ");
 
 	while(1)
 	{

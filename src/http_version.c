@@ -35,7 +35,7 @@ int parse_http_version(stream* rs, http_version* v)
 
 	// skip reading the http version prefix
 	{
-		unsigned int http_version_prefix_read = skip_dstring_from_stream(rs, &get_literal_cstring(http_version_prefix), &error);
+		unsigned int http_version_prefix_read = skip_dstring_from_stream(rs, &get_dstring_pointing_to_literal_cstring(http_version_prefix), &error);
 		if(http_version_prefix_read == 0 || error)
 			return -1;
 	}
