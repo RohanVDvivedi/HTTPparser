@@ -29,7 +29,7 @@ int parse_http_headers(stream* rs, dmap* headers)
 
 		// split header into its corrsponding key and value
 		dstring header_key;
-		dstring header_value = split_dstring(&header, &SPCL, &header_key);
+		dstring header_value = split_dstring(&header, &CLSP, &header_key);
 
 		// header key must not be empty
 		if(is_empty_dstring(&header_key))
@@ -59,10 +59,9 @@ int serialize_http_headers(stream* ws, const dmap* headers)
 	int error = 0;
 
 	for(const dmap_entry* e = get_first_of_in_hashmap(headers, FIRST_OF_HASHMAP); e != NULL; e = get_next_of_in_hashmap(headers, e, ANY_IN_HASHMAP))
-		write_to_stream_formatted(ws, printf_dstring_format ": " printf_dstring_format printf_dstring_format, &error, printf_dstring_params(&(e->key)), printf_dstring_params(&(e->value)), printf_dstring_params(&CRLF));
+		write_to_stream_formatted(ws, printf_dstring_format printf_dstring_format printf_dstring_format printf_dstring_format, &error, printf_dstring_params(&(e->key)), printf_dstring_params(&CLSP), printf_dstring_params(&(e->value)), printf_dstring_params(&CRLF));
 
-	static const char* CRLF = "\r\n";
-	write_to_stream(ws, CRLF, 2, &error);
+	write_dstring_to_stream(ws, &CRLF, &error);
 	if(error)
 		return -1;
 

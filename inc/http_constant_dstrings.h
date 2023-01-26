@@ -5,7 +5,7 @@
 
 extern const dstring CRLF;					// "\r\n"
 extern const dstring SP;					// " "
-extern const dstring SPCL;					// " :"
+extern const dstring CLSP;					// ": "
 extern const dstring http_version_prefix;	// "HTTP/"
 
 #endif
