@@ -7,6 +7,8 @@
 
 #include<ctype.h>
 
+#include<http_constant_dstrings.h>
+
 int parse_http_response_line(stream* rs, http_response* hr_p)
 {
 	if(parse_http_version(rs, &(hr_p->version)) == -1)
@@ -36,7 +38,7 @@ int parse_http_response_line(stream* rs, http_response* hr_p)
 
 	// skip reading the "\r\n"
 	{
-		unsigned int line_end_read = skip_dstring_from_stream(rs, &get_dstring_pointing_to_literal_cstring("\r\n"), &error);
+		unsigned int line_end_read = skip_dstring_from_stream(rs, &CRLF, &error);
 		if(line_end_read == 0 || error)
 			return -1;
 	}

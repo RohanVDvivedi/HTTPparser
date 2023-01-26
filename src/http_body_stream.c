@@ -7,6 +7,8 @@
 
 #include<stream_util.h>
 
+#include<http_constant_dstrings.h>
+
 static unsigned int read_body_from_stream_body(void* stream_context, void* data, unsigned int data_size, int* error)
 {
 	http_body_stream_context* stream_context_p = stream_context;
@@ -25,7 +27,6 @@ static unsigned int read_body_from_stream_body(void* stream_context, void* data,
 	}
 	else
 	{
-		dstring CRLF = get_dstring_pointing_to_literal_cstring("\r\n");
 		if(stream_context_p->body_bytes == 0)
 		{
 			uint64_t body_bytes_val;
