@@ -43,8 +43,6 @@ static unsigned int read_body_from_stream_body(void* stream_context, void* data,
 				stream_context_p->is_closed = 1;
 
 			{
-				unsigned int CRLF_spml[3];
-				get_prefix_suffix_match_lengths(&CRLF, CRLF_spml);
 				dstring to_discard = read_dstring_until_from_stream(stream_context_p->underlying_stream, &CRLF, CRLF_spml, 1024, error);
 				if((*error))
 				{

@@ -9,4 +9,7 @@ extern const dstring CL;					// ":"
 extern const dstring CLSP;					// ": "
 extern const dstring http_version_prefix;	// "HTTP/"
 
+// below are arrays of their prefix suffix match lengths
+extern const unsigned int* CRLF_spml;
+
 #endif

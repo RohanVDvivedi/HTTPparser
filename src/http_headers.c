@@ -10,9 +10,6 @@ int parse_http_headers(stream* rs, dmap* headers)
 {
 	int error = 0;
 
-	unsigned int CRLF_spml[3];
-	get_prefix_suffix_match_lengths(&CRLF, CRLF_spml);
-
 	while(1)
 	{
 		// read from stream until CRLF
