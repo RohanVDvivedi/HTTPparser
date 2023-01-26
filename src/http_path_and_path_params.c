@@ -2,6 +2,8 @@
 
 #include<stream_util.h>
 
+#include<http_constant_dstrings.h>
+
 static char hex_to_char(char hex)
 {
 	hex = hex & 0x0f;

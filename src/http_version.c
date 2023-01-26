@@ -6,6 +6,8 @@
 #include<stdio.h>
 #include<stdint.h>
 
+#include<http_constant_dstrings.h>
+
 const http_version valid_http_versions[] = 
 {
 	{1,0},
