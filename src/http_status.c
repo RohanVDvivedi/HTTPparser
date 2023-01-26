@@ -290,7 +290,7 @@ int parse_http_status_line(stream* rs, int* s)
 
 	// skip all of the status reason
 
-	#define largest_reason_phrase 50
+	#define largest_reason_phrase 64
 
 	int last_char_CR = 0;
 	unsigned int reason_phrase_bytes_read = 0;
@@ -305,8 +305,7 @@ int parse_http_status_line(stream* rs, int* s)
 		if(byte == '\n' && last_char_CR)
 		{
 			status_line_end_reached = 1;
-			char* CRLF = "\r\n";
-			unread_from_stream(rs, CRLF, 2);
+			unread_dstring_from_stream(rs, &CRLF);
 			break;
 		}
 

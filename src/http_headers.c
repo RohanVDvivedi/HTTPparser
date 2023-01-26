@@ -29,7 +29,7 @@ int parse_http_headers(stream* rs, dmap* headers)
 
 		// split header into its corrsponding key and value
 		dstring header_key;
-		dstring header_value = split_dstring(&header, &CLSP, &header_key);
+		dstring header_value = split_dstring(&header, &CL, &header_key);
 
 		// header key must not be empty
 		if(is_empty_dstring(&header_key))
@@ -39,6 +39,9 @@ int parse_http_headers(stream* rs, dmap* headers)
 			deinit_dstring(&header);
 			return -1;
 		}
+
+		// trim header value of any spaces in the front and back
+		trim_dstring(&header_value);
 
 		// insert then both in the headers dmap
 		insert_in_dmap(headers, &header_key, &header_value);
