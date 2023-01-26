@@ -13,3 +13,5 @@ const dstring http_version_prefix = get_dstring_pointing_to_literal_cstring("HTT
 const unsigned int ZERO_spml[64];
 
 unsigned int const * const CRLF_spml = ZERO_spml;
+
+unsigned int const * const SP_spml = ZERO_spml;

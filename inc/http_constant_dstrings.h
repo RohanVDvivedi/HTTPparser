@@ -11,5 +11,6 @@ extern const dstring http_version_prefix;	// "HTTP/"
 
 // below are arrays of their prefix suffix match lengths
 extern unsigned int const * const CRLF_spml;
+extern unsigned int const * const SP_spml;
 
 #endif

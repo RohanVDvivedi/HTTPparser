@@ -85,9 +85,7 @@ int parse_http_path_and_path_params(stream* rs, http_request* hr_p)
 
 	// read path and path params from the stream, until " " is encountered
 	{
-		unsigned int psm_SP[2];
-		get_prefix_suffix_match_lengths(&SP, psm_SP);
-		path_and_params = read_dstring_until_from_stream(rs, &SP, psm_SP, 2048, &error);
+		path_and_params = read_dstring_until_from_stream(rs, &SP, SP_spml, 2048, &error);
 		if(error || is_empty_dstring(&path_and_params))
 		{
 			deinit_dstring(&path_and_params);
