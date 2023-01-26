@@ -1,13 +1,12 @@
 #include<http_response_line.h>
 
+#include<http_constant_dstrings.h>
 #include<http_version.h>
 #include<http_status.h>
 
 #include<stream_util.h>
 
 #include<ctype.h>
-
-#include<http_constant_dstrings.h>
 
 int parse_http_response_line(stream* rs, http_response* hr_p)
 {

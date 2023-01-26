@@ -1,8 +1,8 @@
 #include<http_path_and_path_params.h>
 
-#include<stream_util.h>
-
 #include<http_constant_dstrings.h>
+
+#include<stream_util.h>
 
 static char hex_to_char(char hex)
 {

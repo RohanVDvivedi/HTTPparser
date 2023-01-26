@@ -1,13 +1,13 @@
 #include<http_body_stream.h>
 
+#include<http_constant_dstrings.h>
+
 #include<stdlib.h>
 #include<string.h>
 
 #include<cutlery_math.h>
 
 #include<stream_util.h>
-
-#include<http_constant_dstrings.h>
 
 static unsigned int read_body_from_stream_body(void* stream_context, void* data, unsigned int data_size, int* error)
 {

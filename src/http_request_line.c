@@ -1,13 +1,12 @@
 #include<http_request_line.h>
 
+#include<http_constant_dstrings.h>
 #include<http_path_and_path_params.h>
 #include<http_version.h>
 
 #include<stream_util.h>
 
 #include<ctype.h>
-
-#include<http_constant_dstrings.h>
 
 int parse_http_request_line(stream* rs, http_request* hr_p)
 {

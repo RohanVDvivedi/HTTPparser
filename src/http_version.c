@@ -1,12 +1,12 @@
 #include<http_version.h>
 
+#include<http_constant_dstrings.h>
+
 #include<stream_util.h>
 
 #include<string.h>
 #include<stdio.h>
 #include<stdint.h>
-
-#include<http_constant_dstrings.h>
 
 const http_version valid_http_versions[] = 
 {

@@ -1,10 +1,10 @@
 #include<http_headers.h>
 
+#include<http_constant_dstrings.h>
+
 #include<stream_util.h>
 
 #include<dstring.h>
-
-#include<http_constant_dstrings.h>
 
 int parse_http_headers(stream* rs, dmap* headers)
 {
