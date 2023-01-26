@@ -10,6 +10,6 @@ const dstring CLSP = get_dstring_pointing_to_literal_cstring(": ");
 
 const dstring http_version_prefix = get_dstring_pointing_to_literal_cstring("HTTP/");
 
-unsigned int ZERO_spml[64];
+const unsigned int ZERO_spml[64];
 
-extern const unsigned int* CRLF_spml = ZERO_spml;
+unsigned int const * const CRLF_spml = ZERO_spml;
