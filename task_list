@@ -5,6 +5,7 @@
  * build an iterator to iterate over path delimited by "/"
  * build function to get extension from the path
  * build function to get content type header from the extension of the path, default to text
+ * compare mimetype as given in accept header of the request
 
  * implement stream to read/write websocket data
 
