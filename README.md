@@ -1,5 +1,7 @@
 # HTTPparser
-A C library to build parse tree for HTTP protocol. It contains a (ConnMan based) stream parsing and serializing api.
+A C library to parse HTTP 1.0 and 1.1 protocol over a stream (ConnMan stream). It contains a (ConnMan based) stream parsing and serializing api.
+
+This library in its current form does not support HTTP 2 or 3. This might change with further development.
 
 ## Setup instructions
 **Install dependencies :**
