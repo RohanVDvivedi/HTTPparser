@@ -1,5 +1,3 @@
- * add CRLF SP CSP as constant dstrings, with their constant suffix_prefix_match_length arrays in HTTPparser
-
  * build an iterator for http headers by given key
  * build an iterator for http header values by a given key
  * build a function to get its q value
