@@ -27,8 +27,6 @@ int is_valid_http_version(const http_version* vsn)
 	return 0;
 }
 
-const char* http_version_prefix = "HTTP/";
-
 int parse_http_version(stream* rs, http_version* v)
 {
 	int error = 0;
@@ -74,7 +72,7 @@ int serialize_http_version(stream* ws, const http_version* v)
 {
 	int error = 0;
 
-	write_to_stream_formatted(ws, "%s%d.%d", &error, http_version_prefix, v->major, v->minor);
+	write_to_stream_formatted(ws, printf_dstring_format"%d.%d", &error, printf_dstring_params(&http_version_prefix), v->major, v->minor);
 	if(error)
 		return -1;
 

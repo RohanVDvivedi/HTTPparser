@@ -7,6 +7,8 @@
 
 #include<ctype.h>
 
+#include<http_constant_dstrings.h>
+
 int parse_http_request_line(stream* rs, http_request* hr_p)
 {
 	if(parse_http_method(rs, &(hr_p->method)) == -1)
@@ -56,7 +58,7 @@ int parse_http_request_line(stream* rs, http_request* hr_p)
 
 	// skip reading the "\r\n"
 	{
-		unsigned int line_end_read = skip_dstring_from_stream(rs, &get_dstring_pointing_to_literal_cstring("\r\n"), &error);
+		unsigned int line_end_read = skip_dstring_from_stream(rs, &CRLF, &error);
 		if(line_end_read == 0 || error)
 			return -1;
 	}
@@ -70,25 +72,22 @@ int serialize_http_request_line(stream* ws, const http_request* hr_p)
 		return -1;
 
 	int error = 0;
-	static const char space = ' ';
 
-	write_to_stream(ws, &space, 1, &error);
+	write_dstring_to_stream(ws, &SP, &error); // " "
 	if(error)
 		return -1;
 
 	if(serialize_http_path_and_path_params(ws, hr_p) == -1)
 		return -1;
 
-	write_to_stream(ws, &space, 1, &error);
+	write_dstring_to_stream(ws, &SP, &error); // " "
 	if(error)
 		return -1;
 
 	if(serialize_http_version(ws, &(hr_p->version)) == -1)
 		return -1;
 
-	// serilialize "\r\n"
-	static const char* CRLF = "\r\n";
-	write_to_stream(ws, CRLF, 2, &error);
+	write_dstring_to_stream(ws, &CRLF, &error); // "\r\n"
 	if(error)
 		return -1;
 

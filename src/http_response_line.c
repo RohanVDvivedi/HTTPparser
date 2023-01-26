@@ -52,17 +52,14 @@ int serialize_http_response_line(stream* ws, const http_response* hr_p)
 		return -1;
 
 	int error = 0;
-	static const char space = ' ';
-	write_to_stream(ws, &space, 1, &error);
+	write_dstring_to_stream(ws, &SP, &error); // " "
 	if(error)
 		return -1;
 
 	if(serialize_http_status_line(ws, &(hr_p->status)) == -1)
 		return -1;
 
-	// serilialize "\r\n"
-	static const char* CRLF = "\r\n";
-	write_to_stream(ws, CRLF, 2, &error);
+	write_dstring_to_stream(ws, &CRLF, &error);	// "\r\n"
 	if(error)
 		return -1;
 

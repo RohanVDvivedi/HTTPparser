@@ -81,22 +81,21 @@ int parse_http_path_and_path_params(stream* rs, http_request* hr_p)
 
 	int error = 0;
 
-	// read path and path params from the stream
+	// read path and path params from the stream, until " " is encountered
 	{
-		dstring until_str = get_dstring_pointing_to_literal_cstring(" ");
-		unsigned int psm_us[2];
-		get_prefix_suffix_match_lengths(&until_str, psm_us);
-		path_and_params = read_dstring_until_from_stream(rs, &until_str, psm_us, 2048, &error);
+		unsigned int psm_SP[2];
+		get_prefix_suffix_match_lengths(&SP, psm_SP);
+		path_and_params = read_dstring_until_from_stream(rs, &SP, psm_SP, 2048, &error);
 		if(error || is_empty_dstring(&path_and_params))
 		{
 			deinit_dstring(&path_and_params);
 			return -1;
 		}
 
-		// put until_str back into the stream
-		// and remove until_str from path_and_params
-		unread_from_stream(rs, get_byte_array_dstring(&until_str), get_char_count_dstring(&until_str));
-		discard_chars_dstring(&path_and_params, get_char_count_dstring(&path_and_params) - get_char_count_dstring(&until_str), get_char_count_dstring(&path_and_params) - 1);
+		// put SP (" ") back into the stream
+		// and remove SP (" ") from path_and_params
+		unread_dstring_from_stream(rs, &SP);
+		discard_chars_from_back_dstring(&path_and_params, get_char_count_dstring(&SP));
 	}
 
 	// separate path and params

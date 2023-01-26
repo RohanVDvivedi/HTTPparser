@@ -25,7 +25,7 @@ int parse_http_headers(stream* rs, dmap* headers)
 			return 0;
 
 		// discard the last 2 bytes from header string, which must be CRLF
-		discard_chars_dstring(&header, get_char_count_dstring(&header) - 2, get_char_count_dstring(&header) - 1);
+		discard_chars_from_back_dstring(&header, get_char_count_dstring(&CRLF));
 
 		// split header into its corrsponding key and value
 		dstring header_key;
@@ -59,7 +59,7 @@ int serialize_http_headers(stream* ws, const dmap* headers)
 	int error = 0;
 
 	for(const dmap_entry* e = get_first_of_in_hashmap(headers, FIRST_OF_HASHMAP); e != NULL; e = get_next_of_in_hashmap(headers, e, ANY_IN_HASHMAP))
-		write_to_stream_formatted(ws, printf_dstring_format ": " printf_dstring_format "\r\n", &error, printf_dstring_params(&(e->key)), printf_dstring_params(&(e->value)));
+		write_to_stream_formatted(ws, printf_dstring_format ": " printf_dstring_format printf_dstring_format, &error, printf_dstring_params(&(e->key)), printf_dstring_params(&(e->value)), printf_dstring_params(&CRLF));
 
 	static const char* CRLF = "\r\n";
 	write_to_stream(ws, CRLF, 2, &error);
