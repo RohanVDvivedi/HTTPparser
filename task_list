@@ -8,8 +8,6 @@
  * build function to get extension from the path
  * build function to get content type header from the extension of the path, default to text
 
- * add in read me that it currently supports only http 1.1 and http 1.0
-
  * implement stream to read/write websocket data
 
  * add cookie struct and a function to parse it and serialize it, its values are separated by ";"
