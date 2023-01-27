@@ -192,7 +192,7 @@ int serialize_http_path_and_path_params(stream* ws, const http_request* hr_p)
 	char between_params = '?';
 	static const char after_key = '=';
 
-	for(const dmap_entry* e = get_first_of_in_hashmap(&(hr_p->path_params), FIRST_OF_HASHMAP); e != NULL; e = get_next_of_in_hashmap(&(hr_p->path_params), e, ANY_IN_HASHMAP))
+	for_each_in_dmap(e, &(hr_p->path_params))
 	{
 		write_to_stream(ws, &between_params, 1, &error);
 		if(error)

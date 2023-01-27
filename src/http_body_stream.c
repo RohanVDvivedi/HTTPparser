@@ -156,7 +156,7 @@ static int init_body_stream_context(http_body_stream_context* stream_context_p, 
 	unsigned int spml_chunked[8];
 	get_prefix_suffix_match_lengths(&chunked, spml_chunked);
 
-	for(const dmap_entry* transfer_encoding = get_from_dmap(headers, &get_dstring_pointing_to_literal_cstring("transfer-encoding")); transfer_encoding != NULL; transfer_encoding = get_next_of_in_hashmap(headers, transfer_encoding, ANY_THAT_EQUALS))
+	for_each_equals_in_dmap(transfer_encoding, headers, &get_dstring_pointing_to_literal_cstring("transfer-encoding"))
 	{
 		if(contains_dstring_KMP(&(transfer_encoding->value), &chunked, spml_chunked) != INVALID_INDEX)
 		{
