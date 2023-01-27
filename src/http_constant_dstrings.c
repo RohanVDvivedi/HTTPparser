@@ -8,6 +8,10 @@ const dstring CL = get_dstring_pointing_to_literal_cstring(":");
 
 const dstring CLSP = get_dstring_pointing_to_literal_cstring(": ");
 
+const dstring CM = get_dstring_pointing_to_literal_cstring(",");
+
+const dstring EQ = get_dstring_pointing_to_literal_cstring("=");
+
 const dstring http_version_prefix = get_dstring_pointing_to_literal_cstring("HTTP/");
 
 const dstring content_length = get_dstring_pointing_to_literal_cstring("content-length");
