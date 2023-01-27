@@ -2,7 +2,8 @@
  * build an iterator for http header values by a given key
  * build a function to get its q value
 
- * build an iterator to iterate over path delimited by "/"
+ * build an iterator to iterate over path delimited by using ` for_each_split_by_delim(split, &str, &delim) `
+ * check if path matches regex containing only *, after it is split by "/"
  * build function to get extension from the path
  * build function to get content type header from the extension of the path, default to text
  * compare mimetype as given in accept header of the request
