@@ -38,4 +38,10 @@ void print_dmap(stream* ws, const dmap* dmap_p);
 
 void deinit_dmap(dmap* dmap_p);
 
+// below are 2 macros to iterate over all or some of the elements of the dmap
+
+#define for_each_in_dmap(entry_p, dmap_p) for(const dmap_entry* entry_p = get_first_of_in_hashmap(dmap_p, FIRST_OF_HASHMAP); entry_p != NULL; entry_p = get_next_of_in_hashmap(dmap_p, entry_p, ANY_IN_HASHMAP))
+
+#define for_each_equals_in_dmap(entry_p, dmap_p, key_p) for(const dmap_entry* entry_p = get_from_dmap(dmap_p, key_p); entry_p != NULL; entry_p = get_next_of_in_hashmap(dmap_p, entry_p, ANY_THAT_EQUALS))
+
 #endif
