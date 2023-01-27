@@ -8,6 +8,8 @@ const dstring CL = get_dstring_pointing_to_literal_cstring(":");
 
 const dstring CLSP = get_dstring_pointing_to_literal_cstring(": ");
 
+const dstring SCL = get_dstring_pointing_to_literal_cstring(";");
+
 const dstring CM = get_dstring_pointing_to_literal_cstring(",");
 
 const dstring EQ = get_dstring_pointing_to_literal_cstring("=");
