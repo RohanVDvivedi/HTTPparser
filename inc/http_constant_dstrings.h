@@ -9,8 +9,13 @@ extern const dstring CL;					// ":"
 extern const dstring CLSP;					// ": "
 extern const dstring http_version_prefix;	// "HTTP/"
 
+extern const dstring content_length;		// "content-length"
+extern const dstring transfer_encoding;		// "transfer-encoding"
+extern const dstring chunked;				// "chunked"
+
 // below are arrays of their prefix suffix match lengths
 extern unsigned int const * const CRLF_spml;
 extern unsigned int const * const SP_spml;
+extern unsigned int const * const chunked_spml;
 
 #endif

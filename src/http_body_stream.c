@@ -142,23 +142,19 @@ static int init_body_stream_context(http_body_stream_context* stream_context_p, 
 	stream_context_p->body_bytes = 0;
 	stream_context_p->is_chunked = 0;
 
-	dmap_entry* content_length = get_from_dmap(headers, &get_dstring_pointing_to_literal_cstring("content-length"));
-	if(content_length != NULL)
+	dmap_entry* content_length_entry = get_from_dmap(headers, &content_length);
+	if(content_length_entry != NULL)
 	{
-		dstring clv = get_dstring_pointing_to_dstring(&(content_length->value));
+		dstring clv = get_dstring_pointing_to_dstring(&(content_length_entry->value));
 		trim_dstring(&clv);
 		if(is_empty_dstring(&clv) || !get_unsigned_int_from_dstring(&clv, DECIMAL, &(stream_context_p->body_bytes)))
 			return 0;
 		return 1;
 	}
 
-	dstring chunked = get_dstring_pointing_to_literal_cstring("chunked");
-	unsigned int spml_chunked[8];
-	get_prefix_suffix_match_lengths(&chunked, spml_chunked);
-
-	for_each_equals_in_dmap(transfer_encoding, headers, &get_dstring_pointing_to_literal_cstring("transfer-encoding"))
+	for_each_equals_in_dmap(transfer_encoding_entry, headers, &transfer_encoding)
 	{
-		if(contains_dstring_KMP(&(transfer_encoding->value), &chunked, spml_chunked) != INVALID_INDEX)
+		if(contains_dstring_KMP(&(transfer_encoding_entry->value), &chunked, chunked_spml) != INVALID_INDEX)
 		{
 			stream_context_p->is_chunked = 1;
 			return 1;
