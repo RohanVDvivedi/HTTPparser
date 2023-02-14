@@ -1,3 +1,5 @@
+ * propogate api changes from connman supporting write buffered streams, and test everything
+
  * build a function to get its q value
 
  * check if path matches regex containing only *, after it is split by "/" by using ` for_each_split_by_delim(split, &str, &delim) `
