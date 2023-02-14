@@ -95,7 +95,7 @@ static unsigned int write_body_to_stream_body(void* stream_context, const void* 
 	if(!stream_context_p->is_chunked)
 	{
 		unsigned int bytes_to_write = min(data_size, stream_context_p->body_bytes);
-		unsigned int bytes_written = write_to_stream(stream_context_p->underlying_stream, data, bytes_to_write, error);
+		unsigned int bytes_written = write_to_stream(stream_context_p->underlying_stream, data, bytes_to_write);
 		stream_context_p->body_bytes -= bytes_written;
 		if(stream_context_p->body_bytes == 0)
 			stream_context_p->is_closed = 1;
@@ -104,7 +104,7 @@ static unsigned int write_body_to_stream_body(void* stream_context, const void* 
 	else
 	{
 		unsigned int bytes_to_write = min(WRITE_MAX_CHUNK_SIZE, data_size);
-		write_to_stream_formatted(stream_context_p->underlying_stream, "%x\r\n%.*s\r\n", error, bytes_to_write, bytes_to_write, data, error);
+		write_to_stream_formatted(stream_context_p->underlying_stream, "%x\r\n%.*s\r\n", error, bytes_to_write, bytes_to_write, data);
 		return bytes_to_write;
 	}
 
@@ -118,8 +118,7 @@ static void close_writable_stream_context_body_stream(void* stream_context, int*
 	// if the stream_context is chunked we need to send one last empty chunk
 	if(stream_context_p->is_chunked && !stream_context_p->is_closed)
 	{
-		static const char* last_chunk = "0\r\n\r\n";
-		write_to_stream(stream_context_p->underlying_stream, last_chunk, strlen(last_chunk), error);
+		write_dstring_to_stream(stream_context_p->underlying_stream, &LAST_CHUNK);
 		stream_context_p->is_closed = 1;
 	}
 

@@ -16,6 +16,8 @@ extern const dstring content_length;		// "content-length"
 extern const dstring transfer_encoding;		// "transfer-encoding"
 extern const dstring chunked;				// "chunked"
 
+extern const dstring LAST_CHUNK;			// "0\r\n\r\n"
+
 // below are arrays of their prefix suffix match lengths
 extern unsigned int const * const CRLF_spml;
 extern unsigned int const * const SP_spml;

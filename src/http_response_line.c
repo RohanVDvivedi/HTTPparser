@@ -49,17 +49,14 @@ int serialize_http_response_line(stream* ws, const http_response* hr_p)
 {
 	if(serialize_http_version(ws, &(hr_p->version)) == -1)
 		return -1;
-
-	int error = 0;
-	write_dstring_to_stream(ws, &SP, &error); // " "
-	if(error)
+	
+	if(!write_dstring_to_stream(ws, &SP)) // " "
 		return -1;
 
 	if(serialize_http_status_line(ws, &(hr_p->status)) == -1)
 		return -1;
 
-	write_dstring_to_stream(ws, &CRLF, &error);	// "\r\n"
-	if(error)
+	if(!write_dstring_to_stream(ws, &CRLF))	// "\r\n"
 		return -1;
 
 	return 0;

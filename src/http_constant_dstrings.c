@@ -22,6 +22,8 @@ const dstring transfer_encoding = get_dstring_pointing_to_literal_cstring("trans
 
 const dstring chunked = get_dstring_pointing_to_literal_cstring("chunked");
 
+const dstring LAST_CHUNK = get_dstring_pointing_to_literal_cstring("0\r\n\r\n");
+
 const unsigned int ZERO_spml[64];
 
 unsigned int const * const CRLF_spml = ZERO_spml;

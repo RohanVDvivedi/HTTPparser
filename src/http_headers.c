@@ -56,13 +56,11 @@ int parse_http_headers(stream* rs, dmap* headers)
 
 int serialize_http_headers(stream* ws, const dmap* headers)
 {
-	int error = 0;
-
 	for_each_in_dmap(e, headers)
-		write_to_stream_formatted(ws, printf_dstring_format printf_dstring_format printf_dstring_format printf_dstring_format, &error, printf_dstring_params(&(e->key)), printf_dstring_params(&CLSP), printf_dstring_params(&(e->value)), printf_dstring_params(&CRLF));
+		if(!write_to_stream_formatted(ws, printf_dstring_format printf_dstring_format printf_dstring_format printf_dstring_format, printf_dstring_params(&(e->key)), printf_dstring_params(&CLSP), printf_dstring_params(&(e->value)), printf_dstring_params(&CRLF)))
+			return -1;
 
-	write_dstring_to_stream(ws, &CRLF, &error);
-	if(error)
+	if(!write_dstring_to_stream(ws, &CRLF))
 		return -1;
 
 	return 0;

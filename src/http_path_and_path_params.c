@@ -179,42 +179,38 @@ int parse_http_path_and_path_params(stream* rs, http_request* hr_p)
 
 int serialize_http_path_and_path_params(stream* ws, const http_request* hr_p)
 {
-	int error = 0;
-
 	{
 		dstring path_serializable = to_serializable_format(&(hr_p->path), 1);
-		write_to_stream(ws, get_byte_array_dstring(&path_serializable), get_char_count_dstring(&path_serializable), &error);
+		int write_success = write_to_stream(ws, get_byte_array_dstring(&path_serializable), get_char_count_dstring(&path_serializable));
 		deinit_dstring(&path_serializable);
-		if(error)
+		if(!write_success)
 			return -1;
 	}
 
 	char between_params = '?';
-	static const char after_key = '=';
 
 	for_each_in_dmap(e, &(hr_p->path_params))
 	{
-		write_to_stream(ws, &between_params, 1, &error);
-		if(error)
+		if(!write_to_stream(ws, &between_params, 1)) // between_params = '?' or  '&'
 			return -1;
 
 		{
 			dstring key_serializable = to_serializable_format(&(e->key), 0);
-			write_to_stream(ws, get_byte_array_dstring(&key_serializable), get_char_count_dstring(&key_serializable), &error);
+			int write_success = write_dstring_to_stream(ws, &key_serializable);
 			deinit_dstring(&key_serializable);
-			if(error)
+			if(!write_success)
 				return -1;
 		}
 
-		write_to_stream(ws, &after_key, 1, &error);
-		if(error)
+		
+		if(!write_dstring_to_stream(ws, &EQ)) // '='
 			return -1;
 
 		{
 			dstring value_serializable = to_serializable_format(&(e->value), 0);
-			write_to_stream(ws, get_byte_array_dstring(&value_serializable), get_char_count_dstring(&value_serializable), &error);
+			int write_success = write_dstring_to_stream(ws, &value_serializable);
 			deinit_dstring(&value_serializable);
-			if(error)
+			if(!write_success)
 				return -1;
 		}
 
