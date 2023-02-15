@@ -10,6 +10,8 @@
 
  * implement stream to read/write websocket data
 
+ * parser for reading and writing form data 
+
  * add cookie struct and a function to parse it and serialize it, its values are separated by ";"
 
  * write a function to initialize zlib_streams from ConnMan based on the http headers
