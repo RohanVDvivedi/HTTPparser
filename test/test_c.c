@@ -52,6 +52,12 @@ int main()
 		printf("error serializing http request head\n");
 		goto EXIT_3;
 	}
+	flush_all_from_stream(&raw_stream, &error);
+	if(error)
+	{
+		printf("%d error flushing request head\n", error);
+		goto EXIT_3;
+	}
 	if(parse_http_response_head(&raw_stream, &hrp) == -1)
 	{
 		printf("error parsing http response head\n");
@@ -89,10 +95,15 @@ int main()
 			break;
 		}
 
-		write_to_stream(&ws, read_buffer, bytes_read, &error);
+		if(!write_to_stream(&ws, read_buffer, bytes_read))
+		{
+			printf("error writing to STDOUT\n");
+			break;
+		}
+		flush_all_from_stream(&ws, &error);
 		if(error)
 		{
-			printf("STDOUT threw error\n");
+			printf("flushing STDOUT threw error\n");
 			break;
 		}
 	}
