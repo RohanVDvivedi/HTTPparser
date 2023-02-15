@@ -1,5 +1,4 @@
  * test all api changes from write buffered streams
- * use UNDERLYING_STREAM_ERROR as defined in ConnMan, in http_body_stream
 
  * build a function to get its q value
 
