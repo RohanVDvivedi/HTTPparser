@@ -1,12 +1,12 @@
  * build a function to get its q value
 
  * check if path matches regex containing only *, after it is split by "/" by using ` for_each_split_by_delim(split, &str, &delim) `
- * build function to get extension from the path
- * build function to get content type header from the extension of the path, default to text, this logic is already present in Serc copy from there
+ * implement get extension from the path
+ * implement get content_type for extension (default to text)
+
  * compare mimetype as given in accept header of the request
 
  * implement stream to read/write websocket data
-
  * parser for reading and writing form data 
 
  * add cookie struct and a function to parse it and serialize it, its values are separated by ";"
