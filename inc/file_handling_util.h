@@ -9,6 +9,7 @@
 const dstring get_extension_from_file_path(const dstring* file_path);
 
 // it returns a POINT_DSTR
+// the return value of this function can be used to set the content-type header of the http response
 const dstring get_mimetype_from_file_extension(const dstring* ext);
 
 #endif
