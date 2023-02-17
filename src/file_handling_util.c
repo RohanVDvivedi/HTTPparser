@@ -126,7 +126,7 @@ int match_accept_to_content_type(const dstring* content_type, const dstring* acc
 	dstring accept_mime_subtype = split_dstring(accept, &SLSH, &accept_mime_type);
 
 	dstring content_mime_type;
-	dstring content_mime_subtype = split_dstring(accept, &SLSH, &content_mime_type);
+	dstring content_mime_subtype = split_dstring(content_type, &SLSH, &content_mime_type);
 
 	if(compare_dstring(&accept_mime_type, &content_mime_type) != 0)
 		return 0;
