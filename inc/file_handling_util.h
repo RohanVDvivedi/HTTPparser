@@ -6,6 +6,9 @@
 // it returns POINT_DSTR (pointing to content of file_path) hence you do not need to deinit the return value
 // in absence of '.' chanracter an empty dstring is returned
 // "main/test.txt" => "txt"
-dstring get_extension_from_file_path(const dstring* file_path);
+const dstring get_extension_from_file_path(const dstring* file_path);
+
+// it returns a POINT_DSTR
+const dstring get_mimetype_from_file_extension(const dstring* ext);
 
 #endif

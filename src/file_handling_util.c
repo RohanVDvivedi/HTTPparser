@@ -1,6 +1,6 @@
 #include<file_handling_util.h>
 
-dstring get_extension_from_file_path(const dstring* file_path)
+const dstring get_extension_from_file_path(const dstring* file_path)
 {
 	unsigned int ext_len = 0;
 
@@ -17,7 +17,7 @@ dstring get_extension_from_file_path(const dstring* file_path)
 }
 
 // a map from extension of files to their corresponding http mime types
-char const * const ext_to_mime_type[][2] = {
+char const * const ext_to_mimetype[][2] = {
 	{	"aac",		"audio/aac"},
 	{	"abw",		"application/x-abiword"},
 	{	"arc",		"application/x-freearc"},
@@ -95,3 +95,20 @@ char const * const ext_to_mime_type[][2] = {
 	{	"3g2",		"video/3gpp2"},
 	{	"7z",		"application/x-7z-compressed"},
 };
+
+dstring default_mimetype = get_dstring_pointing_to_literal_cstring("application/octet-stream");
+
+const dstring get_mimetype_from_file_extension(const dstring* ext)
+{
+	if(is_empty_dstring(ext))
+		return default_mimetype;
+
+	for(int i = 0; i < sizeof(ext_to_mimetype)/sizeof(ext_to_mimetype[0]); i++)
+	{
+		dstring extn = get_dstring_pointing_to_cstring(ext_to_mimetype[i][0]);
+		if(compare_dstring(ext, &extn) == 0)
+			return get_dstring_pointing_to_cstring(ext_to_mimetype[i][1]);
+	}
+
+	return default_mimetype;
+}
