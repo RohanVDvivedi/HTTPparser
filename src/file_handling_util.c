@@ -112,3 +112,29 @@ dstring get_mimetype_from_file_extension(const dstring* ext)
 
 	return default_mimetype;
 }
+
+int match_accept_to_content_type(const dstring* content_type, const dstring* accept)
+{
+	// everything matches
+	if(compare_dstring(accept, &get_dstring_pointing_to_literal_cstring("*/*")) == 0)
+		return 1;
+
+	// split on '/'
+	dstring SLSH = get_dstring_pointing_to_literal_cstring("/");
+
+	dstring accept_mime_type;
+	dstring accept_mime_subtype = split_dstring(accept, &SLSH, &accept_mime_type);
+
+	dstring content_mime_type;
+	dstring content_mime_subtype = split_dstring(accept, &SLSH, &content_mime_type);
+
+	if(compare_dstring(&accept_mime_type, &content_mime_type) != 0)
+		return 0;
+
+	dstring ANY = get_dstring_pointing_to_literal_cstring("*");
+
+	if(compare_dstring(&accept_mime_subtype, &ANY) == 0 || compare_dstring(&accept_mime_subtype, &content_mime_subtype) == 0)
+		return 1;
+
+	return 0;
+}
