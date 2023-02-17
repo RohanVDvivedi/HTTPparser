@@ -2,10 +2,11 @@
 
  * check if path matches regex containing only *, after it is split by "/" by using ` for_each_split_by_delim(split, &str, &delim) `
 
- * compare mimetype as given in accept header of the request
-
  * implement stream to read/write websocket data
- * parser for reading and writing form data 
+
+ * parser for reading and writing form data
+   * application/x-www-form-urlencoded => read function returns 1 pair of dstrings key and value, write function writes 1 key value pair to stream, it takes a flag to tell if this is the first key_value_pair, use encoding just like we used it in http_path_and_path_params
+   * multipart/form-data => ponder how to implement this
 
  * add cookie struct and a function to parse it and serialize it, its values are separated by ";"
 
