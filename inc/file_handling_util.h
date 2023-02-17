@@ -6,10 +6,17 @@
 // it returns POINT_DSTR (pointing to content of file_path) hence you do not need to deinit the return value
 // in absence of '.' chanracter an empty dstring is returned
 // "main/test.txt" => "txt"
-const dstring get_extension_from_file_path(const dstring* file_path);
+dstring get_extension_from_file_path(const dstring* file_path);
 
 // it returns a POINT_DSTR
 // the return value of this function can be used to set the content-type header of the http response
-const dstring get_mimetype_from_file_extension(const dstring* ext);
+dstring get_mimetype_from_file_extension(const dstring* ext);
+
+// checks for a match between content_type header of the response and accept header of the request
+// accept values may be
+//	<MIME_type>/<MIME_subtype>
+//	<MIME_type>/*
+//	*/*
+int match_accept_to_content_type(const dstring* content_type, const dstring* accept);
 
 #endif

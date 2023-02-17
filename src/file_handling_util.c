@@ -1,6 +1,6 @@
 #include<file_handling_util.h>
 
-const dstring get_extension_from_file_path(const dstring* file_path)
+dstring get_extension_from_file_path(const dstring* file_path)
 {
 	unsigned int ext_len = 0;
 
@@ -98,7 +98,7 @@ char const * const ext_to_mimetype[][2] = {
 
 dstring default_mimetype = get_dstring_pointing_to_literal_cstring("application/octet-stream");
 
-const dstring get_mimetype_from_file_extension(const dstring* ext)
+dstring get_mimetype_from_file_extension(const dstring* ext)
 {
 	if(is_empty_dstring(ext))
 		return default_mimetype;
