@@ -138,5 +138,23 @@ int match_accept_to_content_type(const dstring* content_type, const dstring* acc
 
 int match_path_with_path_regex(const dstring* path, const dstring* path_regex)
 {
-	// TODO
+	dstring dir_path;
+	dstring rem_path = split_dstring(path, &F_SLSH, dir_path);
+	for_each_split_by_delim(dir_regex, path_regex, &F_SLSH)
+	{
+		// end of path, but the path_regex still has directories
+		if(is_empty_dstring(&dir_path) && is_empty_dstring(&rem_path))
+			return 0;
+
+		// if dir_regex is not "*" and not equal to dir_path, then return failure to match
+		if(compare_dstring(&dir_regex, &AST) != 0 && compare_dstring(&dir_regex, &dir_path) != 0)
+			return 0;
+
+		rem_path = split_dstring(rem_path, &F_SLSH, dir_path);
+	}
+
+	if(!is_empty_dstring(rem_path))
+		return 0;
+
+	return 1;
 }
