@@ -143,7 +143,7 @@ int match_path_with_path_regex(const dstring* path, const dstring* path_regex)
 	for_each_split_by_delim(dir_regex, path_regex, &F_SLSH)
 	{
 		// end of path, but the path_regex still has directories
-		if(is_empty_dstring(&dir_path) && is_empty_dstring(&rem_path))
+		if(get_byte_array_dstring(&dir_path) == NULL)
 			return 0;
 
 		// if dir_regex is not "*" and not equal to dir_path, then return failure to match
@@ -153,7 +153,7 @@ int match_path_with_path_regex(const dstring* path, const dstring* path_regex)
 		rem_path = split_dstring(rem_path, &F_SLSH, dir_path);
 	}
 
-	if(!is_empty_dstring(rem_path))
+	if(get_byte_array_dstring(&dir_path) != NULL)
 		return 0;
 
 	return 1;
