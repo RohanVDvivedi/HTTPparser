@@ -181,7 +181,7 @@ int serialize_http_path_and_path_params(stream* ws, const http_request* hr_p)
 {
 	{
 		dstring path_serializable = to_serializable_format(&(hr_p->path), 1);
-		int write_success = write_to_stream(ws, get_byte_array_dstring(&path_serializable), get_char_count_dstring(&path_serializable));
+		int write_success = write_dstring_to_stream(ws, &path_serializable);
 		deinit_dstring(&path_serializable);
 		if(!write_success)
 			return -1;
