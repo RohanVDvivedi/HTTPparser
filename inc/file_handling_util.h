@@ -19,4 +19,11 @@ dstring get_mimetype_from_file_extension(const dstring* ext);
 //	*/*
 int match_accept_to_content_type(const dstring* content_type, const dstring* accept);
 
+// path_regex can be any complete path dstring that does not contain a '*' directory
+// or it can contain '*' in the directory but nor a '*' directory
+// "/rohan/*/dvivedi" == "/rohan/vipulkumar/dvivedi" => 1
+// "/rohan/*abcd/dvivedi" == "/rohan/vipulkumar/dvivedi" => 0
+// "/rohan/*abcd/dvivedi" == "/rohan/*abcd/dvivedi" => 1
+int match_path(const dstring* path, const dstring* path_regex);
+
 #endif
