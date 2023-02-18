@@ -187,35 +187,12 @@ int serialize_http_path_and_path_params(stream* ws, const http_request* hr_p)
 			return -1;
 	}
 
-	char between_params = '?';
+	// if the hashmap is not empty, then write "?" to the stream
+	if(!is_empty_hashmap(&(hr_p->path_params)) && !write_dstring_to_stream(ws, &QM))
+		return -1;
 
-	for_each_in_dmap(e, &(hr_p->path_params))
-	{
-		if(!write_to_stream(ws, &between_params, 1)) // between_params = '?' or  '&'
-			return -1;
-
-		{
-			dstring key_serializable = to_serializable_format(&(e->key), 0);
-			int write_success = write_dstring_to_stream(ws, &key_serializable);
-			deinit_dstring(&key_serializable);
-			if(!write_success)
-				return -1;
-		}
-
-		
-		if(!write_dstring_to_stream(ws, &EQ)) // '='
-			return -1;
-
-		{
-			dstring value_serializable = to_serializable_format(&(e->value), 0);
-			int write_success = write_dstring_to_stream(ws, &value_serializable);
-			deinit_dstring(&value_serializable);
-			if(!write_success)
-				return -1;
-		}
-
-		between_params = '&';
-	}
+	if(!serialize_url_encoded_params(ws, &(hr_p->path_params)))
+		return -1;
 
 	return 0;
 }
