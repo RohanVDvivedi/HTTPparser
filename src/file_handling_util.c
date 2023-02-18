@@ -138,3 +138,8 @@ int match_accept_to_content_type(const dstring* content_type, const dstring* acc
 
 	return 0;
 }
+
+int match_path_with_path_regex(const dstring* path, const dstring* path_regex)
+{
+	// TODO
+}
