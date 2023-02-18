@@ -100,7 +100,7 @@ int parse_http_path_and_path_params(stream* rs, http_request* hr_p)
 
 	// separate path and params
 	dstring path;
-	dstring params = split_dstring(&path_and_params, &get_dstring_pointing_to_literal_cstring("?"), &path);
+	dstring params = split_dstring(&path_and_params, &QM, &path);
 
 	// path must not be empty
 	if(is_empty_dstring(&path))
