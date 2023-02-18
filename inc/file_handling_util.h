@@ -24,6 +24,6 @@ int match_accept_to_content_type(const dstring* content_type, const dstring* acc
 // "/rohan/*/dvivedi" == "/rohan/vipulkumar/dvivedi" => 1
 // "/rohan/*abcd/dvivedi" == "/rohan/vipulkumar/dvivedi" => 0
 // "/rohan/*abcd/dvivedi" == "/rohan/*abcd/dvivedi" => 1
-int match_path(const dstring* path, const dstring* path_regex);
+int match_path_with_path_regex(const dstring* path, const dstring* path_regex);
 
 #endif
