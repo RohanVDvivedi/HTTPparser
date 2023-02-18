@@ -191,7 +191,7 @@ int serialize_http_path_and_path_params(stream* ws, const http_request* hr_p)
 	if(!is_empty_hashmap(&(hr_p->path_params)) && !write_dstring_to_stream(ws, &QM))
 		return -1;
 
-	if(!serialize_url_encoded_params(ws, &(hr_p->path_params)))
+	if(serialize_url_encoded_params(ws, &(hr_p->path_params)) == -1)
 		return -1;
 
 	return 0;
