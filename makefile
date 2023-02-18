@@ -7,7 +7,7 @@ DOWNLOAD_DIR:=/usr/local
 # we may download all the public headers
 
 # list of public api headers (only these headers will be installed)
-PUBLIC_HEADERS:=http_request.h http_response.h http_body_stream.h http_method.h http_version.h dmap.h file_handling_util.h
+PUBLIC_HEADERS:=http_request.h http_response.h http_body_stream.h http_method.h http_version.h dmap.h http_path_and_path_params.h file_handling_util.h
 # the library, which we will create
 LIBRARY:=lib${PROJECT_NAME}.a
 # the binary, which will use the created library

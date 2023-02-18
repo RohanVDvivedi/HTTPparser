@@ -219,3 +219,43 @@ int serialize_http_path_and_path_params(stream* ws, const http_request* hr_p)
 
 	return 0;
 }
+
+int serialize_url_encoded_params(stream* ws, const dmap* params)
+{
+	int is_first_param = 1;
+	for_each_in_dmap(e, params)
+	{
+		if(serialize_url_encoded_param(ws, &(e->key), &(e->value), is_first_param) == -1)
+			return -1;
+
+		is_first_param = 0;
+	}
+	return 0;
+}
+
+int serialize_url_encoded_param(stream* ws, const dstring* key, const dstring* value, int is_first_param)
+{
+	if(!is_first_param && !write_dstring_to_stream(ws, &AMP)) // write '&' if this is not the first param
+		return -1;
+
+	{
+		dstring key_serializable = to_serializable_format(key, 0);
+		int write_success = write_dstring_to_stream(ws, &key_serializable);
+		deinit_dstring(&key_serializable);
+		if(!write_success)
+			return -1;
+	}
+	
+	if(!write_dstring_to_stream(ws, &EQ)) // '='
+		return -1;
+
+	{
+		dstring value_serializable = to_serializable_format(value, 0);
+		int write_success = write_dstring_to_stream(ws, &value_serializable);
+		deinit_dstring(&value_serializable);
+		if(!write_success)
+			return -1;
+	}
+
+	return 0;
+}

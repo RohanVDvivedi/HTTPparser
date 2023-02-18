@@ -18,6 +18,10 @@ const dstring F_SLSH = get_dstring_pointing_to_literal_cstring("/");
 
 const dstring AST = get_dstring_pointing_to_literal_cstring("*");
 
+const dstring AMP = get_dstring_pointing_to_literal_cstring("&");
+
+const dstring QM = get_dstring_pointing_to_literal_cstring("?");
+
 const dstring http_version_prefix = get_dstring_pointing_to_literal_cstring("HTTP/");
 
 const dstring content_length = get_dstring_pointing_to_literal_cstring("content-length");
