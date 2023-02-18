@@ -1,4 +1,3 @@
- * check if path matches regex containing only *, after it is split by "/" by using ` for_each_split_by_delim(split, &str, &delim) `
 
  * implement stream to read/write websocket data
 
