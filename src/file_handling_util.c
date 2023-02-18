@@ -1,5 +1,7 @@
 #include<file_handling_util.h>
 
+#include<http_constant_dstrings.h>
+
 dstring get_extension_from_file_path(const dstring* file_path)
 {
 	unsigned int ext_len = 0;
@@ -119,21 +121,16 @@ int match_accept_to_content_type(const dstring* content_type, const dstring* acc
 	if(compare_dstring(accept, &get_dstring_pointing_to_literal_cstring("*/*")) == 0)
 		return 1;
 
-	// split on '/'
-	dstring SLSH = get_dstring_pointing_to_literal_cstring("/");
-
 	dstring accept_mime_type;
-	dstring accept_mime_subtype = split_dstring(accept, &SLSH, &accept_mime_type);
+	dstring accept_mime_subtype = split_dstring(accept, &F_SLSH, &accept_mime_type);
 
 	dstring content_mime_type;
-	dstring content_mime_subtype = split_dstring(content_type, &SLSH, &content_mime_type);
+	dstring content_mime_subtype = split_dstring(content_type, &F_SLSH, &content_mime_type);
 
 	if(compare_dstring(&accept_mime_type, &content_mime_type) != 0)
 		return 0;
 
-	dstring ANY = get_dstring_pointing_to_literal_cstring("*");
-
-	if(compare_dstring(&accept_mime_subtype, &ANY) == 0 || compare_dstring(&accept_mime_subtype, &content_mime_subtype) == 0)
+	if(compare_dstring(&accept_mime_subtype, &AST) == 0 || compare_dstring(&accept_mime_subtype, &content_mime_subtype) == 0)
 		return 1;
 
 	return 0;
