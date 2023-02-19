@@ -77,14 +77,43 @@ static int to_dstring_format(const dstring* str, dstring* res)
 	return 1;
 }
 
-int parse_url_encoded_param(stream* ws, dstring* key, dstring* value, int* is_last_param)
+int parse_url_encoded_param(stream* ws, dstring* key, dstring* value, int is_first_param)
 {
+	make_dstring_empty(key);
+	make_dstring_empty(value);
+
 	// TODO
 }
 
-int parse_url_encoded_params(stream* ws, dmap_p* params)
+int parse_url_encoded_params(stream* ws, dmap* params)
 {
-	// TODO
+	dstring key;	init_empty_dstring(&key, 0);
+	dstring value;	init_empty_dstring(&value, 0);
+	int is_first_param = 1;
+	int error = 0;
+
+	while(1)
+	{
+		error = parse_url_encoded_param(ws, &key, &value, is_first_param);
+
+		if((error == -1) || (is_first_param && error == NO_PARAMS_FOUND))
+			break;
+
+		insert_in_dmap(params, &key, &value);
+
+		if(!is_first_param && error == NO_MORE_PARAMS)
+			break;
+
+		is_first_param = 0;
+	}
+
+	deinit_dstring(&key);
+	deinit_dstring(&value);
+
+	if(error == -1)
+		return -1;
+
+	return 0;
 }
 
 int parse_http_path_and_path_params(stream* rs, http_request* hr_p)
