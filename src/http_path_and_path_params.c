@@ -77,6 +77,16 @@ static int to_dstring_format(const dstring* str, dstring* res)
 	return 1;
 }
 
+int parse_url_encoded_param(stream* ws, dstring* key, dstring* value, int* is_last_param)
+{
+	// TODO
+}
+
+int parse_url_encoded_params(stream* ws, dmap_p* params)
+{
+	// TODO
+}
+
 int parse_http_path_and_path_params(stream* rs, http_request* hr_p)
 {
 	dstring path_and_params;
