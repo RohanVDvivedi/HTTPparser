@@ -1,10 +1,8 @@
- * implement function to read_url_encoded_param and read_url_encoded_params, to assist with the parse function
- * the above two tasks will help with application/x-www-form-urlencoded
+ * test parse_url_encoded_params function
 
  * implement stream to read/write websocket data
 
  * parser for reading and writing form data
-   * application/x-www-form-urlencoded => read function returns 1 pair of dstrings key and value, write function writes 1 key value pair to stream, it takes a flag to tell if this is the first key_value_pair, use encoding just like we used it in http_path_and_path_params
    * multipart/form-data => to read this we need to first parse headers, so segregate function to parse headers, and then write a function to identify boundary, use ConnMan to read until a given dstring is hit (possible only after ConnMan developments), write a function to write a headers and then key value pair to stream, value being a dstring or a read stream to write from.
 
  * add cookie struct and a function to parse it and serialize it, its values are separated by ";"
