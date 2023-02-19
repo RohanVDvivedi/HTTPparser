@@ -166,9 +166,6 @@ int parse_url_encoded_params(stream* rs, dmap* params)
 		deinit_dstring(&value);
 	}
 
-	if(error == -1)
-		return -1;
-
 	return 0;
 }
 
