@@ -91,7 +91,7 @@ int parse_url_encoded_param(stream* rs, dstring* key, dstring* value, int is_fir
 {
 	int error = 0;
 
-	if(is_first_param)
+	if(!is_first_param)
 	{
 		unsigned int bytes_skipped = skip_dstring_from_stream(rs, &AMP, &error);
 		if(error || bytes_skipped == 0)
