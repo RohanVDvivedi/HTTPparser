@@ -77,38 +77,99 @@ static int to_dstring_format(const dstring* str, dstring* res)
 	return 1;
 }
 
-int parse_url_encoded_param(stream* ws, dstring* key, dstring* value, int is_first_param)
+static int is_end_char_for_param_key(char c, const void* cntxt)
 {
-	make_dstring_empty(key);
-	make_dstring_empty(value);
-
-	// TODO
+	return c == '=' || !path_and_path_params_characters_allowed_on_stream_unencoded(c);
 }
 
-int parse_url_encoded_params(stream* ws, dmap* params)
+static int is_end_char_for_param_value(char c, const void* cntxt)
 {
-	dstring key;	init_empty_dstring(&key, 0);
-	dstring value;	init_empty_dstring(&value, 0);
-	int is_first_param = 1;
+	return c == '&' || !path_and_path_params_characters_allowed_on_stream_unencoded(c);
+}
+
+int parse_url_encoded_param(stream* rs, dstring* key, dstring* value)
+{
+	int error = 0;
+
+	dstring key_encoded = read_until_any_end_chars_from_stream(rs, is_end_char_for_param_key, NULL, 1024, &error);
+	if(error || is_empty_dstring(&key_encoded))
+	{
+		deinit_dstring(&key_encoded);
+		return -1;
+	}
+
+	const char* key_encoded_data = get_byte_array_dstring(&key_encoded);
+	unsigned int key_encoded_size = get_char_count_dstring(&key_encoded);
+	if(key_encoded_data[key_encoded_size-1] != '=')
+	{
+		deinit_dstring(&key_encoded);
+		return -1;
+	}
+
+	discard_chars_from_back_dstring(&key_encoded, 1);
+
+	if(get_char_count_dstring(&key_encoded) == 0)
+	{
+		deinit_dstring(&key_encoded);
+		return -1;
+	}
+
+	dstring value_encoded = read_until_any_end_chars_from_stream(rs, is_end_char_for_param_value, NULL, 1024, &error);
+	if(error || is_empty_dstring(&value_encoded))
+	{
+		deinit_dstring(&key_encoded);
+		deinit_dstring(&value_encoded);
+		return -1;
+	}
+
+	const char* value_encoded_data = get_byte_array_dstring(&value_encoded);
+	unsigned int value_encoded_size = get_char_count_dstring(&value_encoded);
+	if(value_encoded_data[value_encoded_size-1] != '&')
+		unread_from_stream(rs, &(value_encoded_data[value_encoded_size-1]), 1);
+
+	discard_chars_from_back_dstring(&value_encoded, 1);
+
+	init_empty_dstring(key, get_char_count_dstring(&key_encoded));
+	if(!to_dstring_format(&key_encoded, key))
+	{
+		deinit_dstring(&key_encoded);
+		deinit_dstring(&value_encoded);
+		deinit_dstring(key);
+		return -1;
+	}
+
+	init_empty_dstring(value, get_char_count_dstring(&value_encoded));
+	if(!to_dstring_format(&value_encoded, value))
+	{
+		deinit_dstring(&key_encoded);
+		deinit_dstring(&value_encoded);
+		deinit_dstring(key);
+		deinit_dstring(value);
+		return -1;
+	}
+
+	return 0;
+}
+
+int parse_url_encoded_params(stream* rs, dmap* params)
+{
 	int error = 0;
 
 	while(1)
 	{
-		error = parse_url_encoded_param(ws, &key, &value, is_first_param);
+		dstring key;
+		dstring value;
 
-		if((error == -1) || (is_first_param && error == NO_PARAMS_FOUND))
+		error = parse_url_encoded_param(rs, &key, &value);
+
+		if(error)
 			break;
 
 		insert_in_dmap(params, &key, &value);
 
-		if(!is_first_param && error == NO_MORE_PARAMS)
-			break;
-
-		is_first_param = 0;
+		deinit_dstring(&key);
+		deinit_dstring(&value);
 	}
-
-	deinit_dstring(&key);
-	deinit_dstring(&value);
 
 	if(error == -1)
 		return -1;
