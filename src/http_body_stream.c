@@ -43,7 +43,7 @@ static unsigned int read_body_from_stream_body(void* stream_context, void* data,
 				stream_context_p->is_closed = 1;
 
 			{
-				dstring to_discard = read_dstring_until_from_stream(stream_context_p->underlying_stream, &CRLF, CRLF_spml, 1024, error);
+				dstring to_discard = read_until_dstring_from_stream(stream_context_p->underlying_stream, &CRLF, CRLF_spml, 1024, error);
 				if((*error))
 				{
 					deinit_dstring(&to_discard);
