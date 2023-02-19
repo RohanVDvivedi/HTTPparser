@@ -77,30 +77,30 @@ static int to_dstring_format(const dstring* str, dstring* res)
 	return 1;
 }
 
-static int is_end_char_for_param_key(char c, const void* cntxt)
+static int is_end_char_for_param_key(int is_end_of_stream, char c, const void* cntxt)
 {
 	return c == '=' || !path_and_path_params_characters_allowed_on_stream_unencoded(c);
 }
 
-static int is_end_char_for_param_value(char c, const void* cntxt)
+static int is_end_char_for_param_value(int is_end_of_stream, char c, const void* cntxt)
 {
-	return c == '&' || !path_and_path_params_characters_allowed_on_stream_unencoded(c);
+	return is_end_of_stream || c == '&' || !path_and_path_params_characters_allowed_on_stream_unencoded(c);
 }
 
 int parse_url_encoded_param(stream* rs, dstring* key, dstring* value)
 {
 	int error = 0;
 
-	dstring key_encoded = read_until_any_end_chars_from_stream(rs, is_end_char_for_param_key, NULL, 2048, &error);
+	int last_byte;
+
+	dstring key_encoded = read_until_any_end_chars_from_stream(rs, is_end_char_for_param_key, NULL, &last_byte, 2048, &error);
 	if(error || is_empty_dstring(&key_encoded))
 	{
 		deinit_dstring(&key_encoded);
 		return -1;
 	}
 
-	const char* key_encoded_data = get_byte_array_dstring(&key_encoded);
-	unsigned int key_encoded_size = get_char_count_dstring(&key_encoded);
-	if(key_encoded_data[key_encoded_size-1] != '=')
+	if(((char)last_byte) != '=' && get_char_count_dstring(&key_encoded) == 1)
 	{
 		deinit_dstring(&key_encoded);
 		return -1;
@@ -108,26 +108,21 @@ int parse_url_encoded_param(stream* rs, dstring* key, dstring* value)
 
 	discard_chars_from_back_dstring(&key_encoded, 1);
 
-	if(get_char_count_dstring(&key_encoded) == 0)
-	{
-		deinit_dstring(&key_encoded);
-		return -1;
-	}
-
-	dstring value_encoded = read_until_any_end_chars_from_stream(rs, is_end_char_for_param_value, NULL, 2048, &error);
-	if(error || is_empty_dstring(&value_encoded))
+	dstring value_encoded = read_until_any_end_chars_from_stream(rs, is_end_char_for_param_value, NULL, &last_byte, 2048, &error);
+	if(error || (last_byte != 256 && is_empty_dstring(&value_encoded)))
 	{
 		deinit_dstring(&key_encoded);
 		deinit_dstring(&value_encoded);
 		return -1;
 	}
 
-	const char* value_encoded_data = get_byte_array_dstring(&value_encoded);
-	unsigned int value_encoded_size = get_char_count_dstring(&value_encoded);
-	if(value_encoded_data[value_encoded_size-1] != '&')
-		unread_from_stream(rs, &(value_encoded_data[value_encoded_size-1]), 1);
-
-	discard_chars_from_back_dstring(&value_encoded, 1);
+	if(last_byte != 256 && !is_empty_dstring(&value_encoded))
+	{
+		char lb = last_byte;
+		if(lb != '&')
+			unread_from_stream(rs, &lb, 1);
+		discard_chars_from_back_dstring(&value_encoded, 1);
+	}
 
 	init_empty_dstring(key, get_char_count_dstring(&key_encoded));
 	if(!to_dstring_format(&key_encoded, key))
