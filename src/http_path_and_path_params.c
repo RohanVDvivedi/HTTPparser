@@ -87,9 +87,16 @@ static int is_end_char_for_param_value(int is_end_of_stream, char c, const void*
 	return is_end_of_stream || c == '&' || !path_and_path_params_characters_allowed_on_stream_unencoded(c);
 }
 
-int parse_url_encoded_param(stream* rs, dstring* key, dstring* value)
+int parse_url_encoded_param(stream* rs, dstring* key, dstring* value, int is_first_param)
 {
 	int error = 0;
+
+	if(is_first_param)
+	{
+		unsigned int bytes_skipped = skip_dstring_from_stream(rs, &AMP, &error);
+		if(error || bytes_skipped == 0)
+			return -1;
+	}
 
 	int last_byte;
 
@@ -119,8 +126,7 @@ int parse_url_encoded_param(stream* rs, dstring* key, dstring* value)
 	if(last_byte != 256 && !is_empty_dstring(&value_encoded))
 	{
 		char lb = last_byte;
-		if(lb != '&')
-			unread_from_stream(rs, &lb, 1);
+		unread_from_stream(rs, &lb, 1);
 		discard_chars_from_back_dstring(&value_encoded, 1);
 	}
 
@@ -150,12 +156,14 @@ int parse_url_encoded_params(stream* rs, dmap* params)
 {
 	int error = 0;
 
+	int is_first_param = 1;
+
 	while(1)
 	{
 		dstring key;
 		dstring value;
 
-		error = parse_url_encoded_param(rs, &key, &value);
+		error = parse_url_encoded_param(rs, &key, &value, is_first_param);
 
 		if(error)
 			break;
@@ -164,6 +172,8 @@ int parse_url_encoded_params(stream* rs, dmap* params)
 
 		deinit_dstring(&key);
 		deinit_dstring(&value);
+
+		is_first_param = 0;
 	}
 
 	return 0;

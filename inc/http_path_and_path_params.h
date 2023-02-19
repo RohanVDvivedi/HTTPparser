@@ -11,7 +11,7 @@ int serialize_http_path_and_path_params(stream* ws, const http_request* hr_p);
 
 // key and value will be initialized by this function, you only need to deinit_dstring them
 // and after this call they will contain the next key value pair, unless there is an error
-int parse_url_encoded_param(stream* rs, dstring* key, dstring* value);
+int parse_url_encoded_param(stream* rs, dstring* key, dstring* value, int is_first_param);
 
 // this function never returns -1, hence no error
 int parse_url_encoded_params(stream* rs, dmap* params);
