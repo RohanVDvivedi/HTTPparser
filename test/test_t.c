@@ -22,6 +22,14 @@ int main()
 		goto EXIT;
 	}
 
+	printf("\n");
+
+	print_dmap(&ws, &params);
+
+	flush_all_from_stream(&ws, &error);
+
+	printf("\n");
+
 	error = serialize_url_encoded_params(&ws, &params);
 
 	if(error)
