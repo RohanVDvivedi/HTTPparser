@@ -228,12 +228,8 @@ int parse_http_path_and_path_params(stream* rs, http_request* hr_p)
 	dstring delim_1 = get_dstring_pointing_to_literal_cstring("&");
 	dstring delim_2 = get_dstring_pointing_to_literal_cstring("=");
 
-	dstring remaining = params;
-	while(!is_empty_dstring(&remaining))
+	for_each_split_by_delim(param, &params, &delim_1)
 	{
-		dstring param;
-		remaining = split_dstring(&remaining, &delim_1, &param);
-
 		dstring param_key;
 		dstring param_value = split_dstring(&param, &delim_2, &param_key);
 
