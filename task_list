@@ -2,7 +2,9 @@
  * implement stream to read/write websocket data
 
  * parser for reading and writing form data
-   * multipart/form-data => to read this we need to first parse headers, so segregate function to parse headers, and then write a function to identify boundary, use ConnMan to read until a given dstring is hit (possible only after ConnMan developments), write a function to write a headers and then key value pair to stream, value being a dstring or a read stream to write from.
+   * multipart/form-data 
+    * write a stream reader and writer, for form data that reads until boundary, this will be done after ConnMan task 4
+    * additionally also write logic to read and write form data using a dstring
 
  * add cookie struct and a function to parse it and serialize it, its values are separated by ";"
 
