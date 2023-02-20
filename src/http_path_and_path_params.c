@@ -107,20 +107,20 @@ int parse_url_encoded_param(stream* rs, dstring* key, dstring* value, int is_fir
 	int last_byte;
 
 	dstring key_encoded = read_until_any_end_chars_from_stream(rs, is_end_char_for_param_key, NULL, &last_byte, 2048, &error);
-	if(error)
+	if(error || is_empty_dstring(&key_encoded))
 	{
 		deinit_dstring(&key_encoded);
 		return -1;
 	}
-	if(is_empty_dstring(&key_encoded))
+
+	if(get_char_count_dstring(&key_encoded) == 1)
 	{
 		deinit_dstring(&key_encoded);
 		if(is_first_param)
 			return -2;
 		return -1;
 	}
-
-	if(((char)last_byte) != '=' && get_char_count_dstring(&key_encoded) == 1)
+	else if(((char)last_byte) != '=')
 	{
 		deinit_dstring(&key_encoded);
 		return -1;
