@@ -79,11 +79,15 @@ static int to_dstring_format(const dstring* str, dstring* res)
 
 static int is_end_char_for_param_key(int is_end_of_stream, char c, const void* cntxt)
 {
+	if(c == '%')
+		return 0;
 	return c == '=' || !path_and_path_params_characters_allowed_on_stream_unencoded(c);
 }
 
 static int is_end_char_for_param_value(int is_end_of_stream, char c, const void* cntxt)
 {
+	if(c == '%')
+		return 0;
 	return is_end_of_stream || c == '&' || !path_and_path_params_characters_allowed_on_stream_unencoded(c);
 }
 
