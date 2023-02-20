@@ -98,8 +98,10 @@ int parse_url_encoded_param(stream* rs, dstring* key, dstring* value, int is_fir
 	if(!is_first_param)
 	{
 		unsigned int bytes_skipped = skip_dstring_from_stream(rs, &AMP, &error);
-		if(error || bytes_skipped == 0)
+		if(error)
 			return -1;
+		if(bytes_skipped == 0) // a not first param must start with an ampersand, an absence of that implies end of params
+			return -2;
 	}
 
 	int last_byte;
@@ -179,6 +181,9 @@ int parse_url_encoded_params(stream* rs, dmap* params)
 
 		is_first_param = 0;
 	}
+
+	if(error == -1) // an error of -2 implies end of params
+		return -1;
 
 	return 0;
 }
