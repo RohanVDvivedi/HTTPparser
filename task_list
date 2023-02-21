@@ -14,3 +14,5 @@
  * add function to parse http header with their key value pairs, into a struct consisting of dstring value and a dmap, and return it as an array
 
  * add support in dmap to insert POINT_DSTR that will help the above task
+
+ * integrate this library with serc
