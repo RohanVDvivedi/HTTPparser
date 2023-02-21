@@ -1,14 +1,6 @@
-
- * implement stream to read/write websocket data
-
- * parser for reading and writing form data
-   * multipart/form-data 
-    * write a stream reader and writer, for form data that reads until boundary, this will be done after ConnMan task 4
-    * additionally also write logic to read and write form data using a dstring
-
  * add cookie struct and a function to parse it and serialize it, its values are separated by ";"
 
- * write a function to initialize stream from ConnMan based on the http headers, for zlib and brotli compression
+ * write a function to initialize stream from ConnMan based on the http headers, for zlib and brotli compression (* do brotli later after it has been implemented in ConnMan)
  * test above task with available test cases test.c and test_c.c
 
  * add function to parse http header with their key value pairs, into a struct consisting of dstring value and a dmap, and return it as an array
@@ -16,3 +8,10 @@
  * add support in dmap to insert POINT_DSTR that will help the above task
 
  * integrate this library with serc
+
+ * implement stream to read/write websocket data
+
+ * parser for reading and writing form data
+   * multipart/form-data 
+    * write a stream reader and writer, for form data that reads until boundary, this will be done after ConnMan task 4
+    * additionally also write logic to read and write form data using a dstring
