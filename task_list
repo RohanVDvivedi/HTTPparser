@@ -8,4 +8,8 @@
 
  * add cookie struct and a function to parse it and serialize it, its values are separated by ";"
 
- * write a function to initialize zlib_streams from ConnMan based on the http headers
+ * write a function to initialize stream from ConnMan based on the http headers, for zlib and brotli compression
+
+ * add function to parse http header with their key value pairs, into a struct consisting of dstring value and a dmap, and return it as an array
+
+ * add support in dmap to insert POINT_DSTR that will help the above task
