@@ -14,5 +14,5 @@
 
  * parser for reading and writing form data
    * multipart/form-data 
-    * write a stream reader and writer, for form data that reads until boundary, this will be done after ConnMan task 4
+    * write a stream reader and writer, for form data that reads until boundary
     * additionally also write logic to read and write form data using a dstring
