@@ -1,5 +1,6 @@
 
  * write a function to initialize stream from ConnMan based on the http headers, for zlib and brotli compression (* do brotli later after it has been implemented in ConnMan)
+ * use stream stack api for this task (after it has been implemented in ConnMan)
  * test above task with available test cases test.c and test_c.c
 
  * integrate this library with serc
