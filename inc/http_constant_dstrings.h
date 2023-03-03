@@ -17,8 +17,16 @@ extern const dstring QM;					// "?"
 extern const dstring http_version_prefix;	// "HTTP/"
 
 extern const dstring content_length;		// "content-length"
+
 extern const dstring transfer_encoding;		// "transfer-encoding"
 extern const dstring chunked;				// "chunked"
+
+extern const dstring content_encoding;		// "content-encoding"
+extern const dstring identity;				// "identity"
+extern const dstring gzip;					// "gzip"
+extern const dstring deflate;				// "deflate"
+extern const dstring br;					// "brotli"
+extern const dstring compress;				// "compress"
 
 extern const dstring LAST_CHUNK;			// "0\r\n\r\n"
 

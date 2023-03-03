@@ -30,6 +30,18 @@ const dstring transfer_encoding = get_dstring_pointing_to_literal_cstring("trans
 
 const dstring chunked = get_dstring_pointing_to_literal_cstring("chunked");
 
+const dstring content_encoding = get_dstring_pointing_to_literal_cstring("content-encoding");
+
+const dstring identity = get_dstring_pointing_to_literal_cstring("identity");
+
+const dstring gzip = get_dstring_pointing_to_literal_cstring("gzip");
+
+const dstring deflate = get_dstring_pointing_to_literal_cstring("deflate");
+
+const dstring br = get_dstring_pointing_to_literal_cstring("br");
+
+const dstring compress = get_dstring_pointing_to_literal_cstring("compress");
+
 const dstring LAST_CHUNK = get_dstring_pointing_to_literal_cstring("0\r\n\r\n");
 
 const unsigned int ZERO_spml[64];
