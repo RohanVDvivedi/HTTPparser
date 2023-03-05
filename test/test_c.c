@@ -98,7 +98,8 @@ int main()
 			break;
 		}
 
-		if(!write_to_stream(&ws, read_buffer, bytes_read))
+		write_to_stream(&ws, read_buffer, bytes_read, &error);
+		if(error)
 		{
 			printf("error writing to STDOUT\n");
 			break;
