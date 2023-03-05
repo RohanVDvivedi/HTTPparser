@@ -16,10 +16,14 @@ static unsigned int read_body_from_stream_body(void* stream_context, void* data,
 	if(stream_context_p->is_closed)
 		return 0;
 
+	int u_error = 0;
+
 	if(!stream_context_p->is_chunked)
 	{
 		unsigned int bytes_to_read = min(data_size, stream_context_p->body_bytes);
-		unsigned int bytes_read = read_from_stream(stream_context_p->underlying_stream, data, bytes_to_read, error);
+		unsigned int bytes_read = read_from_stream(stream_context_p->underlying_stream, data, bytes_to_read, &u_error);
+		if(u_error)
+			(*error) = UNDERLYING_STREAM_ERROR;
 		stream_context_p->body_bytes -= bytes_read;
 		if(stream_context_p->body_bytes == 0)
 			stream_context_p->is_closed = 1;
@@ -30,9 +34,12 @@ static unsigned int read_body_from_stream_body(void* stream_context, void* data,
 		if(stream_context_p->body_bytes == 0)
 		{
 			uint64_t body_bytes_val;
-			unsigned int body_bytes_bytes_read = read_uint64_from_stream(stream_context_p->underlying_stream, HEXADECIMAL, &body_bytes_val, error);
-			if(*error)
+			unsigned int body_bytes_bytes_read = read_uint64_from_stream(stream_context_p->underlying_stream, HEXADECIMAL, &body_bytes_val, &u_error);
+			if(u_error)
+			{
+				(*error) = UNDERLYING_STREAM_ERROR;
 				return 0;
+			}
 			if(body_bytes_bytes_read == 0 || body_bytes_val > UINT_MAX)
 			{
 				(*error) = -1;
@@ -43,9 +50,10 @@ static unsigned int read_body_from_stream_body(void* stream_context, void* data,
 				stream_context_p->is_closed = 1;
 
 			{
-				dstring to_discard = read_until_dstring_from_stream(stream_context_p->underlying_stream, &CRLF, CRLF_spml, 1024, error);
-				if((*error))
+				dstring to_discard = read_until_dstring_from_stream(stream_context_p->underlying_stream, &CRLF, CRLF_spml, 1024, &u_error);
+				if(u_error)
 				{
+					(*error) = UNDERLYING_STREAM_ERROR;
 					deinit_dstring(&to_discard);
 					return 0;
 				}
@@ -60,15 +68,16 @@ static unsigned int read_body_from_stream_body(void* stream_context, void* data,
 		}
 
 		unsigned int bytes_to_read = min(stream_context_p->body_bytes, data_size);
-		unsigned int bytes_read = read_from_stream(stream_context_p->underlying_stream, data, bytes_to_read, error);
+		unsigned int bytes_read = read_from_stream(stream_context_p->underlying_stream, data, bytes_to_read, &u_error);
 		stream_context_p->body_bytes -= bytes_read;
-
+		if(u_error)
+			(*error) = UNDERLYING_STREAM_ERROR;
 		if(stream_context_p->body_bytes == 0)
 		{
-			unsigned int crlf_bytes_read = skip_dstring_from_stream(stream_context_p->underlying_stream, &CRLF, error);
-			if((*error))
-				return bytes_read;
-			if(crlf_bytes_read == 0)
+			unsigned int crlf_bytes_read = skip_dstring_from_stream(stream_context_p->underlying_stream, &CRLF, &u_error);
+			if(u_error)
+				(*error) = UNDERLYING_STREAM_ERROR;
+			else if(crlf_bytes_read == 0)
 				(*error) = -1;
 		}
 		return bytes_read;
@@ -92,10 +101,13 @@ static unsigned int write_body_to_stream_body(void* stream_context, const void* 
 	if(data_size == 0)
 		return 0;
 
+	int u_error = 0;
+
 	if(!stream_context_p->is_chunked)
 	{
 		unsigned int bytes_to_write = min(data_size, stream_context_p->body_bytes);
-		if(!write_to_stream(stream_context_p->underlying_stream, data, bytes_to_write))
+		write_to_stream(stream_context_p->underlying_stream, data, bytes_to_write, &u_error);
+		if(u_error)
 		{
 			(*error) = UNDERLYING_STREAM_ERROR;
 			return 0;
@@ -108,7 +120,8 @@ static unsigned int write_body_to_stream_body(void* stream_context, const void* 
 	else
 	{
 		unsigned int bytes_to_write = min(WRITE_MAX_CHUNK_SIZE, data_size);
-		if(!write_to_stream_formatted(stream_context_p->underlying_stream, "%x\r\n%.*s\r\n", bytes_to_write, bytes_to_write, data))
+		write_to_stream_formatted(stream_context_p->underlying_stream, &u_error, "%x\r\n%.*s\r\n", bytes_to_write, bytes_to_write, data);
+		if(u_error)
 		{
 			(*error) = UNDERLYING_STREAM_ERROR;
 			return 0;
@@ -130,13 +143,15 @@ static void close_writable_stream_context_body_stream(void* stream_context, int*
 	// if the stream_context is chunked we need to send one last empty chunk
 	if(stream_context_p->is_chunked && !stream_context_p->is_closed)
 	{
-		if(!write_dstring_to_stream(stream_context_p->underlying_stream, &LAST_CHUNK))
-			(*error) = UNDERLYING_STREAM_ERROR;
-		else
+		int u_error = 0;
+		write_dstring_to_stream(stream_context_p->underlying_stream, &LAST_CHUNK, &u_error);
+		if(!u_error)
 		{
-			flush_all_from_stream(stream_context_p->underlying_stream, error);
+			flush_all_from_stream(stream_context_p->underlying_stream, &u_error);
 			stream_context_p->is_closed = 1;
 		}
+		if(u_error)
+			(*error) = UNDERLYING_STREAM_ERROR;
 	}
 
 	// a chunked stream is closed after a 0 sized chunk is written to the stream
@@ -200,7 +215,7 @@ int initialize_readable_body_stream(stream* strm, stream* underlying_stream, con
 		return 0;
 	}
 
-	initialize_stream(strm, stream_context, read_body_from_stream_body, NULL, close_readable_stream_context_body_stream, destroy_stream_context_body_stream, NULL);
+	initialize_stream(strm, stream_context, read_body_from_stream_body, NULL, close_readable_stream_context_body_stream, destroy_stream_context_body_stream, NULL, 0);
 
 	return 1;
 }
@@ -225,7 +240,7 @@ int initialize_writable_body_stream(stream* strm, stream* underlying_stream, con
 		return 0;
 	}
 
-	initialize_stream(strm, stream_context, NULL, write_body_to_stream_body, close_writable_stream_context_body_stream, destroy_stream_context_body_stream, post_http_body_stream_flush_underlying_stream_flush);
+	initialize_stream(strm, stream_context, NULL, write_body_to_stream_body, close_writable_stream_context_body_stream, destroy_stream_context_body_stream, post_http_body_stream_flush_underlying_stream_flush, WRITE_MAX_CHUNK_SIZE);
 
 	return 1;
 }
