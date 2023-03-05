@@ -72,7 +72,10 @@ int parse_http_version(stream* rs, http_version* v)
 
 int serialize_http_version(stream* ws, const http_version* v)
 {
-	if(!write_to_stream_formatted(ws, printf_dstring_format"%d.%d", printf_dstring_params(&http_version_prefix), v->major, v->minor))
+	int error = 0;
+
+	write_to_stream_formatted(ws, &error, printf_dstring_format"%d.%d", printf_dstring_params(&http_version_prefix), v->major, v->minor);
+	if(error)
 		return -1;
 
 	return 0;

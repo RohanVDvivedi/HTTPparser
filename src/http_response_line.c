@@ -47,16 +47,20 @@ int parse_http_response_line(stream* rs, http_response* hr_p)
 
 int serialize_http_response_line(stream* ws, const http_response* hr_p)
 {
+	int error = 0;
+
 	if(serialize_http_version(ws, &(hr_p->version)) == -1)
 		return -1;
 	
-	if(!write_dstring_to_stream(ws, &SP)) // " "
+	write_dstring_to_stream(ws, &SP, &error); // " "
+	if(error)
 		return -1;
 
 	if(serialize_http_status_line(ws, &(hr_p->status)) == -1)
 		return -1;
 
-	if(!write_dstring_to_stream(ws, &CRLF))	// "\r\n"
+	write_dstring_to_stream(ws, &CRLF, &error);	// "\r\n"
+	if(error)
 		return -1;
 
 	return 0;

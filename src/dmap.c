@@ -85,7 +85,8 @@ void print_dmap(stream* ws, const dmap* dmap_p)
 	int error = 0;
 	for_each_in_dmap(e, dmap_p)
 	{
-		if(!write_to_stream_formatted(ws, "<" printf_dstring_format "> -> <" printf_dstring_format ">\n", printf_dstring_params(&(e->key)), printf_dstring_params(&(e->value))))
+		write_to_stream_formatted(ws, &error, "<" printf_dstring_format "> -> <" printf_dstring_format ">\n", printf_dstring_params(&(e->key)), printf_dstring_params(&(e->value)));
+		if(error)
 			break;
 	}
 	flush_all_from_stream(ws, &error);

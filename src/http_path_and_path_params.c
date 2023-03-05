@@ -293,17 +293,23 @@ int parse_http_path_and_path_params(stream* rs, http_request* hr_p)
 
 int serialize_http_path_and_path_params(stream* ws, const http_request* hr_p)
 {
+	int error = 0;
+
 	{
 		dstring path_serializable = to_serializable_format(&(hr_p->path), 1);
-		int write_success = write_dstring_to_stream(ws, &path_serializable);
+		write_dstring_to_stream(ws, &path_serializable, &error);
 		deinit_dstring(&path_serializable);
-		if(!write_success)
+		if(error)
 			return -1;
 	}
 
 	// if the hashmap is not empty, then write "?" to the stream
-	if(!is_empty_hashmap(&(hr_p->path_params)) && !write_dstring_to_stream(ws, &QM))
-		return -1;
+	if(!is_empty_hashmap(&(hr_p->path_params)))
+	{
+		write_dstring_to_stream(ws, &QM, &error);
+		if(error)
+			return -1;
+	}
 
 	if(serialize_url_encoded_params(ws, &(hr_p->path_params)) == -1)
 		return -1;
@@ -326,25 +332,32 @@ int serialize_url_encoded_params(stream* ws, const dmap* params)
 
 int serialize_url_encoded_param(stream* ws, const dstring* key, const dstring* value, int is_first_param)
 {
-	if(!is_first_param && !write_dstring_to_stream(ws, &AMP)) // write '&' if this is not the first param
-		return -1;
+	int error = 0;
+
+	if(!is_first_param) // write '&' if this is not the first param
+	{
+		write_dstring_to_stream(ws, &AMP, &error);
+		if(error)
+			return -1;
+	}
 
 	{
 		dstring key_serializable = to_serializable_format(key, 0);
-		int write_success = write_dstring_to_stream(ws, &key_serializable);
+		write_dstring_to_stream(ws, &key_serializable, &error);
 		deinit_dstring(&key_serializable);
-		if(!write_success)
+		if(error)
 			return -1;
 	}
-	
-	if(!write_dstring_to_stream(ws, &EQ)) // '='
+
+	write_dstring_to_stream(ws, &EQ, &error); // '='
+	if(error)
 		return -1;
 
 	{
 		dstring value_serializable = to_serializable_format(value, 0);
-		int write_success = write_dstring_to_stream(ws, &value_serializable);
+		write_dstring_to_stream(ws, &value_serializable, &error);
 		deinit_dstring(&value_serializable);
-		if(!write_success)
+		if(error)
 			return -1;
 	}
 
