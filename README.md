@@ -25,6 +25,8 @@ This library in its current form does not support HTTP 2 or 3. This might change
    * `#include<http_parser.h>`
    * `#include<http_serializer.h>`
    * `#include<http_body_stream.h>`
+   * `#include<init_content_encoding_streams.h>`
+   * `#include<flie_handling_util.h>`
 
 ## Instructions for uninstalling library
 
