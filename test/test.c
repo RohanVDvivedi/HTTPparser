@@ -4,6 +4,7 @@
 #include<http_request.h>
 #include<http_response.h>
 #include<http_body_stream.h>
+#include<init_content_encoding_streams.h>
 
 #include<comm_address.h>
 #include<client.h>
@@ -24,7 +25,7 @@ int main()
 	hrq.version.minor = 1;
 	insert_in_dmap(&(hrq.headers), &(get_dstring_pointing_to_literal_cstring("host")), &(get_dstring_pointing_to_literal_cstring("api.dictionaryapi.dev")));
 	insert_in_dmap(&(hrq.headers), &(get_dstring_pointing_to_literal_cstring("accept")), &(get_dstring_pointing_to_literal_cstring("*/*")));
-	//insert_in_dmap(&(hrq.headers), &(get_dstring_pointing_to_literal_cstring("accept-encoding")), &(get_dstring_pointing_to_literal_cstring("gzip,deflate")));
+	insert_in_dmap(&(hrq.headers), &(get_dstring_pointing_to_literal_cstring("accept-encoding")), &(get_dstring_pointing_to_literal_cstring("gzip,deflate")));
 
 	http_response hrp;
 	init_http_response(&hrp);
@@ -73,18 +74,26 @@ int main()
 		printf("\n");
 	}
 
-	stream body_stream;
-	if(!initialize_readable_body_stream(&body_stream, &raw_stream, &(hrp.headers)))
+	stacked_stream sstrm;
+	initialize_stacked_stream(&sstrm);
+
+	stream* body_stream = malloc(sizeof(stream));
+	if(!initialize_readable_body_stream(body_stream, &raw_stream, &(hrp.headers)))
 	{
 		printf("body stream could not be initialized\n");
+		free(body_stream);
 		goto EXIT_3;
 	}
+	push_to_stacked_stream(&sstrm, body_stream, READ_STREAMS);
+
+	if(-1 == initialize_readable_content_decoding_stream(&sstrm, &(hrp.headers)))
+		goto EXIT_4;
 
 	#define read_buffer_size 64
 	char read_buffer[read_buffer_size];
 	while(1)
 	{
-		unsigned int bytes_read = read_from_stream(&body_stream, read_buffer, read_buffer_size, &error);
+		unsigned int bytes_read = read_from_stacked_stream(&sstrm, read_buffer, read_buffer_size, &error);
 		if(error)
 		{
 			printf("body stream read error\n");
@@ -111,10 +120,19 @@ int main()
 		}
 	}
 
-	close_stream(&body_stream, &error);
-	deinitialize_stream(&body_stream);
+	EXIT_4:;
+	while(!is_empty_stacked_stream(&sstrm, READ_STREAMS))
+	{
+		stream* strm = get_top_of_stacked_stream(&sstrm, READ_STREAMS);
+		pop_from_stacked_stream(&sstrm, READ_STREAMS);
+		close_stream(strm, &error);
+		deinitialize_stream(strm);
+		free(strm);
+	}
 
 	EXIT_3:;
+	deinitialize_stacked_stream(&sstrm);
+
 	close_stream(&raw_stream, &error);
 	deinitialize_stream(&raw_stream);
 
