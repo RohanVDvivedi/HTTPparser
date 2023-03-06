@@ -32,15 +32,15 @@ const dstring chunked = get_dstring_pointing_to_literal_cstring("chunked");
 
 const dstring content_encoding = get_dstring_pointing_to_literal_cstring("content-encoding");
 
-const dstring identity = get_dstring_pointing_to_literal_cstring("identity");
+const dstring identity_ce = get_dstring_pointing_to_literal_cstring("identity");
 
-const dstring gzip = get_dstring_pointing_to_literal_cstring("gzip");
+const dstring gzip_ce = get_dstring_pointing_to_literal_cstring("gzip");
 
-const dstring deflate = get_dstring_pointing_to_literal_cstring("deflate");
+const dstring deflate_ce = get_dstring_pointing_to_literal_cstring("deflate");
 
-const dstring br = get_dstring_pointing_to_literal_cstring("br");
+const dstring br_ce = get_dstring_pointing_to_literal_cstring("br");
 
-const dstring compress = get_dstring_pointing_to_literal_cstring("compress");
+const dstring compress_ce = get_dstring_pointing_to_literal_cstring("compress");
 
 const dstring LAST_CHUNK = get_dstring_pointing_to_literal_cstring("0\r\n\r\n");
 

@@ -22,11 +22,11 @@ extern const dstring transfer_encoding;		// "transfer-encoding"
 extern const dstring chunked;				// "chunked"
 
 extern const dstring content_encoding;		// "content-encoding"
-extern const dstring identity;				// "identity"
-extern const dstring gzip;					// "gzip"
-extern const dstring deflate;				// "deflate"
-extern const dstring br;					// "brotli"
-extern const dstring compress;				// "compress"
+extern const dstring identity_ce;			// "identity"
+extern const dstring gzip_ce;				// "gzip"
+extern const dstring deflate_ce;			// "deflate"
+extern const dstring br_ce;					// "brotli"
+extern const dstring compress_ce;			// "compress"
 
 extern const dstring LAST_CHUNK;			// "0\r\n\r\n"
 
