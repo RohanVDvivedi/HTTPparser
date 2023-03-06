@@ -7,8 +7,8 @@
 // return value is the number of encodings stacked in the stacked_stream sstrm
 // -1 implies unidentified encoding
 
-int initialize_readable_content_decoding_stream(stacked_stream* sstrm, stream* underlying_stream, dmap* headers);
+int initialize_readable_content_decoding_stream(stacked_stream* sstrm, dmap* headers);
 
-int initialize_writable_content_encoding_stream(stacked_stream* sstrm, stream* underlying_stream, dmap* headers);
+int initialize_writable_content_encoding_stream(stacked_stream* sstrm, dmap* headers);
 
 #endif
