@@ -2,14 +2,13 @@
 #define INIT_CONTENT_ENCODING_STREAMS_H
 
 #include<dmap.h>
-#include<stream.h>
+#include<stacked_stream.h>
 
-// return value of 1 is success
-// return value of 0 implies a failure, i.e. unsupported encoded stream
-// return value of 2 implies the stream is identity encoded hence not required
+// return value is the number of encodings stacked in the stacked_stream sstrm
+// -1 implies unidentified encoding
 
-int initialize_readable_content_decoding_stream(stream* strm, stream* underlying_stream, dmap* headers);
+int initialize_readable_content_decoding_stream(stacked_stream* sstrm, stream* underlying_stream, dmap* headers);
 
-int initialize_writable_content_encoding_stream(stream* strm, stream* underlying_stream, dmap* headers);
+int initialize_writable_content_encoding_stream(stacked_stream* sstrm, stream* underlying_stream, dmap* headers);
 
 #endif
