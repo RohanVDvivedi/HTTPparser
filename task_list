@@ -1,10 +1,9 @@
-
  * integrate this library with serc
-
- * implement stream to read/write websocket data
-  * you can test this with https://www.piesocket.com/websocket-tester client, after integration with Serc on serc-template-application
 
  * parser for reading and writing form data
    * multipart/form-data 
     * write a stream reader and writer, for form data that reads until boundary
     * additionally also write logic to read and write form data using a dstring
+
+ * implement stream to read/write websocket data
+  * you can test this with https://www.piesocket.com/websocket-tester client, after integration with Serc on serc-template-application
