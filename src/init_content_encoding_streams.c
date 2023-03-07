@@ -28,7 +28,7 @@ int initialize_readable_content_decoding_stream(stacked_stream* sstrm, dmap* hea
 			{
 				if(is_full_stack(&encodings_stack) && !expand_stack(&encodings_stack))
 				{
-					return_success = -1;
+					return_success = -2;
 					break;
 				}
 				push_to_stack(&encodings_stack, encoding);
@@ -43,11 +43,13 @@ int initialize_readable_content_decoding_stream(stacked_stream* sstrm, dmap* hea
 		}
 	}
 
-	if(return_success == -1)
+	if(return_success < 0)
 	{
 		deinitialize_stack(&encodings_stack);
 		return return_success;
 	}
+
+	int streams_pushed = 0;
 
 	// init streams based on stack encodings and then push them on stacked_stream
 	while(!is_empty_stack(&encodings_stack))
@@ -56,13 +58,44 @@ int initialize_readable_content_decoding_stream(stacked_stream* sstrm, dmap* hea
 		dstring const * const encoding = get_top_of_stack(&encodings_stack);
 		pop_from_stack(&encodings_stack);
 		if(encoding == &gzip_ce)
-			initialize_stream_for_zlib_decompression2(strm, get_top_of_stacked_stream(sstrm, READ_STREAMS), 31);
+		{
+			if(!initialize_stream_for_zlib_decompression2(strm, get_top_of_stacked_stream(sstrm, READ_STREAMS), 31))
+			{
+				free(strm);
+				return_success = -3;
+				break;
+			}
+		}
 		else if(encoding == &deflate_ce)
-			initialize_stream_for_zlib_decompression2(strm, get_top_of_stacked_stream(sstrm, READ_STREAMS), 15);
-		push_to_stacked_stream(sstrm, strm, READ_STREAMS);
+		{
+			if(!initialize_stream_for_zlib_decompression2(strm, get_top_of_stacked_stream(sstrm, READ_STREAMS), 15))
+			{
+				free(strm);
+				return_success = -3;
+				break;
+			}
+		}
+		if(!push_to_stacked_stream(sstrm, strm, READ_STREAMS))
+		{
+			return_success = -2;
+			break;
+		}
+		streams_pushed++;
 	}
 
 	deinitialize_stack(&encodings_stack);
+
+	if(return_success >= 0)
+		return return_success;
+
+	for(int i = 0; i < streams_pushed; i++)
+	{
+		stream* strm = get_top_of_stacked_stream(sstrm, READ_STREAMS);
+		pop_from_stacked_stream(sstrm, READ_STREAMS);
+		deinitialize_stream(strm);
+		free(strm);
+	}
+
 	return return_success;
 }
 
@@ -87,7 +120,7 @@ int initialize_writable_content_encoding_stream(stacked_stream* sstrm, dmap* hea
 			{
 				if(is_full_stack(&encodings_stack) && !expand_stack(&encodings_stack))
 				{
-					return_success = -1;
+					return_success = -2;
 					break;
 				}
 				push_to_stack(&encodings_stack, encoding);
@@ -102,11 +135,13 @@ int initialize_writable_content_encoding_stream(stacked_stream* sstrm, dmap* hea
 		}
 	}
 
-	if(return_success == -1)
+	if(return_success < 0)
 	{
 		deinitialize_stack(&encodings_stack);
 		return return_success;
 	}
+
+	int streams_pushed = 0;
 
 	// init streams based on stack encodings and then push them on stacked_stream
 	while(!is_empty_stack(&encodings_stack))
@@ -115,12 +150,43 @@ int initialize_writable_content_encoding_stream(stacked_stream* sstrm, dmap* hea
 		dstring const * const encoding = get_top_of_stack(&encodings_stack);
 		pop_from_stack(&encodings_stack);
 		if(encoding == &gzip_ce)
-			initialize_stream_for_zlib_compression2(strm, get_top_of_stacked_stream(sstrm, WRITE_STREAMS), Z_DEFAULT_COMPRESSION, Z_DEFLATED, 31, 8, Z_DEFAULT_STRATEGY);
+		{
+			if(!initialize_stream_for_zlib_compression2(strm, get_top_of_stacked_stream(sstrm, WRITE_STREAMS), Z_DEFAULT_COMPRESSION, Z_DEFLATED, 31, 8, Z_DEFAULT_STRATEGY))
+			{
+				free(strm);
+				return_success = -3;
+				break;
+			}
+		}
 		else if(encoding == &deflate_ce)
-			initialize_stream_for_zlib_compression2(strm, get_top_of_stacked_stream(sstrm, WRITE_STREAMS), Z_DEFAULT_COMPRESSION, Z_DEFLATED, 15, 8, Z_DEFAULT_STRATEGY);
-		push_to_stacked_stream(sstrm, strm, WRITE_STREAMS);
+		{
+			if(!initialize_stream_for_zlib_compression2(strm, get_top_of_stacked_stream(sstrm, WRITE_STREAMS), Z_DEFAULT_COMPRESSION, Z_DEFLATED, 15, 8, Z_DEFAULT_STRATEGY))
+			{
+				free(strm);
+				return_success = -3;
+				break;
+			}
+		}
+		if(!push_to_stacked_stream(sstrm, strm, WRITE_STREAMS))
+		{
+			return_success = -2;
+			break;
+		}
+		streams_pushed++;
 	}
 
 	deinitialize_stack(&encodings_stack);
+
+	if(return_success >= 0)
+		return return_success;
+
+	for(int i = 0; i < streams_pushed; i++)
+	{
+		stream* strm = get_top_of_stacked_stream(sstrm, WRITE_STREAMS);
+		pop_from_stacked_stream(sstrm, WRITE_STREAMS);
+		deinitialize_stream(strm);
+		free(strm);
+	}
+
 	return return_success;
 }
