@@ -1,6 +1,5 @@
 
  * add support for brotli compression in init_content_encoding_streams (* do brotli later after it has been implemented in ConnMan)
- * error handling in init_content_encoding_streams, on any error pop and destroy all the existing streams that we just pushed, maintain a counter of the streams pushed
  * test above task with available test cases test.c and test_c.c
 
  * integrate this library with serc
