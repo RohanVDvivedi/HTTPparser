@@ -88,7 +88,7 @@ int main()
 	}
 	push_to_stacked_stream(&sstrm, body_stream, READ_STREAMS);
 
-	if(-1 == initialize_readable_content_decoding_stream(&sstrm, &(hrp.headers)))
+	if(initialize_readable_content_decoding_stream(&sstrm, &(hrp.headers)) < 0)
 		goto EXIT_4;
 
 	#define read_buffer_size 64
