@@ -1,7 +1,4 @@
 
- * add support for brotli compression in init_content_encoding_streams (* do brotli later after it has been implemented in ConnMan)
- * test above task with available test cases test.c and test_c.c
-
  * integrate this library with serc
 
  * implement stream to read/write websocket data
