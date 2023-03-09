@@ -21,13 +21,13 @@ int main()
 	init_http_request(&hrq);
 	hrq.method = GET;
 	concatenate_dstring(&(hrq.path), &get_dstring_pointing_to_literal_cstring("/"));
-	insert_in_dmap(&(hrq.path_params), &get_dstring_pointing_to_literal_cstring("toWww"), &get_dstring_pointing_to_literal_cstring("1"));
-	insert_in_dmap(&(hrq.path_params), &get_dstring_pointing_to_literal_cstring("redig"), &get_dstring_pointing_to_literal_cstring("C6A5D09A029446FAA02284B3A374D5F3"));
+	insert_literal_cstrings_in_dmap(&(hrq.path_params), "toWww", "1");
+	insert_literal_cstrings_in_dmap(&(hrq.path_params), "redig", "C6A5D09A029446FAA02284B3A374D5F3");
 	hrq.version.major = 1;
 	hrq.version.minor = 1;
-	insert_in_dmap(&(hrq.headers), &(get_dstring_pointing_to_literal_cstring("host")), &(get_dstring_pointing_to_literal_cstring("www.bing.com")));
-	insert_in_dmap(&(hrq.headers), &(get_dstring_pointing_to_literal_cstring("accept")), &(get_dstring_pointing_to_literal_cstring("*/*")));
-	insert_in_dmap(&(hrq.headers), &(get_dstring_pointing_to_literal_cstring("accept-encoding")), &(get_dstring_pointing_to_literal_cstring("gzip,deflate")));
+	insert_literal_cstrings_in_dmap(&(hrq.headers), "host", "www.bing.com");
+	insert_literal_cstrings_in_dmap(&(hrq.headers), "accept", "*/*");
+	insert_literal_cstrings_in_dmap(&(hrq.headers), "accept-encoding", "gzip,deflate");
 
 	http_response hrp;
 	init_http_response(&hrp);

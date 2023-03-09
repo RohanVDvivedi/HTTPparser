@@ -23,9 +23,9 @@ int main()
 	concatenate_dstring(&(hrq.path), &get_dstring_pointing_to_literal_cstring("/api/v2/entries/en/hello"));
 	hrq.version.major = 1;
 	hrq.version.minor = 1;
-	insert_in_dmap(&(hrq.headers), &(get_dstring_pointing_to_literal_cstring("host")), &(get_dstring_pointing_to_literal_cstring("api.dictionaryapi.dev")));
-	insert_in_dmap(&(hrq.headers), &(get_dstring_pointing_to_literal_cstring("accept")), &(get_dstring_pointing_to_literal_cstring("*/*")));
-	insert_in_dmap(&(hrq.headers), &(get_dstring_pointing_to_literal_cstring("accept-encoding")), &(get_dstring_pointing_to_literal_cstring("gzip,deflate")));
+	insert_literal_cstrings_in_dmap(&(hrq.headers), "host", "api.dictionaryapi.dev");
+	insert_literal_cstrings_in_dmap(&(hrq.headers), "accept", "*/*");
+	insert_literal_cstrings_in_dmap(&(hrq.headers), "accept-encoding", "gzip,deflate");
 
 	http_response hrp;
 	init_http_response(&hrp);
