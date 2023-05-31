@@ -44,10 +44,10 @@ const dstring compress_ce = get_dstring_pointing_to_literal_cstring("compress");
 
 const dstring LAST_CHUNK = get_dstring_pointing_to_literal_cstring("0\r\n\r\n");
 
-const unsigned int ZERO_spml[64];
+const cy_uint ZERO_spml[64];
 
-unsigned int const * const CRLF_spml = ZERO_spml;
+cy_uint const * const CRLF_spml = ZERO_spml;
 
-unsigned int const * const SP_spml = ZERO_spml;
+cy_uint const * const SP_spml = ZERO_spml;
 
-unsigned int const * const chunked_spml = ZERO_spml;
+cy_uint const * const chunked_spml = ZERO_spml;

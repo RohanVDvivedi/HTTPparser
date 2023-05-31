@@ -31,8 +31,8 @@ extern const dstring compress_ce;			// "compress"
 extern const dstring LAST_CHUNK;			// "0\r\n\r\n"
 
 // below are arrays of their prefix suffix match lengths
-extern unsigned int const * const CRLF_spml;
-extern unsigned int const * const SP_spml;
-extern unsigned int const * const chunked_spml;
+extern cy_uint const * const CRLF_spml;
+extern cy_uint const * const SP_spml;
+extern cy_uint const * const chunked_spml;
 
 #endif
