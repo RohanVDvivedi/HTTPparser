@@ -16,25 +16,25 @@ void deinit_dmap_entry(dmap_entry* dmap_entry_p)
 	deinit_dstring(&(dmap_entry_p->value));
 }
 
-static unsigned int dstring_key_hash_case(const void* element)
+static cy_uint dstring_key_hash_case(const void* element)
 {
 	const dmap_entry* ent = element;
 	const char* key_data = get_byte_array_dstring(&(ent->key));
-	unsigned int key_size = get_char_count_dstring(&(ent->key));
-	unsigned int hash = 0;
-	for(unsigned int i = 0; i < key_size; i++)
-		hash += (((((unsigned int)(tolower(key_data[i]))) * i) ^ 0xf0) & 0xffffff);
+	cy_uint key_size = get_char_count_dstring(&(ent->key));
+	cy_uint hash = 0;
+	for(cy_uint i = 0; i < key_size; i++)
+		hash += ((((cy_uint)(tolower(key_data[i]))) * i) ^ 0xf0f0f0f0);
 	return hash;
 }
 
-static unsigned int dstring_key_hash(const void* element)
+static cy_uint dstring_key_hash(const void* element)
 {
 	const dmap_entry* ent = element;
 	const char* key_data = get_byte_array_dstring(&(ent->key));
-	unsigned int key_size = get_char_count_dstring(&(ent->key));
-	unsigned int hash = 0;
-	for(unsigned int i = 0; i < key_size; i++)
-		hash += (((((unsigned int)(key_data[i])) * i) ^ 0xf0) & 0xffffff);
+	cy_uint key_size = get_char_count_dstring(&(ent->key));
+	cy_uint hash = 0;
+	for(cy_uint i = 0; i < key_size; i++)
+		hash += ((((cy_uint)(key_data[i])) * i) ^ 0xf0f0f0f0);
 	return hash;
 }
 
