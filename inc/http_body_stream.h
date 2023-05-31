@@ -16,7 +16,7 @@ struct http_body_stream_context
 	int is_chunked:1;
 
 	// body_bytes to be read next
-	unsigned int body_bytes;
+	unsigned long long int body_bytes;
 };
 
 int initialize_readable_body_stream(stream* strm, stream* underlying_stream, const dmap* headers);
