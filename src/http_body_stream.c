@@ -9,7 +9,7 @@
 
 #include<stream_util.h>
 
-static unsigned int read_body_from_stream_body(void* stream_context, void* data, unsigned int data_size, int* error)
+static size_t read_body_from_stream_body(void* stream_context, void* data, size_t data_size, int* error)
 {
 	http_body_stream_context* stream_context_p = stream_context;
 
@@ -20,8 +20,8 @@ static unsigned int read_body_from_stream_body(void* stream_context, void* data,
 
 	if(!stream_context_p->is_chunked)
 	{
-		unsigned int bytes_to_read = min(data_size, stream_context_p->body_bytes);
-		unsigned int bytes_read = read_from_stream(stream_context_p->underlying_stream, data, bytes_to_read, &u_error);
+		size_t bytes_to_read = min(data_size, stream_context_p->body_bytes);
+		size_t bytes_read = read_from_stream(stream_context_p->underlying_stream, data, bytes_to_read, &u_error);
 		if(u_error)
 			(*error) = UNDERLYING_STREAM_ERROR;
 		stream_context_p->body_bytes -= bytes_read;
@@ -67,14 +67,14 @@ static unsigned int read_body_from_stream_body(void* stream_context, void* data,
 			}
 		}
 
-		unsigned int bytes_to_read = min(stream_context_p->body_bytes, data_size);
-		unsigned int bytes_read = read_from_stream(stream_context_p->underlying_stream, data, bytes_to_read, &u_error);
+		size_t bytes_to_read = min(stream_context_p->body_bytes, data_size);
+		size_t bytes_read = read_from_stream(stream_context_p->underlying_stream, data, bytes_to_read, &u_error);
 		stream_context_p->body_bytes -= bytes_read;
 		if(u_error)
 			(*error) = UNDERLYING_STREAM_ERROR;
 		if(stream_context_p->body_bytes == 0)
 		{
-			unsigned int crlf_bytes_read = skip_dstring_from_stream(stream_context_p->underlying_stream, &CRLF, &u_error);
+			size_t crlf_bytes_read = skip_dstring_from_stream(stream_context_p->underlying_stream, &CRLF, &u_error);
 			if(u_error)
 				(*error) = UNDERLYING_STREAM_ERROR;
 			else if(crlf_bytes_read == 0)
