@@ -40,7 +40,7 @@ static unsigned int read_body_from_stream_body(void* stream_context, void* data,
 				(*error) = UNDERLYING_STREAM_ERROR;
 				return 0;
 			}
-			if(body_bytes_bytes_read == 0 || body_bytes_val > UINT_MAX)
+			if(body_bytes_bytes_read == 0 || body_bytes_val > SIZE_MAX)
 			{
 				(*error) = -1;
 				return 0;
