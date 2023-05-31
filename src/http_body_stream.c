@@ -86,9 +86,10 @@ static unsigned int read_body_from_stream_body(void* stream_context, void* data,
 	return 0;
 }
 
-#define WRITE_MAX_CHUNK_SIZE 4096
+// must be lesser than INT_MAX
+#define WRITE_MAX_CHUNK_SIZE 8192
 
-static unsigned int write_body_to_stream_body(void* stream_context, const void* data, unsigned int data_size, int* error)
+static size_t write_body_to_stream_body(void* stream_context, const void* data, size_t data_size, int* error)
 {
 	http_body_stream_context* stream_context_p = stream_context;
 
@@ -105,7 +106,7 @@ static unsigned int write_body_to_stream_body(void* stream_context, const void* 
 
 	if(!stream_context_p->is_chunked)
 	{
-		unsigned int bytes_to_write = min(data_size, stream_context_p->body_bytes);
+		size_t bytes_to_write = min(data_size, stream_context_p->body_bytes);
 		write_to_stream(stream_context_p->underlying_stream, data, bytes_to_write, &u_error);
 		if(u_error)
 		{
@@ -119,8 +120,8 @@ static unsigned int write_body_to_stream_body(void* stream_context, const void* 
 	}
 	else
 	{
-		unsigned int bytes_to_write = min(WRITE_MAX_CHUNK_SIZE, data_size);
-		write_to_stream_formatted(stream_context_p->underlying_stream, &u_error, "%x\r\n%.*s\r\n", bytes_to_write, bytes_to_write, data);
+		size_t bytes_to_write = min(WRITE_MAX_CHUNK_SIZE, data_size);
+		write_to_stream_formatted(stream_context_p->underlying_stream, &u_error, "%zx\r\n%.*s\r\n", bytes_to_write, ((int)bytes_to_write), data);
 		if(u_error)
 		{
 			(*error) = UNDERLYING_STREAM_ERROR;
