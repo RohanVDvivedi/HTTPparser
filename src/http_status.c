@@ -255,15 +255,13 @@ char* get_http_status_line(int status)
 
 int parse_http_status_line(stream* rs, int* s)
 {
-	char byte;
-	unsigned int byte_read = 0;
 	int error = 0;
 
 	// parse status code and check if it is valid
 	{
 		(*s) = 0;
-		uint64_t status_code_val;
-		unsigned int status_code_bytes = read_uint64_from_stream(rs, DECIMAL, &status_code_val, &error);
+		unsigned long long int status_code_val;
+		size_t status_code_bytes = read_unsigned_long_long_int_from_stream(rs, DECIMAL, &status_code_val, &error);
 		if(status_code_val > 1000 || status_code_bytes == 0 || error)
 			return -1;
 		(*s) = status_code_val;
@@ -276,14 +274,14 @@ int parse_http_status_line(stream* rs, int* s)
 	// skip spaces
 	{
 		#define MAX_SPACES 5
-		unsigned int space_bytes = skip_whitespaces_from_stream(rs, MAX_SPACES, &error);
+		size_t space_bytes = skip_whitespaces_from_stream(rs, MAX_SPACES, &error);
 		if(space_bytes == 0 || error)
 			return -1;
 
 		// make sure that the next byte is not a whitespace
 		{
 			char byte;
-			unsigned int byte_read = read_from_stream(rs, &byte, 1, &error);
+			size_t byte_read = read_from_stream(rs, &byte, 1, &error);
 			if(byte_read == 0 || error || isspace(byte))
 				return -1;
 			unread_from_stream(rs, &byte, 1);
@@ -295,12 +293,13 @@ int parse_http_status_line(stream* rs, int* s)
 	#define largest_reason_phrase 64
 
 	int last_char_CR = 0;
-	unsigned int reason_phrase_bytes_read = 0;
+	size_t reason_phrase_bytes_read = 0;
 	int status_line_end_reached = 0;
 
 	while(reason_phrase_bytes_read < largest_reason_phrase)
 	{
-		byte_read = read_from_stream(rs, &byte, 1, &error);
+		char byte;
+		size_t byte_read = read_from_stream(rs, &byte, 1, &error);
 		if(byte_read == 0 || error)
 			return -1;
 
