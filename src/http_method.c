@@ -17,7 +17,7 @@ const char* http_method_strings[] = {
 int parse_http_method(stream* rs, http_method* m)
 {
 	char byte;
-	unsigned int byte_read = 0;
+	size_t byte_read = 0;
 	int error = 0;
 
 	int method_count = sizeof(http_method_strings)/sizeof(char*);
@@ -25,7 +25,7 @@ int parse_http_method(stream* rs, http_method* m)
 	int can_be_count = sizeof(http_method_strings)/sizeof(char*);
 	int can_not_be[sizeof(http_method_strings)/sizeof(char*)] = {};
 
-	unsigned int bytes_matched = 0;
+	size_t bytes_matched = 0;
 
 	int res = -1;
 
