@@ -33,8 +33,8 @@ static size_t read_body_from_stream_body(void* stream_context, void* data, size_
 	{
 		if(stream_context_p->body_bytes == 0)
 		{
-			uint64_t body_bytes_val;
-			unsigned int body_bytes_bytes_read = read_uint64_from_stream(stream_context_p->underlying_stream, HEXADECIMAL, &body_bytes_val, &u_error);
+			unsigned long long int body_bytes_val;
+			size_t body_bytes_bytes_read = read_unsigned_long_long_int_from_stream(stream_context_p->underlying_stream, HEXADECIMAL, &body_bytes_val, &u_error);
 			if(u_error)
 			{
 				(*error) = UNDERLYING_STREAM_ERROR;
