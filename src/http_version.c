@@ -35,15 +35,15 @@ int parse_http_version(stream* rs, http_version* v)
 
 	// skip reading the http version prefix
 	{
-		unsigned int http_version_prefix_read = skip_dstring_from_stream(rs, &http_version_prefix, &error);
+		size_t http_version_prefix_read = skip_dstring_from_stream(rs, &http_version_prefix, &error);
 		if(http_version_prefix_read == 0 || error)
 			return -1;
 	}
 
 	// parse version major
 	{
-		uint64_t v_major;
-		unsigned int v_major_bytes = read_uint64_from_stream(rs, DECIMAL, &v_major, &error);
+		unsigned long long int v_major;
+		size_t v_major_bytes = read_unsigned_long_long_int_from_stream(rs, DECIMAL, &v_major, &error);
 		if(v_major > 100)
 			return -1;
 		if(v_major_bytes == 0 || error)
@@ -52,14 +52,14 @@ int parse_http_version(stream* rs, http_version* v)
 	}
 
 	char byte;
-	unsigned int byte_read = read_from_stream(rs, &byte, 1, &error);
+	size_t byte_read = read_from_stream(rs, &byte, 1, &error);
 	if(byte_read == 0 || error != 0 || byte != '.')
 		return -1;
 
 	// parse version minor
 	{
-		uint64_t v_minor;
-		unsigned int v_minor_bytes = read_uint64_from_stream(rs, DECIMAL, &v_minor, &error);
+		unsigned long long int v_minor;
+		size_t v_minor_bytes = read_unsigned_long_long_int_from_stream(rs, DECIMAL, &v_minor, &error);
 		if(v_minor > 1000)
 			return -1;
 		if(v_minor_bytes == 0 || error)
