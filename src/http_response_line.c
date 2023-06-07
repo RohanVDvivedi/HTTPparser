@@ -18,14 +18,14 @@ int parse_http_response_line(stream* rs, http_response* hr_p)
 	// skip spaces
 	{
 		#define MAX_SPACES 5
-		unsigned int space_bytes = skip_whitespaces_from_stream(rs, MAX_SPACES, &error);
+		size_t space_bytes = skip_whitespaces_from_stream(rs, MAX_SPACES, &error);
 		if(space_bytes == 0 || error)
 			return -1;
 
 		// make sure that the next byte is not a whitespace
 		{
 			char byte;
-			unsigned int byte_read = read_from_stream(rs, &byte, 1, &error);
+			size_t byte_read = read_from_stream(rs, &byte, 1, &error);
 			if(byte_read == 0 || error || isspace(byte))
 				return -1;
 			unread_from_stream(rs, &byte, 1);
@@ -37,7 +37,7 @@ int parse_http_response_line(stream* rs, http_response* hr_p)
 
 	// skip reading the "\r\n"
 	{
-		unsigned int line_end_read = skip_dstring_from_stream(rs, &CRLF, &error);
+		size_t line_end_read = skip_dstring_from_stream(rs, &CRLF, &error);
 		if(line_end_read == 0 || error)
 			return -1;
 	}
