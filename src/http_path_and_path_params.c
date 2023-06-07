@@ -31,12 +31,12 @@ static int path_and_path_params_characters_allowed_on_stream_unencoded(char c)
 static dstring to_serializable_format(const dstring* str, int is_path)
 {
 	const char* str_data = get_byte_array_dstring(str);
-	unsigned int str_size = get_char_count_dstring(str);
+	cy_uint str_size = get_char_count_dstring(str);
 
 	dstring res;
 	init_empty_dstring(&res, str_size);
 
-	for(unsigned int i = 0; i < str_size; i++)
+	for(cy_uint i = 0; i < str_size; i++)
 	{
 		if(path_and_path_params_characters_allowed_on_stream_unencoded(str_data[i]) || (is_path && str_data[i] == '/'))
 			concatenate_char(&res, str_data[i]);
@@ -51,11 +51,11 @@ static dstring to_serializable_format(const dstring* str, int is_path)
 static int to_dstring_format(const dstring* str, dstring* res)
 {
 	const char* str_data = get_byte_array_dstring(str);
-	unsigned int str_size = get_char_count_dstring(str);
+	cy_uint str_size = get_char_count_dstring(str);
 
 	make_dstring_empty(res);
 
-	for(unsigned int i = 0; i < str_size;)
+	for(cy_uint i = 0; i < str_size;)
 	{
 		if(str_data[i] == '%' && (str_size - i) >= 3)
 		{
@@ -97,7 +97,7 @@ int parse_url_encoded_param(stream* rs, dstring* key, dstring* value, int is_fir
 
 	if(!is_first_param)
 	{
-		unsigned int bytes_skipped = skip_dstring_from_stream(rs, &AMP, &error);
+		size_t bytes_skipped = skip_dstring_from_stream(rs, &AMP, &error);
 		if(error)
 			return -1;
 		if(bytes_skipped == 0) // a not first param must start with an ampersand, an absence of that implies end of params
