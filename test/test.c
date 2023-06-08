@@ -67,12 +67,7 @@ int main()
 	}
 
 	// printing response head
-	{
-		printf("version = %d.%d\n", hrp.version.major, hrp.version.minor);
-		printf("status = %d\n", hrp.status);
-		print_dmap(&ws, &(hrp.headers));
-		printf("\n");
-	}
+	print_http_response_head(&hrp);
 
 	stacked_stream sstrm;
 	initialize_stacked_stream(&sstrm);
