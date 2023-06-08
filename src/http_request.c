@@ -49,17 +49,17 @@ int serialize_http_request_head(stream* ws, const http_request_head* hr_p)
 
 #include<stdio.h>
 
-void print_http_request(const http_request_head* hr_p)
+void print_http_request_head(const http_request_head* hr_p)
 {
 	printf("method = %s\n", http_method_strings[hr_p->method]);
 	printf("path = " printf_dstring_format "\n",  printf_dstring_params(&(hr_p->path)));
 	printf("path_params = \n");
 	for_each_in_dmap(e, &(hr_p->path_params))
-		printf("<" printf_dstring_format "> -> <" printf_dstring_format ">\n", printf_dstring_params(&(e->key)), printf_dstring_params(&(e->value)));
+		printf("\t<" printf_dstring_format "> -> <" printf_dstring_format ">\n", printf_dstring_params(&(e->key)), printf_dstring_params(&(e->value)));
 	printf("\n");
 	printf("version = %d.%d\n", hr_p->version.major, hr_p->version.minor);
 	printf("headers = \n");
 	for_each_in_dmap(e, &(hr_p->headers))
-		printf("<" printf_dstring_format "> -> <" printf_dstring_format ">\n", printf_dstring_params(&(e->key)), printf_dstring_params(&(e->value)));
+		printf("\t<" printf_dstring_format "> -> <" printf_dstring_format ">\n", printf_dstring_params(&(e->key)), printf_dstring_params(&(e->value)));
 	printf("\n");
 }
