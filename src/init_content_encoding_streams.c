@@ -33,7 +33,7 @@ int initialize_readable_content_decoding_stream(stacked_stream* sstrm, dmap* hea
 				}
 				push_to_stack(&encodings_stack, encoding);
 			}
-			else if(compare_dstring(&value, &identity_ce))
+			else if(0 == compare_dstring(&value, &identity_ce))
 				continue;
 			else
 			{
@@ -125,7 +125,7 @@ int initialize_writable_content_encoding_stream(stacked_stream* sstrm, dmap* hea
 				}
 				push_to_stack(&encodings_stack, encoding);
 			}
-			else if(compare_dstring(&value, &identity_ce))
+			else if(0 == compare_dstring(&value, &identity_ce))
 				continue;
 			else
 			{
