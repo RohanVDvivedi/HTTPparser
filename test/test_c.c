@@ -18,7 +18,7 @@ int main()
 	initialize_stream_for_fd(&ws, 1);
 
 	http_request_head hrq;
-	init_http_request(&hrq);
+	init_http_request_head(&hrq);
 	hrq.method = GET;
 	concatenate_dstring(&(hrq.path), &get_dstring_pointing_to_literal_cstring("/"));
 	insert_literal_cstrings_in_dmap(&(hrq.path_params), "toWww", "1");
@@ -30,7 +30,7 @@ int main()
 	insert_literal_cstrings_in_dmap(&(hrq.headers), "accept-encoding", "gzip,deflate");
 
 	http_response_head hrp;
-	init_http_response(&hrp);
+	init_http_response_head(&hrp);
 
 	comm_address server_address;
 	int res = lookup_by_name("bing.com", "443", SOCK_STREAM, AF_INET, &server_address, 1);
@@ -137,8 +137,8 @@ int main()
 		destroy_ssl_ctx(ssl_ctx);
 
 	EXIT_1:;
-	deinit_http_request(&hrq);
-	deinit_http_response(&hrp);
+	deinit_http_request_head(&hrq);
+	deinit_http_response_head(&hrp);
 
 	deinitialize_stream(&rs);
 	deinitialize_stream(&ws);
