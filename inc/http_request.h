@@ -31,4 +31,6 @@ int parse_http_request_head(stream* rs, http_request_head* hr_p);
 // returns -1 for error and 0 for success
 int serialize_http_request_head(stream* ws, const http_request_head* hr_p);
 
+void print_http_request(const http_request_head* hr_p);
+
 #endif
