@@ -1,13 +1,13 @@
 #include<http_request.h>
 
-void init_http_request(http_request* hr_p)
+void init_http_request(http_request_head* hr_p)
 {
 	init_empty_dstring(&(hr_p->path), 0);
 	init_dmap(&(hr_p->path_params), 0);
 	init_dmap(&(hr_p->headers), 1);
 }
 
-void deinit_http_request(http_request* hr_p)
+void deinit_http_request(http_request_head* hr_p)
 {
 	deinit_dstring(&(hr_p->path));
 	deinit_dmap(&(hr_p->path_params));
@@ -17,7 +17,7 @@ void deinit_http_request(http_request* hr_p)
 #include<http_request_line.h>
 #include<http_headers.h>
 
-int parse_http_request_head(stream* rs, http_request* hr_p)
+int parse_http_request_head(stream* rs, http_request_head* hr_p)
 {
 	int error = 0;
 
@@ -32,7 +32,7 @@ int parse_http_request_head(stream* rs, http_request* hr_p)
 	return 0;
 }
 
-int serialize_http_request_head(stream* ws, const http_request* hr_p)
+int serialize_http_request_head(stream* ws, const http_request_head* hr_p)
 {
 	int error = 0;
 

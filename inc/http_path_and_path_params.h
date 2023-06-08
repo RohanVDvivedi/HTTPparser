@@ -4,10 +4,10 @@
 #include<http_request.h>
 
 // returns -1 for error and 0 for success
-int parse_http_path_and_path_params(stream* rs, http_request* hr_p);
+int parse_http_path_and_path_params(stream* rs, http_request_head* hr_p);
 
 // returns -1 for error and 0 for success
-int serialize_http_path_and_path_params(stream* ws, const http_request* hr_p);
+int serialize_http_path_and_path_params(stream* ws, const http_request_head* hr_p);
 
 // key and value will be initialized by this function, you only need to deinit_dstring them
 // and after this call they will contain the next key value pair, unless there is an error

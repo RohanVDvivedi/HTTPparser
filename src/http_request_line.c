@@ -8,7 +8,7 @@
 
 #include<ctype.h>
 
-int parse_http_request_line(stream* rs, http_request* hr_p)
+int parse_http_request_line(stream* rs, http_request_head* hr_p)
 {
 	if(parse_http_method(rs, &(hr_p->method)) == -1)
 		return -1;
@@ -65,7 +65,7 @@ int parse_http_request_line(stream* rs, http_request* hr_p)
 	return 0;
 }
 
-int serialize_http_request_line(stream* ws, const http_request* hr_p)
+int serialize_http_request_line(stream* ws, const http_request_head* hr_p)
 {
 	int error = 0;
 

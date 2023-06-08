@@ -195,7 +195,7 @@ int parse_url_encoded_params(stream* rs, dmap* params)
 	return 0;
 }
 
-int parse_http_path_and_path_params(stream* rs, http_request* hr_p)
+int parse_http_path_and_path_params(stream* rs, http_request_head* hr_p)
 {
 	dstring path_and_params;
 
@@ -291,7 +291,7 @@ int parse_http_path_and_path_params(stream* rs, http_request* hr_p)
 	return 0;
 }
 
-int serialize_http_path_and_path_params(stream* ws, const http_request* hr_p)
+int serialize_http_path_and_path_params(stream* ws, const http_request_head* hr_p)
 {
 	int error = 0;
 

@@ -1,11 +1,11 @@
 #include<http_response.h>
 
-void init_http_response(http_response* hr_p)
+void init_http_response(http_response_head* hr_p)
 {
 	init_dmap(&(hr_p->headers), 1);
 }
 
-void deinit_http_response(http_response* hr_p)
+void deinit_http_response(http_response_head* hr_p)
 {
 	deinit_dmap(&(hr_p->headers));
 }
@@ -13,7 +13,7 @@ void deinit_http_response(http_response* hr_p)
 #include<http_response_line.h>
 #include<http_headers.h>
 
-int parse_http_response_head(stream* rs, http_response* hr_p)
+int parse_http_response_head(stream* rs, http_response_head* hr_p)
 {
 	int error = 0;
 
@@ -28,7 +28,7 @@ int parse_http_response_head(stream* rs, http_response* hr_p)
 	return 0;
 }
 
-int serialize_http_response_head(stream* ws, const http_response* hr_p)
+int serialize_http_response_head(stream* ws, const http_response_head* hr_p)
 {
 	int error = 0;
 

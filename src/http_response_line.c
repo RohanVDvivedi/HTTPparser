@@ -8,7 +8,7 @@
 
 #include<ctype.h>
 
-int parse_http_response_line(stream* rs, http_response* hr_p)
+int parse_http_response_line(stream* rs, http_response_head* hr_p)
 {
 	if(parse_http_version(rs, &(hr_p->version)) == -1)
 		return -1;
@@ -45,7 +45,7 @@ int parse_http_response_line(stream* rs, http_response* hr_p)
 	return 0;
 }
 
-int serialize_http_response_line(stream* ws, const http_response* hr_p)
+int serialize_http_response_line(stream* ws, const http_response_head* hr_p)
 {
 	int error = 0;
 

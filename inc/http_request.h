@@ -5,8 +5,8 @@
 #include<http_version.h>
 #include<dmap.h>
 
-typedef struct http_request http_request;
-struct http_request
+typedef struct http_request_head http_request_head;
+struct http_request_head
 {
 	http_method method;
 
@@ -21,14 +21,14 @@ struct http_request
 	// body stream
 };
 
-void init_http_request(http_request* hr_p);
+void init_http_request(http_request_head* hr_p);
 
-void deinit_http_request(http_request* hr_p);
-
-// returns -1 for error and 0 for success
-int parse_http_request_head(stream* rs, http_request* hr_p);
+void deinit_http_request(http_request_head* hr_p);
 
 // returns -1 for error and 0 for success
-int serialize_http_request_head(stream* ws, const http_request* hr_p);
+int parse_http_request_head(stream* rs, http_request_head* hr_p);
+
+// returns -1 for error and 0 for success
+int serialize_http_request_head(stream* ws, const http_request_head* hr_p);
 
 #endif
