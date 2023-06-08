@@ -1,11 +1,11 @@
 #include<http_response.h>
 
-void init_http_response(http_response_head* hr_p)
+void init_http_response_head(http_response_head* hr_p)
 {
 	init_dmap(&(hr_p->headers), 1);
 }
 
-void deinit_http_response(http_response_head* hr_p)
+void deinit_http_response_head(http_response_head* hr_p)
 {
 	deinit_dmap(&(hr_p->headers));
 }

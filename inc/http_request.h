@@ -21,9 +21,9 @@ struct http_request_head
 	// body stream
 };
 
-void init_http_request(http_request_head* hr_p);
+void init_http_request_head(http_request_head* hr_p);
 
-void deinit_http_request(http_request_head* hr_p);
+void deinit_http_request_head(http_request_head* hr_p);
 
 // returns -1 for error and 0 for success
 int parse_http_request_head(stream* rs, http_request_head* hr_p);
