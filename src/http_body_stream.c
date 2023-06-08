@@ -121,7 +121,19 @@ static size_t write_body_to_stream_body(void* stream_context, const void* data, 
 	else
 	{
 		size_t bytes_to_write = min(WRITE_MAX_CHUNK_SIZE, data_size);
-		write_to_stream_formatted(stream_context_p->underlying_stream, &u_error, "%zx\r\n%.*s\r\n", bytes_to_write, ((int)bytes_to_write), data);
+		write_to_stream_formatted(stream_context_p->underlying_stream, &u_error, "%zx\r\n", bytes_to_write);
+		if(u_error)
+		{
+			(*error) = UNDERLYING_STREAM_ERROR;
+			return 0;
+		}
+		write_to_stream(stream_context_p->underlying_stream, data, bytes_to_write, &u_error);
+		if(u_error)
+		{
+			(*error) = UNDERLYING_STREAM_ERROR;
+			return 0;
+		}
+		write_to_stream(stream_context_p->underlying_stream, "\r\n", 2, &u_error);
 		if(u_error)
 		{
 			(*error) = UNDERLYING_STREAM_ERROR;
