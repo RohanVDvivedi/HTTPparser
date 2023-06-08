@@ -52,5 +52,4 @@ void print_http_response_head(const http_response_head* hr_p)
 	printf("headers = \n");
 	for_each_in_dmap(e, &(hr_p->headers))
 		printf("\t<" printf_dstring_format "> -> <" printf_dstring_format ">\n", printf_dstring_params(&(e->key)), printf_dstring_params(&(e->value)));
-	printf("\n");
 }

@@ -56,10 +56,8 @@ void print_http_request_head(const http_request_head* hr_p)
 	printf("path_params = \n");
 	for_each_in_dmap(e, &(hr_p->path_params))
 		printf("\t<" printf_dstring_format "> -> <" printf_dstring_format ">\n", printf_dstring_params(&(e->key)), printf_dstring_params(&(e->value)));
-	printf("\n");
 	printf("version = %d.%d\n", hr_p->version.major, hr_p->version.minor);
 	printf("headers = \n");
 	for_each_in_dmap(e, &(hr_p->headers))
 		printf("\t<" printf_dstring_format "> -> <" printf_dstring_format ">\n", printf_dstring_params(&(e->key)), printf_dstring_params(&(e->value)));
-	printf("\n");
 }
