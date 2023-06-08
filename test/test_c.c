@@ -17,7 +17,7 @@ int main()
 	initialize_stream_for_fd(&rs, 0);
 	initialize_stream_for_fd(&ws, 1);
 
-	http_request hrq;
+	http_request_head hrq;
 	init_http_request(&hrq);
 	hrq.method = GET;
 	concatenate_dstring(&(hrq.path), &get_dstring_pointing_to_literal_cstring("/"));
@@ -29,7 +29,7 @@ int main()
 	insert_literal_cstrings_in_dmap(&(hrq.headers), "accept", "*/*");
 	insert_literal_cstrings_in_dmap(&(hrq.headers), "accept-encoding", "gzip,deflate");
 
-	http_response hrp;
+	http_response_head hrp;
 	init_http_response(&hrp);
 
 	comm_address server_address;
