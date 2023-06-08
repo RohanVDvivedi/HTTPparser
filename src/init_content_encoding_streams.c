@@ -68,7 +68,7 @@ int initialize_readable_content_decoding_stream(stacked_stream* sstrm, dmap* hea
 		}
 		else if(encoding == &deflate_ce)
 		{
-			if(!initialize_stream_for_zlib_decompression2(strm, get_top_of_stacked_stream(sstrm, READ_STREAMS), 15))
+			if(!initialize_stream_for_zlib_decompression2(strm, get_top_of_stacked_stream(sstrm, READ_STREAMS), -15))
 			{
 				free(strm);
 				return_success = -3;
@@ -160,7 +160,7 @@ int initialize_writable_content_encoding_stream(stacked_stream* sstrm, dmap* hea
 		}
 		else if(encoding == &deflate_ce)
 		{
-			if(!initialize_stream_for_zlib_compression2(strm, get_top_of_stacked_stream(sstrm, WRITE_STREAMS), Z_DEFAULT_COMPRESSION, Z_DEFLATED, 15, 8, Z_DEFAULT_STRATEGY))
+			if(!initialize_stream_for_zlib_compression2(strm, get_top_of_stacked_stream(sstrm, WRITE_STREAMS), Z_DEFAULT_COMPRESSION, Z_DEFLATED, -15, 8, Z_DEFAULT_STRATEGY))
 			{
 				free(strm);
 				return_success = -3;
