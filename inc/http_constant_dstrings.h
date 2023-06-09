@@ -29,6 +29,8 @@ extern const dstring deflate_ce;			// "deflate"
 extern const dstring br_ce;					// "brotli"
 extern const dstring compress_ce;			// "compress"
 
+extern const dstring accept;				// "accept"
+
 extern const dstring LAST_CHUNK;			// "0\r\n\r\n"
 
 // below are arrays of their prefix suffix match lengths

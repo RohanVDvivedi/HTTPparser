@@ -44,6 +44,8 @@ const dstring br_ce = get_dstring_pointing_to_literal_cstring("br");
 
 const dstring compress_ce = get_dstring_pointing_to_literal_cstring("compress");
 
+const dstring accept = get_dstring_pointing_to_literal_cstring("accept");
+
 const dstring LAST_CHUNK = get_dstring_pointing_to_literal_cstring("0\r\n\r\n");
 
 const cy_uint ZERO_spml[64];
