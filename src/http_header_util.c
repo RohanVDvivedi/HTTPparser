@@ -28,7 +28,7 @@ int parse_acceptable_value(const dstring* singlular_header_value, acceptable_val
 	cy_uint rem_size = get_char_count_dstring(&remaining);
 
 	// make sure that there is "q=" before tha actual q value
-	if(rem_size < 2 || is_prefix_of_dstring(&remaining, &get_dstring_pointing_to_literal_cstring("q=")))
+	if(rem_size < 2 || !is_prefix_of_dstring(&remaining, &get_dstring_pointing_to_literal_cstring("q=")))
 		goto RETURN_ERROR;
 	discard_chars_from_front_dstring(&remaining, 2);
 
@@ -68,7 +68,7 @@ int parse_acceptable_value(const dstring* singlular_header_value, acceptable_val
 	deinit_dstring(&(av_p->value));
 	return -1;
 }
-#include<stdio.h>
+
 const dstring* find_acceptable_content_encoding_for_http_response_body(const http_request_head* hrq_p)
 {
 	const dstring* result_encoding = NULL;
@@ -84,11 +84,7 @@ const dstring* find_acceptable_content_encoding_for_http_response_body(const htt
 
 			acceptable_value av;
 			if(-1 == parse_acceptable_value(&value, &av))
-			{
-				printf("accept : parse failure\n");
 				break;
-			}
-			printf(printf_dstring_format " : %lf\n", printf_dstring_params(&(av.value)), av.q_value);
 
 			// a qvalue of 0 implies do not use it
 			if(av.q_value == 0)
