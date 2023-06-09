@@ -44,6 +44,7 @@ int serialize_http_response_head(stream* ws, const http_response_head* hr_p)
 }
 
 #include<http_constant_dstrings.h>
+#include<http_header_util.h>
 
 const dstring* find_acceptable_content_encoding_for_response(const http_request_head* hrq_p)
 {
@@ -53,17 +54,25 @@ const dstring* find_acceptable_content_encoding_for_response(const http_request_
 
 	for_each_equals_in_dmap(accept_encoding_entry, &(hrq_p->headers), &accept_encoding)
 	{
+		none_seen = 0;
 		for_each_split_by_delim(value, &(accept_encoding_entry->value), &CM)
 		{
 			trim_dstring(&value);
-			none_seen = 0;
+
+			acceptable_value av;
+			if(-1 == parse_acceptable_value(&value, &av))
+				break;
+
+			// a qvalue of 0 implies do not use it
+			if(av.q_value == 0)
+				continue;
 
 			// q values if present must also be compare but we are not doing it, yet
-			if(is_prefix_of_dstring(&value, &gzip_ce))
+			if(0 == compare_dstring(&(av.value), &gzip_ce))
 				result_encoding = &gzip_ce;
-			else if(is_prefix_of_dstring(&value, &deflate_ce))
+			else if(0 == compare_dstring(&(av.value), &deflate_ce))
 				result_encoding = &deflate_ce;
-			else if(is_prefix_of_dstring(&value, &identity_ce))
+			else if(0 == compare_dstring(&(av.value), &identity_ce))
 				result_encoding = &identity_ce;
 			else
 				continue;

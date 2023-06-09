@@ -1,5 +1,5 @@
-#ifndef HEADER_UTIL_H
-#define HEADER_UTIL_H
+#ifndef HTTP_HEADER_UTIL_H
+#define HTTP_HEADER_UTIL_H
 
 #include<dstring.h>
 
