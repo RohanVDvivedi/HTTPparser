@@ -29,4 +29,12 @@ int serialize_http_response_head(stream* ws, const http_response_head* hr_p);
 
 void print_http_response_head(const http_response_head* hr_p);
 
+// additional utility functions
+
+#include<http_request.h>
+
+void init_http_response_head_from_http_request_head(http_request_head* hrq_p, const http_response_head* hrp_p, int status);
+
+const dstring* find_acceptable_content_encoding_for_response(const http_request_head* hrq_p);
+
 #endif

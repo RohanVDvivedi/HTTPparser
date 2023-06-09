@@ -32,6 +32,8 @@ const dstring chunked = get_dstring_pointing_to_literal_cstring("chunked");
 
 const dstring content_encoding = get_dstring_pointing_to_literal_cstring("content-encoding");
 
+const dstring accept_encoding = get_dstring_pointing_to_literal_cstring("accept-encoding");
+
 const dstring identity_ce = get_dstring_pointing_to_literal_cstring("identity");
 
 const dstring gzip_ce = get_dstring_pointing_to_literal_cstring("gzip");

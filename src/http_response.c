@@ -43,6 +43,44 @@ int serialize_http_response_head(stream* ws, const http_response_head* hr_p)
 	return 0;
 }
 
+#include<http_constant_dstrings.h>
+
+const dstring* find_acceptable_content_encoding_for_response(const http_request_head* hrq_p)
+{
+	const dstring* result_encoding = NULL;
+
+	int none_seen = 1;
+
+	for_each_equals_in_dmap(accept_encoding_entry, &(hrq_p->headers), &accept_encoding)
+	{
+		for_each_split_by_delim(value, &(accept_encoding_entry->value), &CM)
+		{
+			none_seen = 0;
+			if(compare_dstring(&value, &gzip_ce) == 0)
+				result_encoding = &gzip_ce;
+			else if(compare_dstring(&value, &deflate_ce) == 0)
+				result_encoding = &deflate_ce;
+			else if(0 == compare_dstring(&value, &identity_ce))
+				result_encoding = &deflate_ce;
+			else
+				continue;
+
+			if(result_encoding != NULL)
+				break;
+		}
+	}
+
+	if(none_seen)
+		return &identity_ce;
+
+	return result_encoding;
+}
+
+void init_http_response_head_from_http_request_head(http_request_head* hrq_p, const http_response_head* hrp_p, int status)
+{
+
+}
+
 #include<stdio.h>
 
 void print_http_response_head(const http_response_head* hr_p)

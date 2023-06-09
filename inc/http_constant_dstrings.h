@@ -22,6 +22,7 @@ extern const dstring transfer_encoding;		// "transfer-encoding"
 extern const dstring chunked;				// "chunked"
 
 extern const dstring content_encoding;		// "content-encoding"
+extern const dstring accept_encoding;		// "accept-encoding"
 extern const dstring identity_ce;			// "identity"
 extern const dstring gzip_ce;				// "gzip"
 extern const dstring deflate_ce;			// "deflate"
