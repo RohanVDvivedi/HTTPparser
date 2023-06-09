@@ -43,53 +43,11 @@ int serialize_http_response_head(stream* ws, const http_response_head* hr_p)
 	return 0;
 }
 
-#include<http_constant_dstrings.h>
-#include<http_header_util.h>
-
-const dstring* find_acceptable_content_encoding_for_response(const http_request_head* hrq_p)
-{
-	const dstring* result_encoding = NULL;
-
-	int none_seen = 1;
-
-	for_each_equals_in_dmap(accept_encoding_entry, &(hrq_p->headers), &accept_encoding)
-	{
-		none_seen = 0;
-		for_each_split_by_delim(value, &(accept_encoding_entry->value), &CM)
-		{
-			trim_dstring(&value);
-
-			acceptable_value av;
-			if(-1 == parse_acceptable_value(&value, &av))
-				break;
-
-			// a qvalue of 0 implies do not use it
-			if(av.q_value == 0)
-				continue;
-
-			// q values if present must also be compare but we are not doing it, yet
-			if(0 == compare_dstring(&(av.value), &gzip_ce))
-				result_encoding = &gzip_ce;
-			else if(0 == compare_dstring(&(av.value), &deflate_ce))
-				result_encoding = &deflate_ce;
-			else if(0 == compare_dstring(&(av.value), &identity_ce))
-				result_encoding = &identity_ce;
-			else
-				continue;
-
-			if(result_encoding != NULL)
-				break;
-		}
-	}
-
-	if(none_seen)
-		return &identity_ce;
-
-	return result_encoding;
-}
-
 #include<stdio.h>
 #include<stdint.h>
+
+#include<http_header_util.h>
+#include<http_constant_dstrings.h>
 
 void init_http_response_head_from_http_request_head(http_response_head* hrp_p, const http_request_head* hrq_p, int status, size_t content_length_val)
 {
@@ -99,7 +57,7 @@ void init_http_response_head_from_http_request_head(http_response_head* hrp_p, c
 	if(content_length_val == TRANSFER_CHUNKED)
 	{
 		insert_in_dmap(&(hrp_p->headers), &transfer_encoding, &chunked);
-		const dstring* content_encoding_val = find_acceptable_content_encoding_for_response(hrq_p);
+		const dstring* content_encoding_val = find_acceptable_content_encoding_for_http_response_body(hrq_p);
 		if(content_encoding_val)
 			insert_in_dmap(&(hrp_p->headers), &content_encoding, content_encoding_val);
 	}

@@ -68,3 +68,45 @@ int parse_acceptable_value(const dstring* singlular_header_value, acceptable_val
 	deinit_dstring(&(av_p->value));
 	return -1;
 }
+
+const dstring* find_acceptable_content_encoding_for_response(const http_request_head* hrq_p)
+{
+	const dstring* result_encoding = NULL;
+
+	int none_seen = 1;
+
+	for_each_equals_in_dmap(accept_encoding_entry, &(hrq_p->headers), &accept_encoding)
+	{
+		none_seen = 0;
+		for_each_split_by_delim(value, &(accept_encoding_entry->value), &CM)
+		{
+			trim_dstring(&value);
+
+			acceptable_value av;
+			if(-1 == parse_acceptable_value(&value, &av))
+				break;
+
+			// a qvalue of 0 implies do not use it
+			if(av.q_value == 0)
+				continue;
+
+			// q values if present must also be compare but we are not doing it, yet
+			if(0 == compare_dstring(&(av.value), &gzip_ce))
+				result_encoding = &gzip_ce;
+			else if(0 == compare_dstring(&(av.value), &deflate_ce))
+				result_encoding = &deflate_ce;
+			else if(0 == compare_dstring(&(av.value), &identity_ce))
+				result_encoding = &identity_ce;
+			else
+				continue;
+
+			if(result_encoding != NULL)
+				break;
+		}
+	}
+
+	if(none_seen)
+		return &identity_ce;
+
+	return result_encoding;
+}
