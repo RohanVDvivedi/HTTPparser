@@ -2,6 +2,7 @@
 #define FILE_HANDLING_UTIL_H
 
 #include<dstring.h>
+#include<dmap.h>
 
 // it returns POINT_DSTR (pointing to content of file_path) hence you do not need to deinit the return value
 // in absence of '.' chanracter an empty dstring is returned
