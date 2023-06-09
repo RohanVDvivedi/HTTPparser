@@ -33,7 +33,9 @@ void print_http_response_head(const http_response_head* hr_p);
 
 #include<http_request.h>
 
-void init_http_response_head_from_http_request_head(http_request_head* hrq_p, const http_response_head* hrp_p, int status);
+#define TRANSFER_CHUNKED SIZE_MAX
+
+void init_http_response_head_from_http_request_head(http_response_head* hrp_p, const http_request_head* hrq_p, int status, size_t content_length_val);
 
 const dstring* find_acceptable_content_encoding_for_response(const http_request_head* hrq_p);
 

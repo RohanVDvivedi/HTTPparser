@@ -76,12 +76,26 @@ const dstring* find_acceptable_content_encoding_for_response(const http_request_
 	return result_encoding;
 }
 
-void init_http_response_head_from_http_request_head(http_request_head* hrq_p, const http_response_head* hrp_p, int status)
-{
-
-}
-
 #include<stdio.h>
+#include<stdint.h>
+
+void init_http_response_head_from_http_request_head(http_response_head* hrp_p, const http_request_head* hrq_p, int status, size_t content_length_val)
+{
+	init_http_response_head(hrp_p);
+	hrp_p->version = hrq_p->version;
+	hrp_p->status = status;
+	if(content_length_val == TRANSFER_CHUNKED)
+		insert_in_dmap(&(hrp_p->headers), &transfer_encoding, &chunked);
+	else
+	{
+		char content_length_in_decimal[128];
+		sprintf(content_length_in_decimal, "%zu", content_length_val);
+		insert_in_dmap(&(hrp_p->headers), &content_length, &get_dstring_pointing_to_cstring(content_length_in_decimal));
+	}
+	const dstring* content_encoding_val = find_acceptable_content_encoding_for_response(hrq_p);
+	if(content_encoding_val)
+		insert_in_dmap(&(hrp_p->headers), &content_encoding, content_encoding_val);
+}
 
 void print_http_response_head(const http_response_head* hr_p)
 {
