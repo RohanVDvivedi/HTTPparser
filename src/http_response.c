@@ -55,13 +55,16 @@ const dstring* find_acceptable_content_encoding_for_response(const http_request_
 	{
 		for_each_split_by_delim(value, &(accept_encoding_entry->value), &CM)
 		{
+			trim_dstring(&value);
 			none_seen = 0;
-			if(compare_dstring(&value, &gzip_ce) == 0)
+
+			// q values if present must also be compare but we are not doing it, yet
+			if(is_prefix_of_dstring(&value, &gzip_ce))
 				result_encoding = &gzip_ce;
-			else if(compare_dstring(&value, &deflate_ce) == 0)
+			else if(is_prefix_of_dstring(&value, &deflate_ce))
 				result_encoding = &deflate_ce;
-			else if(0 == compare_dstring(&value, &identity_ce))
-				result_encoding = &deflate_ce;
+			else if(is_prefix_of_dstring(&value, &identity_ce))
+				result_encoding = &identity_ce;
 			else
 				continue;
 
