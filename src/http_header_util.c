@@ -68,8 +68,8 @@ int parse_acceptable_value(const dstring* singlular_header_value, acceptable_val
 	deinit_dstring(&(av_p->value));
 	return -1;
 }
-
-const dstring* find_acceptable_content_encoding_for_response(const http_request_head* hrq_p)
+#include<stdio.h>
+const dstring* find_acceptable_content_encoding_for_http_response_body(const http_request_head* hrq_p)
 {
 	const dstring* result_encoding = NULL;
 
@@ -84,7 +84,11 @@ const dstring* find_acceptable_content_encoding_for_response(const http_request_
 
 			acceptable_value av;
 			if(-1 == parse_acceptable_value(&value, &av))
+			{
+				printf("accept : parse failure\n");
 				break;
+			}
+			printf(printf_dstring_format " : %lf\n", printf_dstring_params(&(av.value)), av.q_value);
 
 			// a qvalue of 0 implies do not use it
 			if(av.q_value == 0)
