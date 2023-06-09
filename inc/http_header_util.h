@@ -18,4 +18,7 @@ int parse_acceptable_value(const dstring* singlular_header_value, acceptable_val
 
 const dstring* find_acceptable_content_encoding_for_http_response_body(const http_request_head* hrq_p);
 
+// check if a given content type is acceptable
+int check_content_type_acceptable(const dstring* content_type, const http_request_head* hrq_p);
+
 #endif

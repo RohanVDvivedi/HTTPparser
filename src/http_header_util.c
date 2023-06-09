@@ -110,3 +110,29 @@ const dstring* find_acceptable_content_encoding_for_http_response_body(const htt
 
 	return result_encoding;
 }
+
+#include<file_handling_util.h>
+
+int check_content_type_acceptable(const dstring* content_type, const http_request_head* hrq_p)
+{
+	for_each_equals_in_dmap(accept_entry, &(hrq_p->headers), &accept_http_header_key)
+	{
+		for_each_split_by_delim(value, &(accept_entry->value), &CM)
+		{
+			trim_dstring(&value);
+
+			acceptable_value av;
+			if(-1 == parse_acceptable_value(&value, &av))
+				break;
+
+			// a qvalue of 0 implies do not use it
+			if(av.q_value == 0)
+				continue;
+
+			if(match_accept_to_content_type(content_type, &(av.value)))
+				return 1;
+		}
+	}
+
+	return 0;
+}

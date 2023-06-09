@@ -13,12 +13,6 @@ dstring get_extension_from_file_path(const dstring* file_path);
 // the return value of this function can be used to set the content-type header of the http response
 dstring get_mimetype_from_file_extension(const dstring* ext);
 
-// check if a given content type is acceptable
-#include<http_request.h>
-#include<http_response.h>
-#include<http_header_util.h>
-int check_content_type_acceptable(const dstring* content_type, const http_request_head* hrq_p);
-
 // checks for a match between content_type header of the response and accept header of the request
 // accept values may be
 //	<MIME_type>/<MIME_subtype>
