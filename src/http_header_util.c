@@ -115,7 +115,7 @@ const dstring* find_acceptable_content_encoding_for_http_response_body(const htt
 
 int check_content_type_acceptable(const dstring* content_type, const http_request_head* hrq_p)
 {
-	for_each_equals_in_dmap(accept_entry, &(hrq_p->headers), &accept_http_header_key)
+	for_each_equals_in_dmap(accept_entry, &(hrq_p->headers), &accept_HKEY)
 	{
 		for_each_split_by_delim(value, &(accept_entry->value), &CM)
 		{
