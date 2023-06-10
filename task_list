@@ -1,5 +1,9 @@
  * integrate this library with serc
 
+ * utility function to quickly initialize a stacked stream with body stream and a content encoded stream over a request or a response
+ * ConnMan task implement stacked_stream_util functions to flush_close_deinit_free close_deinit_free all reader or writer streams from stacked stream
+ * use the above 2 tasks in HTTPparser and Serc
+
  * parser for reading and writing form data
    * multipart/form-data 
     * write a stream reader and writer, for form data that reads until boundary
