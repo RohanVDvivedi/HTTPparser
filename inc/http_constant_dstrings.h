@@ -16,18 +16,18 @@ extern const dstring AMP;					// "&"
 extern const dstring QM;					// "?"
 extern const dstring http_version_prefix;	// "HTTP/"
 
-extern const dstring content_length;		// "content-length"
+extern const dstring content_length_HKEY;		// "content-length"
 
-extern const dstring transfer_encoding;		// "transfer-encoding"
-extern const dstring chunked;				// "chunked"
+extern const dstring transfer_encoding_HKEY;// "transfer-encoding"
+extern const dstring chunked_te_HVAL;		// "chunked"
 
-extern const dstring content_encoding;		// "content-encoding"
-extern const dstring accept_encoding;		// "accept-encoding"
-extern const dstring identity_ce;			// "identity"
-extern const dstring gzip_ce;				// "gzip"
-extern const dstring deflate_ce;			// "deflate"
-extern const dstring br_ce;					// "brotli"
-extern const dstring compress_ce;			// "compress"
+extern const dstring content_encoding_HKEY;	// "content-encoding"
+extern const dstring accept_encoding_HKEY;	// "accept-encoding"
+extern const dstring identity_ce_HVAL;		// "identity"
+extern const dstring gzip_ce_HVAL;			// "gzip"
+extern const dstring deflate_ce_HVAL;		// "deflate"
+extern const dstring br_ce_HVAL;			// "brotli"
+extern const dstring compress_ce_HVAL;		// "compress"
 
 extern const dstring accept_HKEY;			// "accept"
 

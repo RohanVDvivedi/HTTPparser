@@ -24,25 +24,25 @@ const dstring QM = get_dstring_pointing_to_literal_cstring("?");
 
 const dstring http_version_prefix = get_dstring_pointing_to_literal_cstring("HTTP/");
 
-const dstring content_length = get_dstring_pointing_to_literal_cstring("content-length");
+const dstring content_length_HKEY = get_dstring_pointing_to_literal_cstring("content-length");
 
-const dstring transfer_encoding = get_dstring_pointing_to_literal_cstring("transfer-encoding");
+const dstring transfer_encoding_HKEY = get_dstring_pointing_to_literal_cstring("transfer-encoding");
 
-const dstring chunked = get_dstring_pointing_to_literal_cstring("chunked");
+const dstring chunked_te_HVAL = get_dstring_pointing_to_literal_cstring("chunked");
 
-const dstring content_encoding = get_dstring_pointing_to_literal_cstring("content-encoding");
+const dstring content_encoding_HKEY = get_dstring_pointing_to_literal_cstring("content-encoding");
 
-const dstring accept_encoding = get_dstring_pointing_to_literal_cstring("accept-encoding");
+const dstring accept_encoding_HKEY = get_dstring_pointing_to_literal_cstring("accept-encoding");
 
-const dstring identity_ce = get_dstring_pointing_to_literal_cstring("identity");
+const dstring identity_ce_HVAL = get_dstring_pointing_to_literal_cstring("identity");
 
-const dstring gzip_ce = get_dstring_pointing_to_literal_cstring("gzip");
+const dstring gzip_ce_HVAL = get_dstring_pointing_to_literal_cstring("gzip");
 
-const dstring deflate_ce = get_dstring_pointing_to_literal_cstring("deflate");
+const dstring deflate_ce_HVAL = get_dstring_pointing_to_literal_cstring("deflate");
 
-const dstring br_ce = get_dstring_pointing_to_literal_cstring("br");
+const dstring br_ce_HVAL = get_dstring_pointing_to_literal_cstring("br");
 
-const dstring compress_ce = get_dstring_pointing_to_literal_cstring("compress");
+const dstring compress_ce_HVAL = get_dstring_pointing_to_literal_cstring("compress");
 
 const dstring accept_HKEY = get_dstring_pointing_to_literal_cstring("accept");
 
