@@ -186,7 +186,7 @@ static int init_body_stream_context(http_body_stream_context* stream_context_p, 
 	stream_context_p->body_bytes = 0;
 	stream_context_p->is_chunked = 0;
 
-	dmap_entry* content_length_entry = get_from_dmap(headers, &content_length);
+	dmap_entry* content_length_entry = get_from_dmap(headers, &content_length_HKEY);
 	if(content_length_entry != NULL)
 	{
 		dstring clv = get_dstring_pointing_to_dstring(&(content_length_entry->value));
@@ -196,9 +196,9 @@ static int init_body_stream_context(http_body_stream_context* stream_context_p, 
 		return 1;
 	}
 
-	for_each_equals_in_dmap(transfer_encoding_entry, headers, &transfer_encoding)
+	for_each_equals_in_dmap(transfer_encoding_entry, headers, &transfer_encoding_HKEY)
 	{
-		if(contains_dstring_KMP(&(transfer_encoding_entry->value), &chunked, chunked_spml) != INVALID_INDEX)
+		if(contains_dstring_KMP(&(transfer_encoding_entry->value), &chunked_te_HVAL, chunked_spml) != INVALID_INDEX)
 		{
 			stream_context_p->is_chunked = 1;
 			return 1;

@@ -56,17 +56,17 @@ void init_http_response_head_from_http_request_head(http_response_head* hrp_p, c
 	hrp_p->status = status;
 	if(content_length_val == TRANSFER_CHUNKED)
 	{
-		insert_in_dmap(&(hrp_p->headers), &transfer_encoding, &chunked);
+		insert_in_dmap(&(hrp_p->headers), &transfer_encoding_HKEY, &chunked_te_HVAL);
 		const dstring* content_encoding_val = find_acceptable_content_encoding_for_http_response_body(hrq_p);
 		if(content_encoding_val)
-			insert_in_dmap(&(hrp_p->headers), &content_encoding, content_encoding_val);
+			insert_in_dmap(&(hrp_p->headers), &content_encoding_HKEY, content_encoding_val);
 	}
 	else
 	{
 		char content_length_in_decimal[128];
 		sprintf(content_length_in_decimal, "%zu", content_length_val);
-		insert_in_dmap(&(hrp_p->headers), &content_length, &get_dstring_pointing_to_cstring(content_length_in_decimal));
-		insert_in_dmap(&(hrp_p->headers), &content_encoding, &identity_ce);
+		insert_in_dmap(&(hrp_p->headers), &content_length_HKEY, &get_dstring_pointing_to_cstring(content_length_in_decimal));
+		insert_in_dmap(&(hrp_p->headers), &content_encoding_HKEY, &identity_ce_HVAL);
 	}
 }
 

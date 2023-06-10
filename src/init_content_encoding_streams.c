@@ -17,14 +17,14 @@ int initialize_readable_content_decoding_stream(stacked_stream* sstrm, dmap* hea
 	stack encodings_stack;
 	initialize_stack(&encodings_stack, 16);
 
-	for_each_equals_in_dmap(content_encoding_entry, headers, &content_encoding)
+	for_each_equals_in_dmap(content_encoding_entry, headers, &content_encoding_HKEY)
 	{
 		for_each_split_by_delim(value, &(content_encoding_entry->value), &CM)
 		{
 			// compare it each with br, deflate, gzip, compress and identity and put them in encodings_stack
 			dstring const * encoding = NULL;
-			if(	(compare_dstring(&value, &gzip_ce) == 0 && (encoding = &gzip_ce)) || 
-				(compare_dstring(&value, &deflate_ce) == 0 && (encoding = &deflate_ce))	)
+			if(	(compare_dstring(&value, &gzip_ce_HVAL) == 0 && (encoding = &gzip_ce_HVAL)) || 
+				(compare_dstring(&value, &deflate_ce_HVAL) == 0 && (encoding = &deflate_ce_HVAL))	)
 			{
 				if(is_full_stack(&encodings_stack) && !expand_stack(&encodings_stack))
 				{
@@ -33,7 +33,7 @@ int initialize_readable_content_decoding_stream(stacked_stream* sstrm, dmap* hea
 				}
 				push_to_stack(&encodings_stack, encoding);
 			}
-			else if(0 == compare_dstring(&value, &identity_ce))
+			else if(0 == compare_dstring(&value, &identity_ce_HVAL))
 				continue;
 			else
 			{
@@ -57,7 +57,7 @@ int initialize_readable_content_decoding_stream(stacked_stream* sstrm, dmap* hea
 		stream* strm = malloc(sizeof(stream));
 		dstring const * const encoding = get_top_of_stack(&encodings_stack);
 		pop_from_stack(&encodings_stack);
-		if(encoding == &gzip_ce)
+		if(encoding == &gzip_ce_HVAL)
 		{
 			if(!initialize_stream_for_zlib_decompression2(strm, get_top_of_stacked_stream(sstrm, READ_STREAMS), 31))
 			{
@@ -66,7 +66,7 @@ int initialize_readable_content_decoding_stream(stacked_stream* sstrm, dmap* hea
 				break;
 			}
 		}
-		else if(encoding == &deflate_ce)
+		else if(encoding == &deflate_ce_HVAL)
 		{
 			if(!initialize_stream_for_zlib_decompression2(strm, get_top_of_stacked_stream(sstrm, READ_STREAMS), -15))
 			{
@@ -109,14 +109,14 @@ int initialize_writable_content_encoding_stream(stacked_stream* sstrm, dmap* hea
 	stack encodings_stack;
 	initialize_stack(&encodings_stack, 16);
 
-	for_each_equals_in_dmap(content_encoding_entry, headers, &content_encoding)
+	for_each_equals_in_dmap(content_encoding_entry, headers, &content_encoding_HKEY)
 	{
 		for_each_split_by_delim(value, &(content_encoding_entry->value), &CM)
 		{
 			// compare it each with br, deflate, gzip, compress and identity and put them in encodings_stack
 			dstring const * encoding = NULL;
-			if(	(compare_dstring(&value, &gzip_ce) == 0 && (encoding = &gzip_ce)) || 
-				(compare_dstring(&value, &deflate_ce) == 0 && (encoding = &deflate_ce))	)
+			if(	(compare_dstring(&value, &gzip_ce_HVAL) == 0 && (encoding = &gzip_ce_HVAL)) || 
+				(compare_dstring(&value, &deflate_ce_HVAL) == 0 && (encoding = &deflate_ce_HVAL))	)
 			{
 				if(is_full_stack(&encodings_stack) && !expand_stack(&encodings_stack))
 				{
@@ -125,7 +125,7 @@ int initialize_writable_content_encoding_stream(stacked_stream* sstrm, dmap* hea
 				}
 				push_to_stack(&encodings_stack, encoding);
 			}
-			else if(0 == compare_dstring(&value, &identity_ce))
+			else if(0 == compare_dstring(&value, &identity_ce_HVAL))
 				continue;
 			else
 			{
@@ -149,7 +149,7 @@ int initialize_writable_content_encoding_stream(stacked_stream* sstrm, dmap* hea
 		stream* strm = malloc(sizeof(stream));
 		dstring const * const encoding = get_top_of_stack(&encodings_stack);
 		pop_from_stack(&encodings_stack);
-		if(encoding == &gzip_ce)
+		if(encoding == &gzip_ce_HVAL)
 		{
 			if(!initialize_stream_for_zlib_compression2(strm, get_top_of_stacked_stream(sstrm, WRITE_STREAMS), Z_DEFAULT_COMPRESSION, Z_DEFLATED, 31, 8, Z_DEFAULT_STRATEGY))
 			{
@@ -158,7 +158,7 @@ int initialize_writable_content_encoding_stream(stacked_stream* sstrm, dmap* hea
 				break;
 			}
 		}
-		else if(encoding == &deflate_ce)
+		else if(encoding == &deflate_ce_HVAL)
 		{
 			if(!initialize_stream_for_zlib_compression2(strm, get_top_of_stacked_stream(sstrm, WRITE_STREAMS), Z_DEFAULT_COMPRESSION, Z_DEFLATED, -15, 8, Z_DEFAULT_STRATEGY))
 			{

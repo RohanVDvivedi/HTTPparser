@@ -75,7 +75,7 @@ const dstring* find_acceptable_content_encoding_for_http_response_body(const htt
 
 	int none_seen = 1;
 
-	for_each_equals_in_dmap(accept_encoding_entry, &(hrq_p->headers), &accept_encoding)
+	for_each_equals_in_dmap(accept_encoding_entry, &(hrq_p->headers), &accept_encoding_HKEY)
 	{
 		none_seen = 0;
 		for_each_split_by_delim(value, &(accept_encoding_entry->value), &CM)
@@ -91,12 +91,12 @@ const dstring* find_acceptable_content_encoding_for_http_response_body(const htt
 				continue;
 
 			// q values if present must also be compare but we are not doing it, yet
-			if(0 == compare_dstring(&(av.value), &gzip_ce))
-				result_encoding = &gzip_ce;
-			else if(0 == compare_dstring(&(av.value), &deflate_ce))
-				result_encoding = &deflate_ce;
-			else if(0 == compare_dstring(&(av.value), &identity_ce))
-				result_encoding = &identity_ce;
+			if(0 == compare_dstring(&(av.value), &gzip_ce_HVAL))
+				result_encoding = &gzip_ce_HVAL;
+			else if(0 == compare_dstring(&(av.value), &deflate_ce_HVAL))
+				result_encoding = &deflate_ce_HVAL;
+			else if(0 == compare_dstring(&(av.value), &identity_ce_HVAL))
+				result_encoding = &identity_ce_HVAL;
 			else
 				continue;
 
@@ -106,7 +106,7 @@ const dstring* find_acceptable_content_encoding_for_http_response_body(const htt
 	}
 
 	if(none_seen)
-		return &identity_ce;
+		return &identity_ce_HVAL;
 
 	return result_encoding;
 }
