@@ -169,7 +169,7 @@ int intialize_http_body_and_encoding_streams_for_writing(stacked_stream* sstrm, 
 	return result < 0 ? result : streams_pushed;
 }
 
-int intialize_http_body_and_encoding_streams_for_reading(stacked_stream* sstrm, stream* raw_strm, const dmap* headers)
+int intialize_http_body_and_decoding_streams_for_reading(stacked_stream* sstrm, stream* raw_strm, const dmap* headers)
 {
 	int result = 0;
 	int streams_pushed = 0;

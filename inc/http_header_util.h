@@ -26,6 +26,6 @@ int check_content_type_acceptable(const dstring* content_type, const http_reques
 // return < 0 (with no streams pushed) for an error
 // else a value > 0 for the number of streams initialized and pushed in the stacked_stream
 int intialize_http_body_and_encoding_streams_for_writing(stacked_stream* sstrm, stream* raw_strm, const dmap* headers);
-int intialize_http_body_and_encoding_streams_for_reading(stacked_stream* sstrm, stream* raw_strm, const dmap* headers);
+int intialize_http_body_and_decoding_streams_for_reading(stacked_stream* sstrm, stream* raw_strm, const dmap* headers);
 
 #endif
