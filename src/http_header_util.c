@@ -136,3 +136,13 @@ int check_content_type_acceptable(const dstring* content_type, const http_reques
 
 	return 0;
 }
+
+int intialize_http_body_and_encoding_streams_for_writing(stacked_stream* sstrm, stream* raw_strm, const dmap* headers)
+{
+
+}
+
+int intialize_http_body_and_encoding_streams_for_writing(stacked_stream* sstrm, stream* raw_strm, const dmap* headers)
+{
+
+}
