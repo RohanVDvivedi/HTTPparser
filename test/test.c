@@ -3,8 +3,7 @@
 
 #include<http_request.h>
 #include<http_response.h>
-#include<http_body_stream.h>
-#include<init_content_encoding_streams.h>
+#include<http_header_util.h>
 
 #include<comm_address.h>
 #include<client.h>
@@ -72,17 +71,11 @@ int main()
 	stacked_stream sstrm;
 	initialize_stacked_stream(&sstrm);
 
-	stream* body_stream = malloc(sizeof(stream));
-	if(!initialize_readable_body_stream(body_stream, &raw_stream, &(hrp.headers)))
+	if(0 > intialize_http_body_and_decoding_streams_for_reading(&sstrm, &raw_stream, &(hrp.headers)))
 	{
-		printf("body stream could not be initialized\n");
-		free(body_stream);
+		printf("error initializing one of body or decoding streams\n");
 		goto EXIT_3;
 	}
-	push_to_stacked_stream(&sstrm, body_stream, READ_STREAMS);
-
-	if(initialize_readable_content_decoding_stream(&sstrm, &(hrp.headers)) < 0)
-		goto EXIT_4;
 
 	#define read_buffer_size 64
 	char read_buffer[read_buffer_size];
