@@ -157,18 +157,19 @@ int intialize_http_body_and_encoding_streams_for_writing(stacked_stream* sstrm, 
 	push_to_stacked_stream(sstrm, body_stream, WRITE_STREAMS);
 	streams_pushed++;
 
-	result = initialize_writable_content_encoding_stream(sstrm, headers);
-	if(result < 0)
+	if((result = initialize_writable_content_encoding_stream(sstrm, headers)) < 0)
 		goto EXIT_1;
 	streams_pushed += result;
+
+	return streams_pushed;
 
 	EXIT_1:;
 	close_deinitialize_free_all_from_stacked_stream(sstrm, WRITE_STREAMS);
 
 	EXIT_0:;
-	return result < 0 ? result : streams_pushed;
+	return result;
 }
-
+#include<stdio.h>
 int intialize_http_body_and_decoding_streams_for_reading(stacked_stream* sstrm, stream* raw_strm, const dmap* headers)
 {
 	int result = 0;
@@ -184,14 +185,15 @@ int intialize_http_body_and_decoding_streams_for_reading(stacked_stream* sstrm, 
 	push_to_stacked_stream(sstrm, body_stream, READ_STREAMS);
 	streams_pushed++;
 
-	result = initialize_readable_content_decoding_stream(sstrm, headers);
-	if(result < 0)
+	if((result = initialize_readable_content_decoding_stream(sstrm, headers)) < 0)
 		goto EXIT_1;
 	streams_pushed += result;
+
+	return streams_pushed;
 
 	EXIT_1:;
 	close_deinitialize_free_all_from_stacked_stream(sstrm, READ_STREAMS);
 
 	EXIT_0:;
-	return result < 0 ? result : streams_pushed;
+	return result;
 }
