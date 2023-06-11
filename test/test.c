@@ -116,14 +116,7 @@ int main()
 	}
 
 	EXIT_4:;
-	while(!is_empty_stacked_stream(&sstrm, READ_STREAMS))
-	{
-		stream* strm = get_top_of_stacked_stream(&sstrm, READ_STREAMS);
-		pop_from_stacked_stream(&sstrm, READ_STREAMS);
-		close_stream(strm, &error);
-		deinitialize_stream(strm);
-		free(strm);
-	}
+	close_deinitialize_free_all_from_stacked_stream(&sstrm, READ_STREAMS);
 
 	EXIT_3:;
 	deinitialize_stacked_stream(&sstrm);
