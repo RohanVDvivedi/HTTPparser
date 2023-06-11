@@ -1,7 +1,5 @@
  * integrate this library with serc
 
- * utility function to quickly initialize a stacked stream with body stream and a content encoded stream over a request or a response, use it in Serc
-
  * parser for reading and writing form data
    * multipart/form-data 
     * write a stream reader and writer, for form data that reads until boundary
