@@ -1,5 +1,3 @@
- * integrate this library with serc
-
  * parser for reading and writing form data
    * multipart/form-data 
     * write a stream reader and writer, for form data that reads until boundary
