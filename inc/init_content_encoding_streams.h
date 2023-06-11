@@ -10,8 +10,8 @@
 // -2 implies memory allocation error in stacks OR stacked_stream
 // -3 implies failed to initialize a stream
 
-int initialize_readable_content_decoding_stream(stacked_stream* sstrm, dmap* headers);
+int initialize_readable_content_decoding_stream(stacked_stream* sstrm, const dmap* headers);
 
-int initialize_writable_content_encoding_stream(stacked_stream* sstrm, dmap* headers);
+int initialize_writable_content_encoding_stream(stacked_stream* sstrm, const dmap* headers);
 
 #endif

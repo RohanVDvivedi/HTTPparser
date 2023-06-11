@@ -7,7 +7,7 @@
 #include<zlib_readable_decompression_stream.h>
 #include<zlib_writable_compression_stream.h>
 
-int initialize_readable_content_decoding_stream(stacked_stream* sstrm, dmap* headers)
+int initialize_readable_content_decoding_stream(stacked_stream* sstrm, const dmap* headers)
 {
 	if(is_empty_stacked_stream(sstrm, READ_STREAMS))
 		return -1;
@@ -99,7 +99,7 @@ int initialize_readable_content_decoding_stream(stacked_stream* sstrm, dmap* hea
 	return return_success;
 }
 
-int initialize_writable_content_encoding_stream(stacked_stream* sstrm, dmap* headers)
+int initialize_writable_content_encoding_stream(stacked_stream* sstrm, const dmap* headers)
 {
 	if(is_empty_stacked_stream(sstrm, WRITE_STREAMS))
 		return -1;
