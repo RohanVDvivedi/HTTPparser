@@ -144,7 +144,29 @@ int check_content_type_acceptable(const dstring* content_type, const http_reques
 
 int intialize_http_body_and_encoding_streams_for_writing(stacked_stream* sstrm, stream* raw_strm, const dmap* headers)
 {
+	int result = 0;
+	int streams_pushed = 0;
 
+	stream* body_stream = malloc(sizeof(stream));
+	if(!initialize_writable_body_stream(body_stream, raw_strm, headers))
+	{
+		free(body_stream);
+		result = -10;
+		goto EXIT_0;
+	}
+	push_to_stacked_stream(sstrm, body_stream, WRITE_STREAMS);
+	streams_pushed++;
+
+	result = initialize_writable_content_encoding_stream(sstrm, headers);
+	if(result < 0)
+		goto EXIT_1;
+	streams_pushed += result;
+
+	EXIT_1:;
+	close_deinitialize_free_all_from_stacked_stream(sstrm, WRITE_STREAMS);
+
+	EXIT_0:;
+	return result < 0 ? result : streams_pushed;
 }
 
 int intialize_http_body_and_encoding_streams_for_reading(stacked_stream* sstrm, stream* raw_strm, const dmap* headers)
@@ -171,5 +193,5 @@ int intialize_http_body_and_encoding_streams_for_reading(stacked_stream* sstrm, 
 	close_deinitialize_free_all_from_stacked_stream(sstrm, READ_STREAMS);
 
 	EXIT_0:;
-	return result;
+	return result < 0 ? result : streams_pushed;
 }
