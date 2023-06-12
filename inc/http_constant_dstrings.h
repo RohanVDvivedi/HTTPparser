@@ -31,6 +31,8 @@ extern const dstring compress_ce_HVAL;		// "compress"
 
 extern const dstring accept_HKEY;			// "accept"
 
+extern const dstring cookie_HKEY;			// "cookie"
+
 extern const dstring LAST_CHUNK;			// "0\r\n\r\n"
 
 // below are arrays of their prefix suffix match lengths

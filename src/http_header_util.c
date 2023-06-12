@@ -137,6 +137,11 @@ int check_content_type_acceptable(const dstring* content_type, const http_reques
 	return 0;
 }
 
+int parse_cookies_from_cookie_header(dmap* cookies, const dmap* headers)
+{
+	// TODO
+}
+
 #include<http_body_stream.h>
 #include<init_content_encoding_streams.h>
 

@@ -46,6 +46,8 @@ const dstring compress_ce_HVAL = get_dstring_pointing_to_literal_cstring("compre
 
 const dstring accept_HKEY = get_dstring_pointing_to_literal_cstring("accept");
 
+const dstring cookie_HKEY = get_dstring_pointing_to_literal_cstring("cookie");
+
 const dstring LAST_CHUNK = get_dstring_pointing_to_literal_cstring("0\r\n\r\n");
 
 const cy_uint ZERO_spml[64];
