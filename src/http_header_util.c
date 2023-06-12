@@ -139,7 +139,24 @@ int check_content_type_acceptable(const dstring* content_type, const http_reques
 
 int parse_cookies_from_cookie_header(dmap* cookies, const dmap* headers)
 {
-	// TODO
+	for_each_equals_in_dmap(cookie_entry, headers, &cookie_HKEY)
+	{
+		for_each_split_by_delim(cookie_value, &(cookie_entry->value), &SCL)
+		{
+			if(INVALID_INDEX == contains_dstring_RK(&cookie_value, &EQ))
+				return -1;
+
+			dstring cookie_key;
+			dstring cookie_value = split_dstring(&cookie_value, &EQ, &cookie_key);
+
+			trim_dstring(&cookie_key);
+			trim_dstring(&cookie_value);
+
+			insert_in_dmap(cookies, &cookie_key, &cookie_value);
+		}
+	}
+
+	return 0;
 }
 
 #include<http_body_stream.h>
