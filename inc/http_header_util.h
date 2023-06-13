@@ -24,6 +24,8 @@ int check_content_type_acceptable(const dstring* content_type, const http_reques
 // returns -1 on an error and 0 for success
 int parse_cookies_from_cookie_header(dmap* cookies, const dmap* headers);
 
+int has_url_encoded_params_in_body(const dmap* headers);
+
 #include<stacked_stream.h>
 
 // return < 0 (with no streams pushed) for an error

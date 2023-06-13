@@ -16,7 +16,7 @@ extern const dstring AMP;					// "&"
 extern const dstring QM;					// "?"
 extern const dstring http_version_prefix;	// "HTTP/"
 
-extern const dstring content_length_HKEY;		// "content-length"
+extern const dstring content_length_HKEY;	// "content-length"
 
 extern const dstring transfer_encoding_HKEY;// "transfer-encoding"
 extern const dstring chunked_te_HVAL;		// "chunked"
@@ -32,6 +32,9 @@ extern const dstring compress_ce_HVAL;		// "compress"
 extern const dstring accept_HKEY;			// "accept"
 
 extern const dstring cookie_HKEY;			// "cookie"
+
+extern const dstring content_type_HKEY;		// "content-type"
+extern const dstring form_url_encoded_ct_HVAL;// "application/x-www-form-urlencoded"
 
 extern const dstring LAST_CHUNK;			// "0\r\n\r\n"
 
