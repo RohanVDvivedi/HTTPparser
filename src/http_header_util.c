@@ -191,7 +191,7 @@ int intialize_http_body_and_encoding_streams_for_writing(stacked_stream* sstrm, 
 	EXIT_0:;
 	return result;
 }
-#include<stdio.h>
+
 int intialize_http_body_and_decoding_streams_for_reading(stacked_stream* sstrm, stream* raw_strm, const dmap* headers)
 {
 	int result = 0;

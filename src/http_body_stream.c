@@ -191,7 +191,7 @@ static int init_body_stream_context(http_body_stream_context* stream_context_p, 
 	{
 		dstring clv = get_dstring_pointing_to_dstring(&(content_length_entry->value));
 		trim_dstring(&clv);
-		if(is_empty_dstring(&clv) || get_unsigned_long_long_int_from_dstring(&clv, DECIMAL, &(stream_context_p->body_bytes)))
+		if(is_empty_dstring(&clv) || !get_unsigned_long_long_int_from_dstring(&clv, DECIMAL, &(stream_context_p->body_bytes)))
 			return 0;
 		return 1;
 	}
