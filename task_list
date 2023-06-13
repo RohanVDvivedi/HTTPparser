@@ -1,7 +1,4 @@
- * parser for reading and writing form data
-   * multipart/form-data 
-    * write a stream reader and writer, for form data that reads until boundary
-    * additionally also write logic to read and write form data using a dstring
+ * build a struct containing headers and a flag that suggests whether it is a dstring or a stream and union of a dstring or a stream to store multipart form data
 
  * implement stream to read/write websocket data
   * you can test this with https://www.piesocket.com/websocket-tester client, after integration with Serc on serc-template-application
