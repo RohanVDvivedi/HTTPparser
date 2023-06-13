@@ -162,7 +162,7 @@ int parse_cookies_from_cookie_header(dmap* cookies, const dmap* headers)
 int has_url_encoded_params_in_body(const dmap* headers)
 {
 	for_each_equals_in_dmap(content_type_entry, headers, &content_type_HKEY)
-		if(compare_dstring(&(content_type_entry->value), &form_url_encoded_ct_HVAL))
+		if(0 == compare_dstring(&(content_type_entry->value), &form_url_encoded_ct_HVAL))
 			return 1;
 	return 0;
 }
