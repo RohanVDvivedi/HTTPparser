@@ -26,7 +26,7 @@ int parse_cookies_from_cookie_header(dmap* cookies, const dmap* headers);
 
 int has_url_encoded_params_in_body(const dmap* headers);
 
-int has_multi_part_form_data_in_body(const dmap* headers, int* is_boundary_present, dstring* boundary);
+int has_multipart_form_data_in_body(const dmap* headers, int* is_boundary_present, dstring* boundary);
 
 #include<stacked_stream.h>
 

@@ -169,7 +169,7 @@ int has_url_encoded_params_in_body(const dmap* headers)
 	return 0;
 }
 
-int has_multi_part_form_data_in_body(const dmap* headers, int* is_boundary_present, dstring* boundary)
+int has_multipart_form_data_in_body(const dmap* headers, int* is_boundary_present, dstring* boundary)
 {
 	int is_multi_part_form_data = 0;
 	(*is_boundary_present) = 0;
@@ -181,7 +181,7 @@ int has_multi_part_form_data_in_body(const dmap* headers, int* is_boundary_prese
 			if(is_first)
 			{
 				is_first = 0;
-				if(0 == compare_dstring(&content_type_value, &multi_part_form_data_ct_HVAL))
+				if(0 == compare_dstring(&content_type_value, &multipart_form_data_ct_HVAL))
 					is_multi_part_form_data = 1;
 				else
 					break;

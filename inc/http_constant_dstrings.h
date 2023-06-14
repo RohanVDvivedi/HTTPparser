@@ -35,7 +35,7 @@ extern const dstring cookie_HKEY;			// "cookie"
 
 extern const dstring content_type_HKEY;		// "content-type"
 extern const dstring form_url_encoded_ct_HVAL;// "application/x-www-form-urlencoded"
-extern const dstring multi_part_form_data_ct_HVAL;// "multipart/form-data"
+extern const dstring multipart_form_data_ct_HVAL;// "multipart/form-data"
 
 extern const dstring LAST_CHUNK;			// "0\r\n\r\n"
 
