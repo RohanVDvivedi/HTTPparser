@@ -1,7 +1,2 @@
- * build a struct containing headers and a flag that suggests whether it is a dstring or a stream and union of a dstring or a stream to store multipart form data
- * added logic to initialize and deinitialize multipart form data to parse and serialize multipart form data
-
- * implement stream to read/write websocket data
-  * you can test this with https://www.piesocket.com/websocket-tester client, after integration with Serc on serc-template-application
-
+ * implement stream to read/write websocket data -> you can test this with https://www.piesocket.com/websocket-tester client, after integration with Serc on serc-template-application
  * implement stream to read write server sent event data
