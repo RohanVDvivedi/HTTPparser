@@ -9,7 +9,7 @@ struct multipart_form_data_segment
 {
 	dmap headers;
 
-	stream body;
+	stream body_stream;
 };
 
 // return -1 if boundary is not read
