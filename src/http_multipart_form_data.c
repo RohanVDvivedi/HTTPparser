@@ -81,7 +81,8 @@ multipart_form_data_segment* parse_next_multipart_form_data(stream* strm, const 
 	}
 
 	dstring __boundary;
-	init_empty_dstring(&__boundary, get_char_count_dstring(boundary) + 2);
+	init_empty_dstring(&__boundary, get_char_count_dstring(boundary) + 4);
+	concatenate_dstring(&__boundary, &CRLF);
 	concatenate_dstring(&__boundary, &MULTIPART_FORM_DATA_end);
 	concatenate_dstring(&__boundary, boundary);
 
