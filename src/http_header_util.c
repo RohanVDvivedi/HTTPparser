@@ -164,7 +164,50 @@ int has_url_encoded_params_in_body(const dmap* headers)
 	for_each_equals_in_dmap(content_type_entry, headers, &content_type_HKEY)
 		if(0 == compare_dstring(&(content_type_entry->value), &form_url_encoded_ct_HVAL))
 			return 1;
+		else
+			return 0;
 	return 0;
+}
+
+int has_multi_part_form_data_in_body(const dmap* headers, int* is_boundary_present, dstring* boundary)
+{
+	int is_multi_part_form_data = 0;
+	(*is_boundary_present) = 0;
+	for_each_equals_in_dmap(content_type_entry, headers, &content_type_HKEY)
+	{
+		int is_first = 1;
+		for_each_split_by_delim(content_type_value, &(content_type_entry->value), &SCL)
+		{
+			if(is_first)
+			{
+				is_first = 0;
+				if(0 == compare_dstring(&content_type_value, &multi_part_form_data_ct_HVAL))
+					is_multi_part_form_data = 1;
+				else
+					break;
+			}
+			else
+			{
+				dstring key;
+				dstring val = split_dstring(&content_type_value, &EQ, &key);
+
+				if(get_byte_array_dstring(&val) == NULL)
+					continue;
+
+				trim_dstring(&key);
+				trim_dstring(&val);
+
+				if(0 == compare_dstring(&key, &get_dstring_pointing_to_literal_cstring("boundary")))
+				{
+					concatenate_dstring(boundary, &val);
+					(*is_boundary_present) = 1;
+					break;
+				}
+			}
+		}
+		break;
+	}
+	return is_multi_part_form_data;
 }
 
 #include<http_body_stream.h>
