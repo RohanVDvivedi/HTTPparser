@@ -37,7 +37,7 @@ static multipart_form_data_segment* new_multipart_form_data_segment()
 	init_dmap(&(seg->headers), 1);
 	return seg;
 }
-#include<stdio.h>
+
 multipart_form_data_segment* parse_next_multipart_form_data(stream* strm, const dstring* boundary, int* error)
 {
 	(*error) = 0;
