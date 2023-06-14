@@ -14,9 +14,6 @@ const dstring MULTIPART_FORM_DATA_end = get_dstring_pointing_to_literal_cstring(
 // return -1 if boundary is not read
 int read_prefix_multipart_form_data(stream* strm, const dstring* boundary)
 {
-	if(is_empty_dstring(boundary))
-		return -1;
-
 	dstring __boundary;
 	init_empty_dstring(&__boundary, get_char_count_dstring(boundary) + 2);
 	concatenate_dstring(&__boundary, &__MULTIPART_FORM_DATA);
