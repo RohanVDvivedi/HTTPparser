@@ -89,6 +89,48 @@ multipart_form_data_segment* parse_next_multipart_form_data(stream* strm, const 
 	return seg;
 }
 
+int get_name_n_filename_from_content_disposition_header(const multipart_form_data_segment* seg, dstring* name, dstring* filename)
+{
+	int name_set = 0;
+	int filename_set = 0;
+	for_each_equals_in_dmap(content_disposition_entry, &(seg->headers), &content_disposition_HKEY)
+	{
+		for_each_split_by_delim(content_disposition_value, &(content_disposition_entry->value), &SCL)
+		{
+			trim_dstring(&content_disposition_value);
+
+			if(0 == compare_dstring(&content_disposition_value, &form_data_cd_HVAL))
+				continue;
+
+			dstring cd_key;
+			dstring cd_value = split_dstring(&content_disposition_value, &EQ, &cd_key);
+
+			if(get_byte_array_dstring(&cd_value) == NULL)
+				continue;
+
+			trim_dstring(&cd_key);
+			trim_dstring(&cd_value);
+
+			if(!name_set && 0 == compare_dstring(&cd_key, &get_dstring_pointing_to_literal_cstring("name")))
+			{
+				name_set = 1;
+				concatenate_dstring(name, &cd_value);
+			}
+			else if(!filename_set && 0 == compare_dstring(&cd_key, &get_dstring_pointing_to_literal_cstring("filename")))
+			{
+				filename_set = 1;
+				concatenate_dstring(filename, &cd_value);
+			}
+
+			if(name_set && filename_set)
+				break;
+		}
+		break;
+	}
+
+	return (filename_set << 1) | name_set;
+}
+
 void destroy_multipart_form_data_segment(multipart_form_data_segment* seg)
 {
 	int error = 0;

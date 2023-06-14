@@ -54,6 +54,10 @@ const dstring form_url_encoded_ct_HVAL = get_dstring_pointing_to_literal_cstring
 
 const dstring multipart_form_data_ct_HVAL = get_dstring_pointing_to_literal_cstring("multipart/form-data");
 
+const dstring content_disposition_HKEY = get_dstring_pointing_to_literal_cstring("content-disposition");
+
+const dstring form_data_cd_HVAL = get_dstring_pointing_to_literal_cstring("form-data");
+
 const dstring LAST_CHUNK = get_dstring_pointing_to_literal_cstring("0\r\n\r\n");
 
 const cy_uint ZERO_spml[64];

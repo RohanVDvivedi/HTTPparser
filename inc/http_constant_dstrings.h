@@ -37,6 +37,9 @@ extern const dstring content_type_HKEY;		// "content-type"
 extern const dstring form_url_encoded_ct_HVAL;// "application/x-www-form-urlencoded"
 extern const dstring multipart_form_data_ct_HVAL;// "multipart/form-data"
 
+extern const dstring content_disposition_HKEY;// "content-disposition"
+extern const dstring form_data_cd_HVAL;		// "form-data"
+
 extern const dstring LAST_CHUNK;			// "0\r\n\r\n"
 
 // below are arrays of their prefix suffix match lengths
