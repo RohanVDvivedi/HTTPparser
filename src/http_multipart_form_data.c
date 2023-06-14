@@ -3,9 +3,12 @@
 #include<stream_util.h>
 #include<read_until_dstring_stream.h>
 
+#include<http_headers.h>
+#include<http_constant_dstrings.h>
+
 #include<stdlib.h>
 
-#include<http_headers.h>
+const dstring MULTIPART_FORM_DATA_end = get_dstring_pointing_to_literal_cstring("--");
 
 // return -1 if boundary is not read
 int read_prefix_multipart_form_data(stream* strm, const dstring* boundary)
@@ -13,11 +16,20 @@ int read_prefix_multipart_form_data(stream* strm, const dstring* boundary)
 	if(is_empty_dstring(boundary))
 		return -1;
 
-	int error = 0;
-	size_t bytes_read = skip_dstring_from_stream(strm, boundary, &error);
-	if(error || bytes_read == 0)
-		return -1;
+	dstring __boundary;
+	init_empty_dstring(&__boundary, get_char_count_dstring(boundary) + 2);
+	concatenate_dstring(&__boundary, &MULTIPART_FORM_DATA_end);
+	concatenate_dstring(&__boundary, boundary);
 
+	int error = 0;
+	size_t bytes_read = skip_dstring_from_stream(strm, &__boundary, &error);
+	if(error || bytes_read == 0)
+	{
+		deinit_dstring(&__boundary);
+		return -1;
+	}
+
+	deinit_dstring(&__boundary);
 	return 0;
 }
 
@@ -28,8 +40,6 @@ static multipart_form_data_segment* new_multipart_form_data_segment()
 	return seg;
 }
 
-const dstring MULTIPART_FORM_DATA_end = get_dstring_pointing_to_literal_cstring("--");
-
 multipart_form_data_segment* parse_next_multipart_form_data(stream* strm, const dstring* boundary, int* error)
 {
 	(*error) = 0;
@@ -39,18 +49,28 @@ multipart_form_data_segment* parse_next_multipart_form_data(stream* strm, const 
 		return NULL;
 
 	if(bytes_read == 0)
-		goto PARSE_HEADER;
+		goto CHECK_CRLF_BEFORE_HEADER;
 
 	char byte;
 	size_t byte_read = read_from_stream(strm, &byte, 1, error);
 	if((*error) || byte_read == 0)
 		return NULL;
+	else
+	{
+		(*error) = -1;
+		return NULL;
+	}
 
-	// unread all of the contents that we read until now
-	unread_from_stream(strm, &byte, 1);
-	unread_dstring_from_stream(strm, &MULTIPART_FORM_DATA_end);
+	CHECK_CRLF_BEFORE_HEADER:;
 
-	PARSE_HEADER:;
+	bytes_read = skip_dstring_from_stream(strm, &CRLF, error);
+	if((*error))
+		return NULL;
+	else if(bytes_read == 0)
+	{
+		(*error) = -1;
+		return NULL;
+	}
 
 	multipart_form_data_segment* seg = new_multipart_form_data_segment();
 	if(-1 == ((*error) = parse_http_headers(strm, &(seg->headers))))
@@ -60,13 +80,20 @@ multipart_form_data_segment* parse_next_multipart_form_data(stream* strm, const 
 		return NULL;
 	}
 
-	if(!initialize_stream_for_reading_until_dstring(&(seg->body_stream), strm, boundary))
+	dstring __boundary;
+	init_empty_dstring(&__boundary, get_char_count_dstring(boundary) + 2);
+	concatenate_dstring(&__boundary, &MULTIPART_FORM_DATA_end);
+	concatenate_dstring(&__boundary, boundary);
+
+	if(!initialize_stream_for_reading_until_dstring(&(seg->body_stream), strm, &__boundary))
 	{
+		deinit_dstring(&__boundary);
 		deinit_dmap(&(seg->headers));
 		free(seg);
 		return NULL;
 	}
 
+	deinit_dstring(&__boundary);
 	return seg;
 }
 
