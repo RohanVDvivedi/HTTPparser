@@ -67,6 +67,8 @@ dmap_entry* insert_in_dmap(dmap* dmap_p, const dstring* key, const dstring* valu
 	return dmap_entry_p;
 }
 
+dmap_entry* insert_formatted_in_dmap(dmap* dmap_p, const dstring* key, const char* value_format, ...);
+
 int delete_from_dmap_key(dmap* dmap_p, dmap_entry* dmap_entry_p)
 {
 	if(remove_from_hashmap(dmap_p, dmap_entry_p))

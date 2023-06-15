@@ -30,6 +30,9 @@ dmap_entry* get_from_dmap(const dmap* dmap_p, const dstring* key);
 // if an entry with the given key already exists then, no insertion will be performed and the existing entry will be returned
 dmap_entry* insert_in_dmap(dmap* dmap_p, const dstring* key, const dstring* value);
 
+// just like printf it inserts a formatted value corresponding to a key
+dmap_entry* insert_formatted_in_dmap(dmap* dmap_p, const dstring* key, const char* value_format, ...);
+
 #define insert_cstrings_in_dmap(dmap_p, key, value) insert_in_dmap(dmap_p, &get_dstring_pointing_to_cstring(key), &get_dstring_pointing_to_cstring(value))
 #define insert_literal_cstrings_in_dmap(dmap_p, key, value) insert_in_dmap(dmap_p, &get_dstring_pointing_to_literal_cstring(key), &get_dstring_pointing_to_literal_cstring(value))
 
