@@ -67,7 +67,27 @@ dmap_entry* insert_in_dmap(dmap* dmap_p, const dstring* key, const dstring* valu
 	return dmap_entry_p;
 }
 
-dmap_entry* insert_formatted_in_dmap(dmap* dmap_p, const dstring* key, const char* value_format, ...);
+dmap_entry* insert_formatted_in_dmap(dmap* dmap_p, const dstring* key, const char* value_format, ...)
+{
+	// create a dmap_entry indentically to the above function, but with an empty value
+	dmap_entry* dmap_entry_p = malloc(sizeof(dmap_entry));
+	init_dmap_entry(dmap_entry_p, key, &get_dstring_pointing_to_literal_cstring(""));
+
+	va_list var_args;
+	va_start(var_args, value_format);
+	vsnprintf_dstring(&(dmap_entry_p->value), value_format, var_args);
+	va_end(var_args);
+
+	// insert the new dmap_entry in hashmap
+	// if it fails then expand the hashmap and retry insertion
+	if(!insert_in_hashmap(dmap_p, dmap_entry_p))
+	{
+		expand_hashmap(dmap_p, 2.0);
+		insert_in_hashmap(dmap_p, dmap_entry_p);
+	}
+
+	return dmap_entry_p;
+}
 
 int delete_from_dmap_key(dmap* dmap_p, dmap_entry* dmap_entry_p)
 {
