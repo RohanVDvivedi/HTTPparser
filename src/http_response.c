@@ -63,9 +63,7 @@ void init_http_response_head_from_http_request_head(http_response_head* hrp_p, c
 	}
 	else
 	{
-		char content_length_in_decimal[128];
-		sprintf(content_length_in_decimal, "%zu", content_length_val);
-		insert_in_dmap(&(hrp_p->headers), &content_length_HKEY, &get_dstring_pointing_to_cstring(content_length_in_decimal));
+		insert_formatted_in_dmap(&(hrp_p->headers), &content_length_HKEY, "%zu", content_length_val);
 		insert_in_dmap(&(hrp_p->headers), &content_encoding_HKEY, &identity_ce_HVAL);
 	}
 }
