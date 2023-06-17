@@ -7,6 +7,7 @@ typedef struct uri uri;
 struct uri
 {
 	// all the contents of uri will be POINT_DSTRs
+	// the the get_byte_array_dstring of any of them returns NULL, then they are absent in the uri
 	dstring scheme;
 	dstring userinfo;
 	dstring host;
