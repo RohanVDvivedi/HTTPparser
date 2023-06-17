@@ -20,8 +20,6 @@ int main()
 	init_http_request_head(&hrq);
 	hrq.method = GET;
 	concatenate_dstring(&(hrq.path), &get_dstring_pointing_to_literal_cstring("/api/v2/entries/en/hello"));
-	hrq.version.major = 1;
-	hrq.version.minor = 1;
 	insert_literal_cstrings_in_dmap(&(hrq.headers), "host", "api.dictionaryapi.dev");
 	insert_literal_cstrings_in_dmap(&(hrq.headers), "accept", "*/*");
 	insert_literal_cstrings_in_dmap(&(hrq.headers), "accept-encoding", "gzip,deflate");

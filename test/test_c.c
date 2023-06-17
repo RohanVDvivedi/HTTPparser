@@ -22,8 +22,6 @@ int main()
 	concatenate_dstring(&(hrq.path), &get_dstring_pointing_to_literal_cstring("/"));
 	insert_literal_cstrings_in_dmap(&(hrq.path_params), "toWww", "1");
 	insert_literal_cstrings_in_dmap(&(hrq.path_params), "redig", "C6A5D09A029446FAA02284B3A374D5F3");
-	hrq.version.major = 1;
-	hrq.version.minor = 1;
 	insert_literal_cstrings_in_dmap(&(hrq.headers), "host", "www.bing.com");
 	insert_literal_cstrings_in_dmap(&(hrq.headers), "accept", "*/*");
 	insert_literal_cstrings_in_dmap(&(hrq.headers), "accept-encoding", "gzip,deflate");
