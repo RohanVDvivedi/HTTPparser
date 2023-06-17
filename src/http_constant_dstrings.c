@@ -16,6 +16,8 @@ const dstring EQ = get_dstring_pointing_to_literal_cstring("=");
 
 const dstring F_SLSH = get_dstring_pointing_to_literal_cstring("/");
 
+const dstring F_SLSH_F_SLSH = get_dstring_pointing_to_literal_cstring("//");
+
 const dstring AST = get_dstring_pointing_to_literal_cstring("*");
 
 const dstring AMP = get_dstring_pointing_to_literal_cstring("&");
