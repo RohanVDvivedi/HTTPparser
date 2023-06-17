@@ -32,7 +32,7 @@ int parse_uri(uri* uri_p, const dstring* uri_val)
 	if(is_prefix_of_dstring(&uri_val_pdstr, &F_SLSH_F_SLSH))
 	{
 		// discard "//"
-		discard_chars_from_front_dstring(&uri_val_pdstr, scheme_end_pos);
+		discard_chars_from_front_dstring(&uri_val_pdstr, 2);
 
 		cy_uint authority_end_pos = contains_dstring_RK(&uri_val_pdstr, &F_SLSH);
 		if(authority_end_pos == INVALID_INDEX)
