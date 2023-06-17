@@ -55,7 +55,7 @@ int parse_uri(uri* uri_p, const dstring* uri_val)
 			concatenate_dstring(&(uri_p->host), &get_dstring_pointing_to(get_byte_array_dstring(&authority) + host_start, host_end - host_start));
 
 			if(cl_pos != INVALID_INDEX)
-				concatenate_dstring(&(uri_p->userinfo), &get_dstring_pointing_to(get_byte_array_dstring(&authority) + cl_pos + 1, get_char_count_dstring(&authority) - cl_pos - 1));
+				concatenate_dstring(&(uri_p->port), &get_dstring_pointing_to(get_byte_array_dstring(&authority) + cl_pos + 1, get_char_count_dstring(&authority) - cl_pos - 1));
 		}
 
 		// discard all of authority, after this call uri_val_pdstr only contains "path ? query # fragment"
