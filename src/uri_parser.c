@@ -35,9 +35,18 @@ int parse_uri(uri* uri_p, const dstring* uri_val)
 		discard_chars_from_front_dstring(&uri_val_pdstr, 2);
 
 		cy_uint authority_end_pos = get_char_count_dstring(&uri_val_pdstr);
-		authority_end_pos = min(contains_dstring_RK(&uri_val_pdstr, &F_SLSH), authority_end_pos);
-		authority_end_pos = min(contains_dstring_RK(&uri_val_pdstr, &QM), authority_end_pos);
-		authority_end_pos = min(contains_dstring_RK(&uri_val_pdstr, &PND), authority_end_pos);
+		cy_uint f_slsh_pos = contains_dstring_RK(&uri_val_pdstr, &F_SLSH);
+		authority_end_pos = min(f_slsh, authority_end_pos);
+		cy_uint qm_pos = contains_dstring_RK(&uri_val_pdstr, &F_SLSH);
+		authority_end_pos = min(qm_pos, authority_end_pos);
+		cy_uint pnd_pos = contains_dstring_RK(&uri_val_pdstr, &PND);
+		authority_end_pos = min(pnd_pos, authority_end_pos);
+
+		if(f_slsh_pos != INVALID_INDEX && ((qm_pos != INVALID_INDEX && f_slsh_pos >= qm_pos) || (pnd_pos != INVALID_INDEX && f_slsh_pos < pnd_pos))
+			return -1;
+
+		if(qm_pos != INVALID_INDEX && ((pnd_pos != INVALID_INDEX && qm_pos >= pnd_pos))
+			return -1;
 
 		// this will contain "userinfo @ host : port"
 		dstring authority = get_dstring_pointing_to(get_byte_array_dstring(&uri_val_pdstr), authority_end_pos);
