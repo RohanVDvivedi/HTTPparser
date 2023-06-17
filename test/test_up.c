@@ -13,7 +13,7 @@ int main(int argc, char** argv)
 
 	uri uriv;
 	init_uri(&uriv);
-	int res = parse_uri(&uriv);
+	int res = parse_uri(&uriv, &get_dstring_pointing_to_cstring(argv[1]));
 	if(res)
 		printf("error parsing the uri\n");
 	else
