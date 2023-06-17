@@ -37,7 +37,7 @@ int parse_uri(uri* uri_p, const dstring* uri_val)
 		cy_uint authority_end_pos = get_char_count_dstring(&uri_val_pdstr);
 		cy_uint f_slsh_pos = contains_dstring_RK(&uri_val_pdstr, &F_SLSH);
 		authority_end_pos = min(f_slsh_pos, authority_end_pos);
-		cy_uint qm_pos = contains_dstring_RK(&uri_val_pdstr, &F_SLSH);
+		cy_uint qm_pos = contains_dstring_RK(&uri_val_pdstr, &QM);
 		authority_end_pos = min(qm_pos, authority_end_pos);
 		cy_uint pnd_pos = contains_dstring_RK(&uri_val_pdstr, &PND);
 		authority_end_pos = min(pnd_pos, authority_end_pos);
@@ -75,6 +75,9 @@ int parse_uri(uri* uri_p, const dstring* uri_val)
 	// next is path, a mandatory field
 	cy_uint qm_pos = contains_dstring_RK(&uri_val_pdstr, &QM);
 	cy_uint hs_pos = contains_dstring_RK(&uri_val_pdstr, &PND);
+
+	if(qm_pos != INVALID_INDEX && hs_pos != INVALID_INDEX && qm_pos > hs_pos)
+		return -1;
 
 	// calculate path_end_position
 	cy_uint path_end_pos = min(min(qm_pos, hs_pos), get_char_count_dstring(&uri_val_pdstr));
