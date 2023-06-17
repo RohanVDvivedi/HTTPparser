@@ -36,7 +36,7 @@ int parse_uri(uri* uri_p, const dstring* uri_val)
 
 		cy_uint authority_end_pos = contains_dstring_RK(&uri_val_pdstr, &F_SLSH);
 		if(authority_end_pos == INVALID_INDEX)
-			return -1;
+			authority_end_pos = get_char_count_dstring(&uri_val_pdstr);
 
 		// this will contain "userinfo @ host : port"
 		dstring authority = get_dstring_pointing_to(get_byte_array_dstring(&uri_val_pdstr), authority_end_pos);
