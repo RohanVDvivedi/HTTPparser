@@ -34,9 +34,10 @@ int parse_uri(uri* uri_p, const dstring* uri_val)
 		// discard "//"
 		discard_chars_from_front_dstring(&uri_val_pdstr, 2);
 
-		cy_uint authority_end_pos = contains_dstring_RK(&uri_val_pdstr, &F_SLSH);
-		if(authority_end_pos == INVALID_INDEX)
-			authority_end_pos = get_char_count_dstring(&uri_val_pdstr);
+		cy_uint authority_end_pos = get_char_count_dstring(&uri_val_pdstr);
+		authority_end_pos = min(contains_dstring_RK(&uri_val_pdstr, &F_SLSH), authority_end_pos);
+		authority_end_pos = min(contains_dstring_RK(&uri_val_pdstr, &QM), authority_end_pos);
+		authority_end_pos = min(contains_dstring_RK(&uri_val_pdstr, &PND), authority_end_pos);
 
 		// this will contain "userinfo @ host : port"
 		dstring authority = get_dstring_pointing_to(get_byte_array_dstring(&uri_val_pdstr), authority_end_pos);
