@@ -2,13 +2,13 @@
 
 void init_uri(uri* uri_p)
 {
-	uri_p->scheme = get_dstring_pointing_to(NULL, 0);
-	uri_p->userinfo = get_dstring_pointing_to(NULL, 0);
-	uri_p->host = get_dstring_pointing_to(NULL, 0);
-	uri_p->port = get_dstring_pointing_to(NULL, 0);
-	uri_p->path = get_dstring_pointing_to(NULL, 0);
-	uri_p->query = get_dstring_pointing_to(NULL, 0);
-	uri_p->fragment = get_dstring_pointing_to(NULL, 0);
+	init_empty_dstring(&(uri_p->scheme), 0);
+	init_empty_dstring(&(uri_p->userinfo), 0);
+	init_empty_dstring(&(uri_p->host), 0);
+	init_empty_dstring(&(uri_p->port), 0);
+	init_empty_dstring(&(uri_p->path), 0);
+	init_empty_dstring(&(uri_p->query), 0);
+	init_empty_dstring(&(uri_p->fragment), 0);
 }
 
 int parse_uri(uri* uri_p, const dstring* uri_val);
