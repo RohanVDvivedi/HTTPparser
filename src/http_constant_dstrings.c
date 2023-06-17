@@ -22,6 +22,10 @@ const dstring AMP = get_dstring_pointing_to_literal_cstring("&");
 
 const dstring QM = get_dstring_pointing_to_literal_cstring("?");
 
+const dstring AT = get_dstring_pointing_to_literal_cstring("@");
+
+const dstring PND = get_dstring_pointing_to_literal_cstring("#");
+
 const dstring http_version_prefix = get_dstring_pointing_to_literal_cstring("HTTP/");
 
 const dstring content_length_HKEY = get_dstring_pointing_to_literal_cstring("content-length");

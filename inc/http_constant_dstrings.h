@@ -14,6 +14,8 @@ extern const dstring F_SLSH;				// "/"
 extern const dstring AST;					// "*"
 extern const dstring AMP;					// "&"
 extern const dstring QM;					// "?"
+extern const dstring AT;					// "@"
+extern const dstring PND;					// "#"
 extern const dstring http_version_prefix;	// "HTTP/"
 
 extern const dstring content_length_HKEY;	// "content-length"
