@@ -19,6 +19,7 @@ struct uri
 
 void init_uri(uri* uri_p);
 
+// -1 implies an error, 0 is a success
 int parse_uri(uri* uri_p, const dstring* uri_val);
 
 void deinit_uri(uri* uri_p);
