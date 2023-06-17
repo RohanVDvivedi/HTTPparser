@@ -2,6 +2,7 @@
 
 void init_http_response_head(http_response_head* hr_p)
 {
+	hr_p->version = (http_version){1,1};
 	init_dmap(&(hr_p->headers), 1);
 }
 

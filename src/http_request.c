@@ -2,6 +2,7 @@
 
 void init_http_request_head(http_request_head* hr_p)
 {
+	hr_p->version = (http_version){1,1};
 	init_empty_dstring(&(hr_p->path), 0);
 	init_dmap(&(hr_p->path_params), 0);
 	init_dmap(&(hr_p->headers), 1);
