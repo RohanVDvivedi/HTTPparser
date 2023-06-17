@@ -1,4 +1,3 @@
- * implement parser to parse uri
  * create a http_request_head out of it
  * pass it as input to http_client_set
 
