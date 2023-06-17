@@ -16,16 +16,13 @@ int main(int argc, char** argv)
 	int res = parse_uri(&uriv, &get_dstring_pointing_to_cstring(argv[1]));
 	if(res)
 		printf("error parsing the uri\n");
-	else
-	{
-		printf("scheme : < " printf_dstring_format " >", printf_dstring_params(&(uriv.scheme)));
-		printf("userinfo : < " printf_dstring_format " >", printf_dstring_params(&(uriv.userinfo)));
-		printf("host : < " printf_dstring_format " >", printf_dstring_params(&(uriv.host)));
-		printf("port : < " printf_dstring_format " >", printf_dstring_params(&(uriv.port)));
-		printf("path : < " printf_dstring_format " >", printf_dstring_params(&(uriv.path)));
-		printf("query : < " printf_dstring_format " >", printf_dstring_params(&(uriv.query)));
-		printf("fragment : < " printf_dstring_format " >", printf_dstring_params(&(uriv.fragment)));
-	}
+	printf("scheme : < " printf_dstring_format " >\n", printf_dstring_params(&(uriv.scheme)));
+	printf("userinfo : < " printf_dstring_format " >\n", printf_dstring_params(&(uriv.userinfo)));
+	printf("host : < " printf_dstring_format " >\n", printf_dstring_params(&(uriv.host)));
+	printf("port : < " printf_dstring_format " >\n", printf_dstring_params(&(uriv.port)));
+	printf("path : < " printf_dstring_format " >\n", printf_dstring_params(&(uriv.path)));
+	printf("query : < " printf_dstring_format " >\n", printf_dstring_params(&(uriv.query)));
+	printf("fragment : < " printf_dstring_format " >\n", printf_dstring_params(&(uriv.fragment)));
 	deinit_uri(&uriv);
 	return res;
 }
