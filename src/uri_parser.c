@@ -12,3 +12,14 @@ void init_uri(uri* uri_p)
 }
 
 int parse_uri(uri* uri_p, const dstring* uri_val);
+
+void deinit_uri(uri* uri_p)
+{
+	deinit_dstring(&(uri_p->scheme));
+	deinit_dstring(&(uri_p->userinfo));
+	deinit_dstring(&(uri_p->host));
+	deinit_dstring(&(uri_p->port));
+	deinit_dstring(&(uri_p->path));
+	deinit_dstring(&(uri_p->query));
+	deinit_dstring(&(uri_p->fragment));
+}
