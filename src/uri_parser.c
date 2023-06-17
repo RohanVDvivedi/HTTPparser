@@ -41,9 +41,21 @@ int parse_uri(uri* uri_p, const dstring* uri_val)
 		// this will contain "userinfo @ host : port"
 		dstring authority = get_dstring_pointing_to(get_byte_array_dstring(&uri_val_pdstr), authority_end_pos);
 
-		// extract 
+		// extract userinfo, host and port in this scope
 		{
+			// position of delimeters
+			cy_uint at_pos = contains_dstring_RK(&authority, &AT);
+			cy_uint cl_pos = contains_dstring_RK(&authority, &CL);
 
+			if(at_pos != INVALID_INDEX)
+				concatenate_dstring(&(uri_p->userinfo), &get_dstring_pointing_to(get_byte_array_dstring(&authority), at_pos));
+
+			cy_uint host_start = (at_pos == INVALID_INDEX) ? 0 : (at_pos + 1);
+			cy_uint host_end = (cl_pos == INVALID_INDEX) ? get_char_count_dstring(&authority) : cl_pos;
+			concatenate_dstring(&(uri_p->host), &get_dstring_pointing_to(get_byte_array_dstring(&authority) + host_start, host_end - host_start));
+
+			if(cl_pos != INVALID_INDEX)
+				concatenate_dstring(&(uri_p->userinfo), &get_dstring_pointing_to(get_byte_array_dstring(&authority) + cl_pos + 1, get_char_count_dstring(&authority) - cl_pos - 1));
 		}
 
 		// discard all of authority, after this call uri_val_pdstr only contains "path ? query # fragment"
@@ -62,14 +74,14 @@ int parse_uri(uri* uri_p, const dstring* uri_val)
 	if(qm_pos != INVALID_INDEX)
 	{
 		cy_uint query_end_pos = min(hs_pos, get_char_count_dstring(&uri_val_pdstr));
-		concatenate_dstring(&(uri_p->query), &get_dstring_pointing_to(get_byte_array_dstring(&uri_val_pdstr) + qm_pos + 1, query_end_pos));
+		concatenate_dstring(&(uri_p->query), &get_dstring_pointing_to(get_byte_array_dstring(&uri_val_pdstr) + qm_pos + 1, query_end_pos - qm_pos - 1));
 	}
 
 	// # exists implies a fragment exists
 	if(hs_pos != INVALID_INDEX)
 	{
 		cy_uint fragment_end_pos = get_char_count_dstring(&uri_val_pdstr);
-		concatenate_dstring(&(uri_p->fragment), &get_dstring_pointing_to(get_byte_array_dstring(&uri_val_pdstr) + hs_pos + 1, fragment_end_pos));
+		concatenate_dstring(&(uri_p->fragment), &get_dstring_pointing_to(get_byte_array_dstring(&uri_val_pdstr) + hs_pos + 1, fragment_end_pos - hs_pos - 1));
 	}
 
 	return 0;
