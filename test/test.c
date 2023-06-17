@@ -110,10 +110,9 @@ int main()
 
 	EXIT_4:;
 	close_deinitialize_free_all_from_stacked_stream(&sstrm, READ_STREAMS);
-
-	EXIT_3:;
 	deinitialize_stacked_stream(&sstrm);
 
+	EXIT_3:;
 	close_stream(&raw_stream, &error);
 	deinitialize_stream(&raw_stream);
 
