@@ -23,7 +23,8 @@ struct http_request_head
 
 void init_http_request_head(http_request_head* hr_p);
 
-void init_http_request_head_from_uri(http_request_head* hr_p, const dstring* uri_str);
+// return value of -1 is an error, 0 is a success
+int init_http_request_head_from_uri(http_request_head* hr_p, const dstring* uri_str);
 
 void deinit_http_request_head(http_request_head* hr_p);
 

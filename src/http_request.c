@@ -11,13 +11,16 @@ void init_http_request_head(http_request_head* hr_p)
 #include<uri_parser.h>
 #include<http_constant_dstrings.h>
 
-void init_http_request_head_from_uri(http_request_head* hr_p, const dstring* uri_str)
+int init_http_request_head_from_uri(http_request_head* hr_p, const dstring* uri_str)
 {
 	init_http_request_head(hr_p);
 
 	uri uriv;
 	init_uri(&uriv);
-	parse_uri(&uriv, uri_str);
+	int parse_error = parse_uri(&uriv, uri_str);
+
+	if(parse_error)
+		return -1;
 
 	if(!is_empty_dstring(&(uriv.host)))
 		insert_literal_cstrings_in_dmap(&(hr_p->headers), "host", &(uriv.host));
@@ -34,7 +37,7 @@ void init_http_request_head_from_uri(http_request_head* hr_p, const dstring* uri
 
 			// malfomed uri
 			if(get_byte_array_dstring(&value) == NULL)
-				break;
+				return -1;
 
 			// empty key is error prone
 			if(is_empty_dstring(&key))
