@@ -17,12 +17,12 @@ int main()
 	initialize_stream_for_fd(&ws, 1);
 
 	http_request_head hrq;
-	init_http_request_head(&hrq);
+	init_http_request_head_from_uri(&hrq, &get_dstring_pointing_to_literal_cstring("http://api.dictionaryapi.dev/api/v2/entries/en/hello"));
 	hrq.method = GET;
-	concatenate_dstring(&(hrq.path), &get_dstring_pointing_to_literal_cstring("/api/v2/entries/en/hello"));
-	insert_literal_cstrings_in_dmap(&(hrq.headers), "host", "api.dictionaryapi.dev");
 	insert_literal_cstrings_in_dmap(&(hrq.headers), "accept", "*/*");
 	insert_literal_cstrings_in_dmap(&(hrq.headers), "accept-encoding", "gzip,deflate");
+
+	print_http_request_head(&hrq);
 
 	http_response_head hrp;
 	init_http_response_head(&hrp);

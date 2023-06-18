@@ -17,14 +17,12 @@ int main()
 	initialize_stream_for_fd(&ws, 1);
 
 	http_request_head hrq;
-	init_http_request_head(&hrq);
+	init_http_request_head_from_uri(&hrq, &get_dstring_pointing_to_literal_cstring("https://www.bing.com/?toWww=1&redig=C6A5D09A029446FAA02284B3A374D5F3"));
 	hrq.method = GET;
-	concatenate_dstring(&(hrq.path), &get_dstring_pointing_to_literal_cstring("/"));
-	insert_literal_cstrings_in_dmap(&(hrq.path_params), "toWww", "1");
-	insert_literal_cstrings_in_dmap(&(hrq.path_params), "redig", "C6A5D09A029446FAA02284B3A374D5F3");
-	insert_literal_cstrings_in_dmap(&(hrq.headers), "host", "www.bing.com");
 	insert_literal_cstrings_in_dmap(&(hrq.headers), "accept", "*/*");
 	insert_literal_cstrings_in_dmap(&(hrq.headers), "accept-encoding", "gzip,deflate");
+
+	print_http_request_head(&hrq);
 
 	http_response_head hrp;
 	init_http_response_head(&hrp);
