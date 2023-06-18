@@ -27,6 +27,8 @@ int init_http_request_head_from_uri(http_request_head* hr_p, const dstring* uri_
 
 	if(!is_empty_dstring(&(uriv.path)))
 		concatenate_dstring(&(hr_p->path), &(uriv.path));
+	else
+		concatenate_dstring(&(hr_p->path), &F_SLSH);
 
 	if(!is_empty_dstring(&(uriv.query)))
 	{
@@ -35,7 +37,7 @@ int init_http_request_head_from_uri(http_request_head* hr_p, const dstring* uri_
 			dstring key;
 			dstring value = split_dstring(&value, &EQ, &key);
 
-			// malfomed uri
+			// malformed uri
 			if(get_byte_array_dstring(&value) == NULL)
 				return -1;
 
