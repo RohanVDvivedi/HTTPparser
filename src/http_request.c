@@ -8,6 +8,45 @@ void init_http_request_head(http_request_head* hr_p)
 	init_dmap(&(hr_p->headers), 1);
 }
 
+#include<uri_parser.h>
+#include<http_constant_dstrings.h>
+
+void init_http_request_head_from_uri(http_request_head* hr_p, const dstring* uri_str)
+{
+	init_http_request_head(hr_p);
+
+	uri uriv;
+	init_uri(&uriv);
+	parse_uri(&uriv, uri_str);
+
+	if(!is_empty_dstring(&(uriv.host)))
+		insert_literal_cstrings_in_dmap(&(hr_p->headers), "host", &(uriv.host));
+
+	if(!is_empty_dstring(&(uriv.path)))
+		concatenate_dstring(&(hr_p->path), &(uriv.path));
+
+	if(!is_empty_dstring(&(uriv.query)))
+	{
+		for_each_split_by_delim(key_value, &(uriv.query), &AMP)
+		{
+			dstring key;
+			dstring value = split_dstring(&value, &EQ, &key);
+
+			// malfomed uri
+			if(get_byte_array_dstring(&value) == NULL)
+				break;
+
+			// empty key is error prone
+			if(is_empty_dstring(&key))
+				continue;
+
+			insert_in_dmap(&(hr_p->path_params), &key, &value);
+		}
+	}
+
+	deinit_uri(&uriv);
+}
+
 void deinit_http_request_head(http_request_head* hr_p)
 {
 	deinit_dstring(&(hr_p->path));
