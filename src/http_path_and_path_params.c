@@ -48,7 +48,7 @@ static dstring to_serializable_format(const dstring* str, int is_path)
 }
 
 // returns 1 for success and 0 for an error
-static int to_dstring_format(const dstring* str, dstring* res)
+int uri_to_dstring_format(const dstring* str, dstring* res)
 {
 	const char* str_data = get_byte_array_dstring(str);
 	cy_uint str_size = get_char_count_dstring(str);
@@ -144,7 +144,7 @@ int parse_url_encoded_param(stream* rs, dstring* key, dstring* value, int is_fir
 	}
 
 	init_empty_dstring(key, get_char_count_dstring(&key_encoded));
-	if(!to_dstring_format(&key_encoded, key))
+	if(!uri_to_dstring_format(&key_encoded, key))
 	{
 		deinit_dstring(&key_encoded);
 		deinit_dstring(&value_encoded);
@@ -153,7 +153,7 @@ int parse_url_encoded_param(stream* rs, dstring* key, dstring* value, int is_fir
 	}
 
 	init_empty_dstring(value, get_char_count_dstring(&value_encoded));
-	if(!to_dstring_format(&value_encoded, value))
+	if(!uri_to_dstring_format(&value_encoded, value))
 	{
 		deinit_dstring(&key_encoded);
 		deinit_dstring(&value_encoded);
@@ -229,7 +229,7 @@ int parse_http_path_and_path_params(stream* rs, http_request_head* hr_p)
 
 	// populate path
 	make_dstring_empty(&(hr_p->path));
-	if(!to_dstring_format(&path, &(hr_p->path)))
+	if(!uri_to_dstring_format(&path, &(hr_p->path)))
 	{
 		deinit_dstring(&path_and_params);
 		return -1;
@@ -262,7 +262,7 @@ int parse_http_path_and_path_params(stream* rs, http_request_head* hr_p)
 		{
 			dstring param_key_dstring;
 			init_empty_dstring(&param_key_dstring, get_char_count_dstring(&param_key));
-			if(!to_dstring_format(&param_key, &param_key_dstring))
+			if(!uri_to_dstring_format(&param_key, &param_key_dstring))
 			{
 				deinit_dstring(&param_key_dstring);
 				deinit_dstring(&path_and_params);
@@ -271,7 +271,7 @@ int parse_http_path_and_path_params(stream* rs, http_request_head* hr_p)
 
 			dstring param_value_dstring;
 			init_empty_dstring(&param_value_dstring, get_char_count_dstring(&param_value));
-			if(!to_dstring_format(&param_value, &param_value_dstring))
+			if(!uri_to_dstring_format(&param_value, &param_value_dstring))
 			{
 				deinit_dstring(&param_key_dstring);
 				deinit_dstring(&param_value_dstring);

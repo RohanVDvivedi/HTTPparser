@@ -22,4 +22,9 @@ int serialize_url_encoded_param(stream* ws, const dstring* key, const dstring* v
 
 int serialize_url_encoded_params(stream* ws, const dmap* params);
 
+// internal function exposed api
+
+// use this only if you know what you are doing
+int uri_to_dstring_format(const dstring* str, dstring* res);
+
 #endif
