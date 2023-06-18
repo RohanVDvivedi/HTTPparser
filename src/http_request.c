@@ -10,6 +10,7 @@ void init_http_request_head(http_request_head* hr_p)
 
 #include<uri_parser.h>
 #include<http_constant_dstrings.h>
+#include<http_path_and_path_params.h>
 
 int init_http_request_head_from_uri(http_request_head* hr_p, const dstring* uri_str)
 {
@@ -49,7 +50,7 @@ int init_http_request_head_from_uri(http_request_head* hr_p, const dstring* uri_
 				continue;
 
 			dstring key_;init_empty_dstring(&key_, get_char_count_dstring(&key));
-			dstring value_;init_empty_dstring(&value_, get_char_count_dstring(&value))
+			dstring value_;init_empty_dstring(&value_, get_char_count_dstring(&value));
 
 			if(uri_to_dstring_format(&key, &key_) == 0 || uri_to_dstring_format(&value, &value_) == 0)
 			{
