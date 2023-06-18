@@ -25,6 +25,7 @@ int serialize_url_encoded_params(stream* ws, const dmap* params);
 // internal function exposed api
 
 // use this only if you know what you are doing
+// returns 1 for success and 0 for an error
 int uri_to_dstring_format(const dstring* str, dstring* res);
 
 #endif
