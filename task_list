@@ -1,4 +1,2 @@
- * pass it as input to http_client_set
-
  * implement stream to read/write websocket data -> you can test this with https://www.piesocket.com/websocket-tester client, after integration with Serc on serc-template-application
  * implement stream to read write server sent event data
