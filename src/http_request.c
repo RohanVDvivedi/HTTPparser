@@ -26,7 +26,10 @@ int init_http_request_head_from_uri(http_request_head* hr_p, const dstring* uri_
 		insert_in_dmap(&(hr_p->headers), &get_dstring_pointing_to_literal_cstring("host"), &(uriv.host));
 
 	if(!is_empty_dstring(&(uriv.path)))
-		concatenate_dstring(&(hr_p->path), &(uriv.path));
+	{
+		if(0 == uri_to_dstring_format(&(uriv.path), &(hr_p->path)))
+			return -1;
+	}
 	else
 		concatenate_dstring(&(hr_p->path), &F_SLSH);
 
@@ -45,7 +48,20 @@ int init_http_request_head_from_uri(http_request_head* hr_p, const dstring* uri_
 			if(is_empty_dstring(&key))
 				continue;
 
-			insert_in_dmap(&(hr_p->path_params), &key, &value);
+			dstring key_;init_empty_dstring(&key_, get_char_count_dstring(&key));
+			dstring value_;init_empty_dstring(&value_, get_char_count_dstring(&value))
+
+			if(uri_to_dstring_format(&key, &key_) == 0 || uri_to_dstring_format(&value, &value_) == 0)
+			{
+				deinit_dstring(&key_);
+				deinit_dstring(&value_);
+				return -1;
+			}
+
+			insert_in_dmap(&(hr_p->path_params), &key_, &value_);
+
+			deinit_dstring(&key_);
+			deinit_dstring(&value_);
 		}
 	}
 
