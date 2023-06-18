@@ -22,8 +22,6 @@ int main()
 	insert_literal_cstrings_in_dmap(&(hrq.headers), "accept", "*/*");
 	insert_literal_cstrings_in_dmap(&(hrq.headers), "accept-encoding", "gzip,deflate");
 
-	print_http_request_head(&hrq);
-
 	http_response_head hrp;
 	init_http_response_head(&hrp);
 
