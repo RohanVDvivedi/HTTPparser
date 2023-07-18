@@ -28,7 +28,9 @@ int parse_http_request_line(stream* rs, http_request_head* hr_p)
 			size_t byte_read = read_from_stream(rs, &byte, 1, &error);
 			if(byte_read == 0 || error || isspace(byte))
 				return -1;
-			unread_from_stream(rs, &byte, 1);
+			unread_from_stream(rs, &byte, 1, &error);
+			if(error)
+				return -1;
 		}
 	}
 
@@ -48,7 +50,9 @@ int parse_http_request_line(stream* rs, http_request_head* hr_p)
 			size_t byte_read = read_from_stream(rs, &byte, 1, &error);
 			if(byte_read == 0 || error || isspace(byte))
 				return -1;
-			unread_from_stream(rs, &byte, 1);
+			unread_from_stream(rs, &byte, 1, &error);
+			if(error)
+				return -1;
 		}
 	}
 

@@ -284,7 +284,9 @@ int parse_http_status_line(stream* rs, int* s)
 			size_t byte_read = read_from_stream(rs, &byte, 1, &error);
 			if(byte_read == 0 || error || isspace(byte))
 				return -1;
-			unread_from_stream(rs, &byte, 1);
+			unread_from_stream(rs, &byte, 1, &error);
+			if(error)
+				return -1;
 		}
 	}
 
@@ -306,7 +308,9 @@ int parse_http_status_line(stream* rs, int* s)
 		if(byte == '\n' && last_char_CR)
 		{
 			status_line_end_reached = 1;
-			unread_dstring_from_stream(rs, &CRLF);
+			unread_dstring_from_stream(rs, &CRLF, &error);
+			if(error)
+				return -1;
 			break;
 		}
 

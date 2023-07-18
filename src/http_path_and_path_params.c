@@ -139,7 +139,13 @@ int parse_url_encoded_param(stream* rs, dstring* key, dstring* value, int is_fir
 	if(last_byte != 256 && !is_empty_dstring(&value_encoded))
 	{
 		char lb = last_byte;
-		unread_from_stream(rs, &lb, 1);
+		unread_from_stream(rs, &lb, 1, &error);
+		if(error)
+		{
+			deinit_dstring(&key_encoded);
+			deinit_dstring(&value_encoded);
+			return -1;
+		}
 		discard_chars_from_back_dstring(&value_encoded, 1);
 	}
 
@@ -212,7 +218,12 @@ int parse_http_path_and_path_params(stream* rs, http_request_head* hr_p)
 
 		// put SP (" ") back into the stream
 		// and remove SP (" ") from path_and_params
-		unread_dstring_from_stream(rs, &SP);
+		unread_dstring_from_stream(rs, &SP, &error);
+		if(error)
+		{
+			deinit_dstring(&path_and_params);
+			return -1;
+		}
 		discard_chars_from_back_dstring(&path_and_params, get_char_count_dstring(&SP));
 	}
 
