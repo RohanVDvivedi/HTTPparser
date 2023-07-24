@@ -1,4 +1,6 @@
- * fail parsing if dstring function calls fail, either initialization or concatnation
+ *1 fail insert to dmap if dstring functions or malloc fails
+ *2 fail parsing if dstring function calls fail, either initialization or concatenation or malloc fails
+
 
  * implement stream to read/write websocket data -> you can test this with https://www.piesocket.com/websocket-tester client, after integration with Serc on serc-template-application
  * implement stream to read write server sent event data
