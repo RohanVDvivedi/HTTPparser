@@ -149,7 +149,12 @@ int parse_url_encoded_param(stream* rs, dstring* key, dstring* value, int is_fir
 		discard_chars_from_back_dstring(&value_encoded, 1);
 	}
 
-	init_empty_dstring(key, get_char_count_dstring(&key_encoded));
+	if(!init_empty_dstring(key, get_char_count_dstring(&key_encoded)))
+	{
+		deinit_dstring(&key_encoded);
+		deinit_dstring(&value_encoded);
+		return -1;
+	}
 	if(!uri_to_dstring_format(&key_encoded, key))
 	{
 		deinit_dstring(&key_encoded);
@@ -158,7 +163,13 @@ int parse_url_encoded_param(stream* rs, dstring* key, dstring* value, int is_fir
 		return -1;
 	}
 
-	init_empty_dstring(value, get_char_count_dstring(&value_encoded));
+	if(!init_empty_dstring(value, get_char_count_dstring(&value_encoded)))
+	{
+		deinit_dstring(&key_encoded);
+		deinit_dstring(&value_encoded);
+		deinit_dstring(key);
+		return -1;
+	}
 	if(!uri_to_dstring_format(&value_encoded, value))
 	{
 		deinit_dstring(&key_encoded);
@@ -187,7 +198,12 @@ int parse_url_encoded_params(stream* rs, dmap* params)
 		if(error)
 			break;
 
-		insert_in_dmap(params, &key, &value);
+		if(!insert_in_dmap(params, &key, &value))
+		{
+			deinit_dstring(&key);
+			deinit_dstring(&value);
+			return -1;
+		}
 
 		deinit_dstring(&key);
 		deinit_dstring(&value);
@@ -272,7 +288,11 @@ int parse_http_path_and_path_params(stream* rs, http_request_head* hr_p)
 		// insert param_key and param_value into path_params
 		{
 			dstring param_key_dstring;
-			init_empty_dstring(&param_key_dstring, get_char_count_dstring(&param_key));
+			if(!init_empty_dstring(&param_key_dstring, get_char_count_dstring(&param_key)))
+			{
+				deinit_dstring(&path_and_params);
+				return -1;
+			}
 			if(!uri_to_dstring_format(&param_key, &param_key_dstring))
 			{
 				deinit_dstring(&param_key_dstring);
@@ -281,7 +301,12 @@ int parse_http_path_and_path_params(stream* rs, http_request_head* hr_p)
 			}
 
 			dstring param_value_dstring;
-			init_empty_dstring(&param_value_dstring, get_char_count_dstring(&param_value));
+			if(!init_empty_dstring(&param_value_dstring, get_char_count_dstring(&param_value)))
+			{
+				deinit_dstring(&param_key_dstring);
+				deinit_dstring(&path_and_params);
+				return -1;
+			}
 			if(!uri_to_dstring_format(&param_value, &param_value_dstring))
 			{
 				deinit_dstring(&param_key_dstring);
@@ -290,7 +315,13 @@ int parse_http_path_and_path_params(stream* rs, http_request_head* hr_p)
 				return -1;
 			}
 
-			insert_in_dmap(&(hr_p->path_params), &param_key_dstring, &param_value_dstring);
+			if(!insert_in_dmap(&(hr_p->path_params), &param_key_dstring, &param_value_dstring))
+			{
+				deinit_dstring(&param_key_dstring);
+				deinit_dstring(&param_value_dstring);
+				deinit_dstring(&path_and_params);
+				return -1;
+			}
 
 			deinit_dstring(&param_key_dstring);
 			deinit_dstring(&param_value_dstring);
