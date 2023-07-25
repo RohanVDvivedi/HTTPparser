@@ -3,7 +3,7 @@
 #include<stdlib.h>
 #include<ctype.h>
 
-int init_dmap_entry(dmap_entry* dmap_entry_p, const dstring* key, const dstring* value)
+static int init_dmap_entry(dmap_entry* dmap_entry_p, const dstring* key, const dstring* value)
 {
 	if(!init_copy_dstring(&(dmap_entry_p->key), key))
 		return 0;
@@ -16,7 +16,7 @@ int init_dmap_entry(dmap_entry* dmap_entry_p, const dstring* key, const dstring*
 	return 1;
 }
 
-void deinit_dmap_entry(dmap_entry* dmap_entry_p)
+static void deinit_dmap_entry(dmap_entry* dmap_entry_p)
 {
 	deinit_dstring(&(dmap_entry_p->key));
 	deinit_dstring(&(dmap_entry_p->value));

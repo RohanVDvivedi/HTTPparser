@@ -14,12 +14,6 @@ struct dmap_entry
 	rbhnode embed_node;
 };
 
-int init_dmap_entry(dmap_entry* dmap_entry_p, const dstring* key, const dstring* value);
-
-void deinit_dmap_entry(dmap_entry* dmap_entry_p);
-
-
-
 typedef hashmap dmap;
 
 void init_dmap(dmap* dmap_p, int ignore_case_for_key);
