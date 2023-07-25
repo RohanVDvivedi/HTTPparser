@@ -64,14 +64,26 @@ dmap_entry* get_from_dmap(const dmap* dmap_p, const dstring* key)
 dmap_entry* insert_in_dmap(dmap* dmap_p, const dstring* key, const dstring* value)
 {
 	dmap_entry* dmap_entry_p = malloc(sizeof(dmap_entry));
-	init_dmap_entry(dmap_entry_p, key, value);
+	if(dmap_entry_p == NULL) // fail if malloc fails
+		return NULL;
+
+	if(!init_dmap_entry(dmap_entry_p, key, value)) // fail if we fail to initialize the dmap_entry
+	{
+		free(dmap_entry_p);
+		return NULL;
+	}
 
 	// insert the new dmap_entry in hashmap
 	// if it fails then expand the hashmap and retry insertion
 	if(!insert_in_hashmap(dmap_p, dmap_entry_p))
 	{
 		expand_hashmap(dmap_p, 2.0);
-		insert_in_hashmap(dmap_p, dmap_entry_p);
+		if(!insert_in_hashmap(dmap_p, dmap_entry_p)) // if the retry also fails, then fail the insert_in_dmap
+		{
+			deinit_dmap_entry(dmap_entry_p);
+			free(dmap_entry_p);
+			return NULL;
+		}
 	}
 
 	return dmap_entry_p;
@@ -81,11 +93,24 @@ dmap_entry* insert_formatted_in_dmap(dmap* dmap_p, const dstring* key, const cha
 {
 	// create a dmap_entry indentically to the above function, but with an empty value
 	dmap_entry* dmap_entry_p = malloc(sizeof(dmap_entry));
-	init_dmap_entry(dmap_entry_p, key, &get_dstring_pointing_to_literal_cstring(""));
+	if(dmap_entry_p == NULL) // fail if malloc fails
+		return NULL;
+
+	if(!init_dmap_entry(dmap_entry_p, key, &get_dstring_pointing_to_literal_cstring("")))  // fail if we fail to initialize the dmap_entry
+	{
+		free(dmap_entry_p);
+		return NULL;
+	}
 
 	va_list var_args;
 	va_start(var_args, value_format);
-	vsnprintf_dstring(&(dmap_entry_p->value), value_format, var_args);
+	if(!vsnprintf_dstring(&(dmap_entry_p->value), value_format, var_args))  // fail if we fail to write the formatted value to dmap's value
+	{
+		va_end(var_args);
+		deinit_dmap_entry(dmap_entry_p);
+		free(dmap_entry_p);
+		return NULL;
+	}
 	va_end(var_args);
 
 	// insert the new dmap_entry in hashmap
@@ -93,7 +118,12 @@ dmap_entry* insert_formatted_in_dmap(dmap* dmap_p, const dstring* key, const cha
 	if(!insert_in_hashmap(dmap_p, dmap_entry_p))
 	{
 		expand_hashmap(dmap_p, 2.0);
-		insert_in_hashmap(dmap_p, dmap_entry_p);
+		if(!insert_in_hashmap(dmap_p, dmap_entry_p)) // if the retry also fails, then fail the insert_in_dmap
+		{
+			deinit_dmap_entry(dmap_entry_p);
+			free(dmap_entry_p);
+			return NULL;
+		}
 	}
 
 	return dmap_entry_p;
