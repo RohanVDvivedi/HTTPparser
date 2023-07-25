@@ -345,7 +345,14 @@ int serialize_http_path_and_path_params(stream* ws, const http_request_head* hr_
 	int error = 0;
 
 	{
-		dstring path_serializable = to_serializable_format(&(hr_p->path), 1);
+		dstring path_serializable;
+		if(!init_empty_dstring(&path_serializable, get_char_count_dstring(&(hr_p->path))))
+			return -1;
+		if(!to_serializable_format(&(hr_p->path), 1, &path_serializable))
+		{
+			deinit_dstring(&path_serializable);
+			return -1;
+		}
 		write_dstring_to_stream(ws, &path_serializable, &error);
 		deinit_dstring(&path_serializable);
 		if(error)
@@ -391,7 +398,14 @@ int serialize_url_encoded_param(stream* ws, const dstring* key, const dstring* v
 	}
 
 	{
-		dstring key_serializable = to_serializable_format(key, 0);
+		dstring key_serializable;
+		if(!init_empty_dstring(&key_serializable, get_char_count_dstring(key)))
+			return -1;
+		if(!to_serializable_format(key, 0, &key_serializable))
+		{
+			deinit_dstring(&key_serializable);
+			return -1;
+		}
 		write_dstring_to_stream(ws, &key_serializable, &error);
 		deinit_dstring(&key_serializable);
 		if(error)
@@ -403,7 +417,14 @@ int serialize_url_encoded_param(stream* ws, const dstring* key, const dstring* v
 		return -1;
 
 	{
-		dstring value_serializable = to_serializable_format(value, 0);
+		dstring value_serializable;
+		if(!init_empty_dstring(&value_serializable, get_char_count_dstring(value)))
+			return -1;
+		if(!to_serializable_format(value, 0, &value_serializable))
+		{
+			deinit_dstring(&value_serializable);
+			return -1;
+		}
 		write_dstring_to_stream(ws, &value_serializable, &error);
 		deinit_dstring(&value_serializable);
 		if(error)
