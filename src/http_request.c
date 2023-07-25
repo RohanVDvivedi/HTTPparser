@@ -23,8 +23,8 @@ int init_http_request_head_from_uri(http_request_head* hr_p, const dstring* uri_
 	if(parse_error)
 		return -1;
 
-	if(!is_empty_dstring(&(uriv.host)))
-		insert_in_dmap(&(hr_p->headers), &get_dstring_pointing_to_literal_cstring("host"), &(uriv.host));
+	if(!is_empty_dstring(&(uriv.host)) && !insert_in_dmap(&(hr_p->headers), &get_dstring_pointing_to_literal_cstring("host"), &(uriv.host)))
+		return -1;
 
 	if(!is_empty_dstring(&(uriv.path)))
 	{
@@ -32,7 +32,10 @@ int init_http_request_head_from_uri(http_request_head* hr_p, const dstring* uri_
 			return -1;
 	}
 	else
-		concatenate_dstring(&(hr_p->path), &F_SLSH);
+	{
+		if(!concatenate_dstring(&(hr_p->path), &F_SLSH))
+			return -1;
+	}
 
 	if(!is_empty_dstring(&(uriv.query)))
 	{
@@ -52,14 +55,13 @@ int init_http_request_head_from_uri(http_request_head* hr_p, const dstring* uri_
 			dstring key_;init_empty_dstring(&key_, get_char_count_dstring(&key));
 			dstring value_;init_empty_dstring(&value_, get_char_count_dstring(&value));
 
-			if(uri_to_dstring_format(&key, &key_) == 0 || uri_to_dstring_format(&value, &value_) == 0)
+			// if we fail converting them to dstring_format OR if the insert fails, then we fail
+			if(!uri_to_dstring_format(&key, &key_) || !uri_to_dstring_format(&value, &value_) || !insert_in_dmap(&(hr_p->path_params), &key_, &value_))
 			{
 				deinit_dstring(&key_);
 				deinit_dstring(&value_);
 				return -1;
 			}
-
-			insert_in_dmap(&(hr_p->path_params), &key_, &value_);
 
 			deinit_dstring(&key_);
 			deinit_dstring(&value_);
