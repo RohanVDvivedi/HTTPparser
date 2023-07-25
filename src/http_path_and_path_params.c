@@ -159,30 +159,21 @@ int parse_url_encoded_param(stream* rs, dstring* key, dstring* value, int is_fir
 		discard_chars_from_back_dstring(&value_encoded, 1);
 	}
 
-	if(get_unused_capacity_dstring(key) < get_char_count_dstring(&key_encoded) &&
-		!expand_dstring(key, get_char_count_dstring(&key_encoded) - get_unused_capacity_dstring(key)))
+	// clubbed conditionals with function calls
+	// FAIL if (current capacity of dstring is less AND dstring could not be expanded) OR (uri format to dstring format conversion fails)
+	if((get_unused_capacity_dstring(key) < get_char_count_dstring(&key_encoded) &&
+		!expand_dstring(key, get_char_count_dstring(&key_encoded) - get_unused_capacity_dstring(key))) ||
+		(!uri_to_dstring_format(&key_encoded, key)))
 	{
 		deinit_dstring(&key_encoded);
 		deinit_dstring(&value_encoded);
 		return -1;
 	}
 
-	if(!uri_to_dstring_format(&key_encoded, key))
-	{
-		deinit_dstring(&key_encoded);
-		deinit_dstring(&value_encoded);
-		return -1;
-	}
-
-	if(get_unused_capacity_dstring(value) < get_char_count_dstring(&value_encoded) &&
-		!expand_dstring(value, get_char_count_dstring(&value_encoded) - get_unused_capacity_dstring(value)))
-	{
-		deinit_dstring(&key_encoded);
-		deinit_dstring(&value_encoded);
-		return -1;
-	}
-
-	if(!uri_to_dstring_format(&value_encoded, value))
+	// clubbed conditionals with function calls just like above
+	if((get_unused_capacity_dstring(value) < get_char_count_dstring(&value_encoded) &&
+		!expand_dstring(value, get_char_count_dstring(&value_encoded) - get_unused_capacity_dstring(value))) ||
+		(!uri_to_dstring_format(&value_encoded, value)))
 	{
 		deinit_dstring(&key_encoded);
 		deinit_dstring(&value_encoded);
