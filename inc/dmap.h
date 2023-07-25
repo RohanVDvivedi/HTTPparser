@@ -14,7 +14,7 @@ struct dmap_entry
 	rbhnode embed_node;
 };
 
-void init_dmap_entry(dmap_entry* dmap_entry_p, const dstring* key, const dstring* value);
+int init_dmap_entry(dmap_entry* dmap_entry_p, const dstring* key, const dstring* value);
 
 void deinit_dmap_entry(dmap_entry* dmap_entry_p);
 

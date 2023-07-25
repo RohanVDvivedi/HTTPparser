@@ -3,11 +3,17 @@
 #include<stdlib.h>
 #include<ctype.h>
 
-void init_dmap_entry(dmap_entry* dmap_entry_p, const dstring* key, const dstring* value)
+int init_dmap_entry(dmap_entry* dmap_entry_p, const dstring* key, const dstring* value)
 {
-	init_copy_dstring(&(dmap_entry_p->key), key);
-	init_copy_dstring(&(dmap_entry_p->value), value);
+	if(!init_copy_dstring(&(dmap_entry_p->key), key))
+		return 0;
+	if(!init_copy_dstring(&(dmap_entry_p->value), value))
+	{
+		deinit_dstring(&(dmap_entry_p->key));
+		return 0;
+	}
 	initialize_rbhnode(&(dmap_entry_p->embed_node));
+	return 1;
 }
 
 void deinit_dmap_entry(dmap_entry* dmap_entry_p)
