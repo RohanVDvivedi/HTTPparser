@@ -28,23 +28,29 @@ static int path_and_path_params_characters_allowed_on_stream_unencoded(char c)
 }
 
 // if is_path is set then '/' is left unencoded
-static dstring to_serializable_format(const dstring* str, int is_path)
+// returns 1 for success and 0 for an error
+static int to_serializable_format(const dstring* str, int is_path, dstring* res)
 {
 	const char* str_data = get_byte_array_dstring(str);
 	cy_uint str_size = get_char_count_dstring(str);
 
-	dstring res;
-	init_empty_dstring(&res, str_size);
+	make_dstring_empty(res);
 
 	for(cy_uint i = 0; i < str_size; i++)
 	{
 		if(path_and_path_params_characters_allowed_on_stream_unencoded(str_data[i]) || (is_path && str_data[i] == '/'))
-			concatenate_char(&res, str_data[i]);
+		{
+			if(!concatenate_char(res, str_data[i]))
+				return 0;
+		}
 		else
-			snprintf_dstring(&res, "%%%c%c", hex_to_char((str_data[i] >> 4) & 0x0f), hex_to_char(str_data[i] & 0x0f));
+		{
+			if(!snprintf_dstring(res, "%%%c%c", hex_to_char((str_data[i] >> 4) & 0x0f), hex_to_char(str_data[i] & 0x0f)))
+				return 0;
+		}
 	}
 
-	return res;
+	return 1;
 }
 
 // returns 1 for success and 0 for an error
