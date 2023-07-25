@@ -102,6 +102,9 @@ int parse_url_encoded_param(stream* rs, dstring* key, dstring* value, int is_fir
 {
 	int error = 0;
 
+	make_dstring_empty(key);
+	make_dstring_empty(value);
+
 	if(!is_first_param)
 	{
 		size_t bytes_skipped = skip_dstring_from_stream(rs, &AMP, &error);
@@ -156,33 +159,33 @@ int parse_url_encoded_param(stream* rs, dstring* key, dstring* value, int is_fir
 		discard_chars_from_back_dstring(&value_encoded, 1);
 	}
 
-	if(!init_empty_dstring(key, get_char_count_dstring(&key_encoded)))
+	if(get_unused_capacity_dstring(key) < get_char_count_dstring(&key_encoded) &&
+		!expand_dstring(key, get_char_count_dstring(&key_encoded) - get_unused_capacity_dstring(key)))
 	{
 		deinit_dstring(&key_encoded);
 		deinit_dstring(&value_encoded);
 		return -1;
 	}
+
 	if(!uri_to_dstring_format(&key_encoded, key))
 	{
 		deinit_dstring(&key_encoded);
 		deinit_dstring(&value_encoded);
-		deinit_dstring(key);
 		return -1;
 	}
 
-	if(!init_empty_dstring(value, get_char_count_dstring(&value_encoded)))
+	if(get_unused_capacity_dstring(value) < get_char_count_dstring(&value_encoded) &&
+		!expand_dstring(value, get_char_count_dstring(&value_encoded) - get_unused_capacity_dstring(value)))
 	{
 		deinit_dstring(&key_encoded);
 		deinit_dstring(&value_encoded);
-		deinit_dstring(key);
 		return -1;
 	}
+
 	if(!uri_to_dstring_format(&value_encoded, value))
 	{
 		deinit_dstring(&key_encoded);
 		deinit_dstring(&value_encoded);
-		deinit_dstring(key);
-		deinit_dstring(value);
 		return -1;
 	}
 
@@ -200,10 +203,16 @@ int parse_url_encoded_params(stream* rs, dmap* params)
 		dstring key;
 		dstring value;
 
-		error = parse_url_encoded_param(rs, &key, &value, is_first_param);
+		init_empty_dstring(&key, 0);
+		init_empty_dstring(&value, 0);
 
+		error = parse_url_encoded_param(rs, &key, &value, is_first_param);
 		if(error)
+		{
+			deinit_dstring(&key);
+			deinit_dstring(&value);
 			break;
+		}
 
 		if(!insert_in_dmap(params, &key, &value))
 		{
