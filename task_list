@@ -1,4 +1,4 @@
- *2 fail parsing if dstring function calls fail, either initialization or concatenation or malloc fails
+ *1 fail parsing if dstring function calls fail, either initialization or concatenation or malloc fails
 
 
  * implement stream to read/write websocket data -> you can test this with https://www.piesocket.com/websocket-tester client, after integration with Serc on serc-template-application
