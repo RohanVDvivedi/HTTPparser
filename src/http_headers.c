@@ -27,12 +27,11 @@ int parse_http_headers(stream* rs, dmap* headers)
 		// split header into its corrsponding key and value
 		dstring header_key;
 		dstring header_value = split_dstring(&header, &CL, &header_key);
+		// note: header_key and header_value are POINT_DSTR, hence we need not deinit them
 
 		// header key must not be empty
 		if(is_empty_dstring(&header_key))
 		{
-			deinit_dstring(&header_key);
-			deinit_dstring(&header_value);
 			deinit_dstring(&header);
 			return -1;
 		}
@@ -41,13 +40,13 @@ int parse_http_headers(stream* rs, dmap* headers)
 		trim_dstring(&header_value);
 
 		// insert then both in the headers dmap
-		insert_in_dmap(headers, &header_key, &header_value);
+		if(!insert_in_dmap(headers, &header_key, &header_value))
+		{
+			deinit_dstring(&header);
+			return -1;
+		}
 
-		// deinitialize all dstrings you generated
-
-		deinit_dstring(&header_key);
-		deinit_dstring(&header_value);
-
+		// deinitialize all dstrings you generated, again header_key and header_value need not be deinit-ed
 		deinit_dstring(&header);
 	}
 
