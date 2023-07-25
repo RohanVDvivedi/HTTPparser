@@ -17,7 +17,8 @@ int parse_acceptable_value(const dstring* singlular_header_value, acceptable_val
 	dstring remaining = split_dstring(&shv, &SCL, &split);
 
 	// concatenate split to value
-	concatenate_dstring(&(av_p->value), &split);
+	if(!concatenate_dstring(&(av_p->value), &split))
+		return -1;
 
 	// trim and check if the remaining is empty, if so this implies that there is only value and no q_value
 	ltrim_dstring(&remaining);
@@ -152,7 +153,8 @@ int parse_cookies_from_cookie_header(dmap* cookies, const dmap* headers)
 			trim_dstring(&cookie_key);
 			trim_dstring(&cookie_value);
 
-			insert_in_dmap(cookies, &cookie_key, &cookie_value);
+			if(!insert_in_dmap(cookies, &cookie_key, &cookie_value))
+				return -1;
 		}
 	}
 
@@ -199,8 +201,9 @@ int has_multipart_form_data_in_body(const dmap* headers, int* is_boundary_presen
 
 				if(0 == compare_dstring(&key, &get_dstring_pointing_to_literal_cstring("boundary")))
 				{
-					concatenate_dstring(boundary, &val);
-					(*is_boundary_present) = 1;
+					// we will set the is_boundary_present only if we were able to concatenate it to the result variable
+					if(concatenate_dstring(boundary, &val))
+						(*is_boundary_present) = 1;
 					break;
 				}
 			}
@@ -221,6 +224,11 @@ int intialize_http_body_and_encoding_streams_for_writing(stacked_stream* sstrm, 
 	int streams_pushed = 0;
 
 	stream* body_stream = malloc(sizeof(stream));
+	if(body_stream == NULL)
+	{
+		result = -10;
+		goto EXIT_0;
+	}
 	if(!initialize_writable_body_stream(body_stream, raw_strm, headers))
 	{
 		free(body_stream);
@@ -249,6 +257,11 @@ int intialize_http_body_and_decoding_streams_for_reading(stacked_stream* sstrm, 
 	int streams_pushed = 0;
 
 	stream* body_stream = malloc(sizeof(stream));
+	if(body_stream == NULL)
+	{
+		result = -10;
+		goto EXIT_0;
+	}
 	if(!initialize_readable_body_stream(body_stream, raw_strm, headers))
 	{
 		free(body_stream);
