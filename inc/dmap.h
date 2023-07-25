@@ -16,7 +16,7 @@ struct dmap_entry
 
 typedef hashmap dmap;
 
-void init_dmap(dmap* dmap_p, int ignore_case_for_key);
+int init_dmap(dmap* dmap_p, int ignore_case_for_key);
 
 dmap_entry* get_from_dmap(const dmap* dmap_p, const dstring* key);
 

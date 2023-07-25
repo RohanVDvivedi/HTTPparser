@@ -44,12 +44,12 @@ static cy_uint dstring_key_hash(const void* element)
 	return hash;
 }
 
-void init_dmap(dmap* dmap_p, int ignore_case_for_key)
+int init_dmap(dmap* dmap_p, int ignore_case_for_key)
 {
 	if(ignore_case_for_key)
-		initialize_hashmap(dmap_p, ROBINHOOD_HASHING, 8, dstring_key_hash_case, (int (*)(const void*, const void*))case_compare_dstring, offsetof(dmap_entry, embed_node));
+		return initialize_hashmap(dmap_p, ROBINHOOD_HASHING, 8, dstring_key_hash_case, (int (*)(const void*, const void*))case_compare_dstring, offsetof(dmap_entry, embed_node));
 	else
-		initialize_hashmap(dmap_p, ROBINHOOD_HASHING, 8, dstring_key_hash, (int (*)(const void*, const void*))compare_dstring, offsetof(dmap_entry, embed_node));
+		return initialize_hashmap(dmap_p, ROBINHOOD_HASHING, 8, dstring_key_hash, (int (*)(const void*, const void*))compare_dstring, offsetof(dmap_entry, embed_node));
 }
 
 dmap_entry* get_from_dmap(const dmap* dmap_p, const dstring* key)
