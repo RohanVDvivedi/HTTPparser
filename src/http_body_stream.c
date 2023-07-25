@@ -3,7 +3,6 @@
 #include<http_constant_dstrings.h>
 
 #include<stdlib.h>
-#include<string.h>
 
 #include<cutlery_math.h>
 
