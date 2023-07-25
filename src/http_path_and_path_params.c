@@ -64,14 +64,15 @@ int uri_to_dstring_format(const dstring* str, dstring* res)
 			digits[0] = get_digit_from_char(str_data[i++], 16);
 			digits[1] = get_digit_from_char(str_data[i++], 16);
 			if(digits[0] == INVALID_INDEX || digits[1] == INVALID_INDEX)
-			{
-				make_dstring_empty(res);
 				return 0;
-			}
-			concatenate_char(res, (((digits[0] << 4) & 0xf0) | (digits[1] & 0x0f)));
+			if(!concatenate_char(res, (((digits[0] << 4) & 0xf0) | (digits[1] & 0x0f))))
+				return 0;
 		}
 		else
-			concatenate_char(res, str_data[i++]);
+		{
+			if(!concatenate_char(res, str_data[i++]))
+				return 0;
+		}
 	}
 
 	return 1;
