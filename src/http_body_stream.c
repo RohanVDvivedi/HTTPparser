@@ -211,6 +211,8 @@ static int init_body_stream_context(http_body_stream_context* stream_context_p, 
 int initialize_readable_body_stream(stream* strm, stream* underlying_stream, const dmap* headers)
 {
 	http_body_stream_context* stream_context = malloc(sizeof(http_body_stream_context));
+	if(stream_context == NULL)
+		return 0;
 
 	// intialize stream context
 	stream_context->underlying_stream = underlying_stream;
@@ -236,6 +238,8 @@ int initialize_readable_body_stream(stream* strm, stream* underlying_stream, con
 int initialize_writable_body_stream(stream* strm, stream* underlying_stream, const dmap* headers)
 {
 	http_body_stream_context* stream_context = malloc(sizeof(http_body_stream_context));
+	if(stream_context == NULL)
+		return 0;
 
 	// intialize stream context
 	stream_context->underlying_stream = underlying_stream;
