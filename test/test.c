@@ -19,18 +19,18 @@ int main()
 	http_request_head hrq;
 	if(!init_http_request_head_from_uri(&hrq, &get_dstring_pointing_to_literal_cstring("http://api.dictionaryapi.dev/api/v2/entries/en/hello")))
 	{
-		printf("failed to initialize http request from given uri");
+		printf("failed to initialize http request from given uri\n");
 		goto EXIT_0;
 	}
 	hrq.method = GET;
 	if(!insert_literal_cstrings_in_dmap(&(hrq.headers), "accept", "*/*"))
 	{
-		printf("failed to insert accept header");
+		printf("failed to insert accept header\n");
 		goto EXIT_1;
 	}
 	if(!insert_literal_cstrings_in_dmap(&(hrq.headers), "accept-encoding", "gzip,deflate"))
 	{
-		printf("failed to insert accept-encoding header");
+		printf("failed to insert accept-encoding header\n");
 		goto EXIT_1;
 	}
 
