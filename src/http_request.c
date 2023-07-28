@@ -42,7 +42,7 @@ int init_http_request_head_from_uri(http_request_head* hr_p, const dstring* uri_
 		for_each_split_by_delim(key_value, &(uriv.query), &AMP)
 		{
 			dstring key;
-			dstring value = split_dstring(&value, &EQ, &key);
+			dstring value = split_dstring(&key_value, &EQ, &key);
 
 			// malformed uri
 			if(get_byte_array_dstring(&value) == NULL)
