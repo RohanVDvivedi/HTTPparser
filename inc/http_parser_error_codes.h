@@ -1,7 +1,7 @@
 #ifndef HTTP_PARSER_ERROR_CODES_H
 #define HTTP_PARSER_ERROR_CODES_H
 
-// This are the error codes to be used with http parser and serializer of this library
+// This are the error codes to be used with http parser and serializer functions of this library
 
 #define HTTP_NO_ERROR              0
 #define HTTP_PARSER_ERROR         -1
