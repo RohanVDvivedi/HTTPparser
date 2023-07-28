@@ -5,6 +5,8 @@
 
 #include<http_request.h>
 
+#include<http_parser_error_codes.h>
+
 // returns int value, suggesting error, from error codes given in http_parser_error_codes.h
 int parse_http_request_line(stream* rs, http_request_head* hr_p);
 
