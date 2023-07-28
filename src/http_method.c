@@ -1,6 +1,9 @@
 #include<http_method.h>
 
 #include<string.h>
+#include<dstring.h>
+
+#include<stream_util.h>
 
 const char* http_method_strings[] = {
 	"GET",
@@ -65,11 +68,10 @@ int parse_http_method(stream* rs, http_method* m)
 
 int serialize_http_method(stream* ws, const http_method* m)
 {
-	int error = 0;
+	int stream_error = 0;
+	write_dstring_to_stream(ws, &get_dstring_pointing_to_cstring(http_method_strings[(*m)]), &stream_error);
+	if(stream_error)
+		return HTTP_ERROR_IN_STREAM;
 
-	write_to_stream(ws, http_method_strings[(*m)], strlen(http_method_strings[(*m)]), &error);
-	if(error)
-		return -1;
-
-	return 0;
+	return HTTP_NO_ERROR;
 }
