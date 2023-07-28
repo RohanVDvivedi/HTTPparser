@@ -17,10 +17,22 @@ int main()
 	initialize_stream_for_fd(&ws, 1);
 
 	http_request_head hrq;
-	init_http_request_head_from_uri(&hrq, &get_dstring_pointing_to_literal_cstring("https://www.bing.com/?toWww=1&redig=C6A5D09A029446FAA02284B3A374D5F3"));
+	if(!init_http_request_head_from_uri(&hrq, &get_dstring_pointing_to_literal_cstring("https://www.bing.com/?toWww=1&redig=C6A5D09A029446FAA02284B3A374D5F3")))
+	{
+		printf("failed to initialize http request from given uri");
+		goto EXIT_0;
+	}
 	hrq.method = GET;
-	insert_literal_cstrings_in_dmap(&(hrq.headers), "accept", "*/*");
-	insert_literal_cstrings_in_dmap(&(hrq.headers), "accept-encoding", "gzip,deflate");
+	if(!insert_literal_cstrings_in_dmap(&(hrq.headers), "accept", "*/*"))
+	{
+		printf("failed to insert accept header");
+		goto EXIT_1;
+	}
+	if(!insert_literal_cstrings_in_dmap(&(hrq.headers), "accept-encoding", "gzip,deflate"))
+	{
+		printf("failed to insert accept-encoding header");
+		goto EXIT_1;
+	}
 
 	http_response_head hrp;
 	init_http_response_head(&hrp);
@@ -30,7 +42,7 @@ int main()
 	if(res == 0)
 	{
 		printf("no servers found\n");
-		goto EXIT_1;
+		goto EXIT_2;
 	}
 
 	stream raw_stream;
@@ -39,7 +51,7 @@ int main()
 	if(!make_connection_stream(&raw_stream, &server_address, NULL, ssl_ctx))
 	{
 		printf("failed to make connection");
-		goto EXIT_2;
+		goto EXIT_3;
 	}
 
 	int error = 0;
@@ -47,18 +59,18 @@ int main()
 	if(serialize_http_request_head(&raw_stream, &hrq) == -1)
 	{
 		printf("error serializing http request head\n");
-		goto EXIT_3;
+		goto EXIT_4;
 	}
 	flush_all_from_stream(&raw_stream, &error);
 	if(error)
 	{
 		printf("%d error flushing request head\n", error);
-		goto EXIT_3;
+		goto EXIT_4;
 	}
 	if(parse_http_response_head(&raw_stream, &hrp) == -1)
 	{
 		printf("error parsing http response head\n");
-		goto EXIT_3;
+		goto EXIT_4;
 	}
 
 	// printing response head
@@ -70,7 +82,7 @@ int main()
 	if(0 > intialize_http_body_and_decoding_streams_for_reading(&sstrm, &raw_stream, &(hrp.headers)))
 	{
 		printf("error initializing one of body or decoding streams\n");
-		goto EXIT_3;
+		goto EXIT_4;
 	}
 
 	#define read_buffer_size 64
@@ -103,22 +115,25 @@ int main()
 		}
 	}
 
-	EXIT_4:;
+	EXIT_5:;
 	close_deinitialize_free_all_from_stacked_stream(&sstrm, READ_STREAMS);
 	deinitialize_stacked_stream(&sstrm);
 
-	EXIT_3:;
+	EXIT_4:;
 	close_stream(&raw_stream, &error);
 	deinitialize_stream(&raw_stream);
 
-	EXIT_2:;
+	EXIT_3:;
 	if(ssl_ctx != NULL)
 		destroy_ssl_ctx(ssl_ctx);
 
-	EXIT_1:;
-	deinit_http_request_head(&hrq);
+	EXIT_2:;
 	deinit_http_response_head(&hrp);
 
+	EXIT_1:;
+	deinit_http_request_head(&hrq);
+
+	EXIT_0:;
 	deinitialize_stream(&rs);
 	deinitialize_stream(&ws);
 
