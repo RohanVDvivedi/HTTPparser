@@ -255,40 +255,31 @@ char* get_http_status_line(int status)
 
 int parse_http_status_line(stream* rs, int* s)
 {
-	int error = 0;
+	int stream_error = 0;
 
 	// parse status code and check if it is valid
 	{
 		(*s) = 0;
 		unsigned long long int status_code_val;
-		size_t status_code_bytes = read_unsigned_long_long_int_from_stream(rs, DECIMAL, &status_code_val, &error);
-		if(status_code_val > 1000 || status_code_bytes == 0 || error)
-			return -1;
+		size_t status_code_bytes = read_unsigned_long_long_int_from_stream(rs, DECIMAL, &status_code_val, &stream_error);
+		if(stream_error)
+			return HTTP_ERROR_IN_STREAM;
+		if(status_code_bytes == 0 || status_code_val > 1000)
+			return HTTP_PARSER_ERROR;
 		(*s) = status_code_val;
 
 		const char* status_reason_string = get_http_status_line((*s));
 		if(status_reason_string == NULL) // this check ensures that it is a valid status code
-			return -1;
+			return HTTP_OBJECT_INVALID_ERROR;
 	}
 
 	// skip spaces
-	{
-		#define MAX_SPACES 5
-		size_t space_bytes = skip_whitespaces_from_stream(rs, MAX_SPACES, &error);
-		if(space_bytes == 0 || error)
-			return -1;
-
-		// make sure that the next byte is not a whitespace
-		{
-			char byte;
-			size_t byte_read = read_from_stream(rs, &byte, 1, &error);
-			if(byte_read == 0 || error || isspace(byte))
-				return -1;
-			unread_from_stream(rs, &byte, 1, &error);
-			if(error)
-				return -1;
-		}
-	}
+	#define MAX_SPACES 5
+	size_t space_bytes = skip_whitespaces_from_stream(rs, MAX_SPACES, &stream_error);
+	if(stream_error)
+		return HTTP_ERROR_IN_STREAM;
+	if(space_bytes == 0)
+		return HTTP_PARSER_ERROR;
 
 	// skip all of the status reason
 
@@ -301,16 +292,18 @@ int parse_http_status_line(stream* rs, int* s)
 	while(reason_phrase_bytes_read < largest_reason_phrase)
 	{
 		char byte;
-		size_t byte_read = read_from_stream(rs, &byte, 1, &error);
-		if(byte_read == 0 || error)
-			return -1;
+		size_t byte_read = read_from_stream(rs, &byte, 1, &stream_error);
+		if(stream_error)
+			return HTTP_ERROR_IN_STREAM;
+		if(byte_read == 0)
+			return HTTP_PARSER_ERROR;
 
 		if(byte == '\n' && last_char_CR)
 		{
 			status_line_end_reached = 1;
-			unread_dstring_from_stream(rs, &CRLF, &error);
-			if(error)
-				return -1;
+			unread_dstring_from_stream(rs, &CRLF, &stream_error);
+			if(stream_error)
+				return HTTP_ERROR_IN_STREAM;
 			break;
 		}
 
@@ -319,9 +312,9 @@ int parse_http_status_line(stream* rs, int* s)
 	}
 
 	if(!status_line_end_reached)
-		return -1;
+		return HTTP_PARSER_ERROR;
 
-	return 0;
+	return HTTP_NO_ERROR;
 }
 
 int serialize_http_status_line(stream* ws, const int* s)
