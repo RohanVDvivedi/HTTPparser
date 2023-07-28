@@ -21,7 +21,7 @@ int parse_http_method(stream* rs, http_method* m)
 {
 	char byte;
 	size_t byte_read = 0;
-	int error = 0;
+	int stream_error = 0;
 
 	int method_count = sizeof(http_method_strings)/sizeof(char*);
 
@@ -34,9 +34,11 @@ int parse_http_method(stream* rs, http_method* m)
 
 	while(can_be_count > 0 && res == -1)
 	{
-		byte_read = read_from_stream(rs, &byte, 1, &error);
-		if(byte_read == 0 || error != 0)
-			return -1;
+		byte_read = read_from_stream(rs, &byte, 1, &stream_error);
+		if(stream_error)
+			return HTTP_ERROR_IN_STREAM;
+		if(byte_read == 0)
+			return HTTP_PARSER_ERROR;
 
 		for(int i = 0; i < method_count; i++)
 		{
@@ -59,11 +61,11 @@ int parse_http_method(stream* rs, http_method* m)
 	}
 
 	if(res == -1)
-		return -1;
+		return HTTP_PARSER_ERROR;
 
 	(*m) = res;
 
-	return 0;
+	return HTTP_NO_ERROR;
 }
 
 int serialize_http_method(stream* ws, const http_method* m)
