@@ -3,8 +3,6 @@
 
 #include<dstring.h>
 
-#include<http_parser_error_codes.h>
-
 // scheme ":" [ "//" [ userinfo "@" ] host [ ":" port ] ] path [ "?" query ] [ "#" fragment ]
 
 typedef struct uri uri;
@@ -21,7 +19,11 @@ struct uri
 
 void init_uri(uri* uri_p);
 
-// returns int value, suggesting error, from error codes given in http_parser_error_codes.h
+#define URI_NO_ERROR          0
+#define URI_PARSER_ERROR     -1
+#define URI_ALLOCATION_ERROR -2
+
+// returns int value, suggesting error, as mentioned above
 int parse_uri(uri* uri_p, const dstring* uri_val);
 
 void deinit_uri(uri* uri_p);
