@@ -1,4 +1,3 @@
- * segregate error codes for all parsing functions HTTP_NO_ERROR, HTTP_PARSER_ERROR, HTTP_ERROR_IN_STREAM and HTTP_ALLOCATION_ERROR
  * propogate thei new error api to test cases and downstream projects like Serc and serc_template_application
 
  * implement stream to read/write websocket data -> you can test this with https://www.piesocket.com/websocket-tester client, after integration with Serc on serc-template-application
