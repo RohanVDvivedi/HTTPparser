@@ -100,87 +100,115 @@ static int is_end_char_for_param_value(int is_end_of_stream, char c, const void*
 
 int parse_url_encoded_param(stream* rs, dstring* key, dstring* value, int is_first_param)
 {
-	int error = 0;
+	int stream_error = 0;
 
 	make_dstring_empty(key);
 	make_dstring_empty(value);
 
 	if(!is_first_param)
 	{
-		size_t bytes_skipped = skip_dstring_from_stream(rs, &AMP, &error);
-		if(error)
-			return -1;
+		size_t bytes_skipped = skip_dstring_from_stream(rs, &AMP, &stream_error);
+		if(stream_error)
+			return HTTP_ERROR_IN_STREAM;
 		if(bytes_skipped == 0) // a not first param must start with an ampersand, an absence of that implies end of params
-			return -2;
+			return HTTP_OBJECT_INVALID_ERROR;
 	}
 
 	int last_byte;
 
-	dstring key_encoded = read_until_any_end_chars_from_stream(rs, is_end_char_for_param_key, NULL, &last_byte, 2048, &error);
-	if(error || is_empty_dstring(&key_encoded))
+	dstring key_encoded = read_until_any_end_chars_from_stream(rs, is_end_char_for_param_key, NULL, &last_byte, 2048, &stream_error);
+	if(stream_error)
 	{
 		deinit_dstring(&key_encoded);
-		return -1;
+		return HTTP_ERROR_IN_STREAM;
+	}
+	if(is_empty_dstring(&key_encoded))
+	{
+		deinit_dstring(&key_encoded);
+		return HTTP_PARSER_ERROR;
 	}
 
 	if(get_char_count_dstring(&key_encoded) == 1)
 	{
 		deinit_dstring(&key_encoded);
 		if(is_first_param)
-			return -2;
-		return -1;
+			return HTTP_OBJECT_INVALID_ERROR;
+		return HTTP_PARSER_ERROR;
 	}
 	else if(((char)last_byte) != '=')
 	{
 		deinit_dstring(&key_encoded);
-		return -1;
+		return HTTP_PARSER_ERROR;
 	}
 
 	discard_chars_from_back_dstring(&key_encoded, 1);
 
-	dstring value_encoded = read_until_any_end_chars_from_stream(rs, is_end_char_for_param_value, NULL, &last_byte, 2048, &error);
-	if(error || (last_byte != 256 && is_empty_dstring(&value_encoded)))
+	dstring value_encoded = read_until_any_end_chars_from_stream(rs, is_end_char_for_param_value, NULL, &last_byte, 2048, &stream_error);
+	if(stream_error)
 	{
 		deinit_dstring(&key_encoded);
 		deinit_dstring(&value_encoded);
-		return -1;
+		return HTTP_ERROR_IN_STREAM;
+	}
+	if(is_empty_dstring(&value_encoded) && last_byte != 256) // a last_byte of 256 implies that the last byte read was end of stream
+	{
+		deinit_dstring(&key_encoded);
+		deinit_dstring(&value_encoded);
+		return HTTP_PARSER_ERROR;
 	}
 
-	if(last_byte != 256 && !is_empty_dstring(&value_encoded))
+	// a last_byte of 256 implies that the last byte read was end of stream
+	// the below condition is true if a value_encoded is successfully read and the last byte read was not an EOF, so in this case we need to discard this last byte
+	if(!is_empty_dstring(&value_encoded) && last_byte != 256)
 	{
 		char lb = last_byte;
-		unread_from_stream(rs, &lb, 1, &error);
-		if(error)
+		unread_from_stream(rs, &lb, 1, &stream_error);
+		if(stream_error)
 		{
 			deinit_dstring(&key_encoded);
 			deinit_dstring(&value_encoded);
-			return -1;
+			return HTTP_ERROR_IN_STREAM;
 		}
 		discard_chars_from_back_dstring(&value_encoded, 1);
 	}
 
 	// clubbed conditionals with function calls
-	// FAIL if (current capacity of dstring is less AND dstring could not be expanded) OR (uri format to dstring format conversion fails)
-	if((get_unused_capacity_dstring(key) < get_char_count_dstring(&key_encoded) &&
-		!expand_dstring(key, get_char_count_dstring(&key_encoded) - get_unused_capacity_dstring(key))) ||
-		(!uri_to_dstring_format(&key_encoded, key)))
+	// FAIL if (current capacity of dstring is less AND dstring could not be expanded)
+	if(get_unused_capacity_dstring(key) < get_char_count_dstring(&key_encoded) &&
+		!expand_dstring(key, get_char_count_dstring(&key_encoded) - get_unused_capacity_dstring(key)))
 	{
 		deinit_dstring(&key_encoded);
 		deinit_dstring(&value_encoded);
-		return -1;
+		return HTTP_ALLOCATION_ERROR;
+	}
+
+	// FAIL if (uri format to dstring format conversion fails)
+	int error = uri_to_dstring_format(&key_encoded, key);
+	if(error)
+	{
+		deinit_dstring(&key_encoded);
+		deinit_dstring(&value_encoded);
+		return error;
 	}
 
 	// clubbed conditionals with function calls just like above
-	if((get_unused_capacity_dstring(value) < get_char_count_dstring(&value_encoded) &&
-		!expand_dstring(value, get_char_count_dstring(&value_encoded) - get_unused_capacity_dstring(value))) ||
-		(!uri_to_dstring_format(&value_encoded, value)))
+	if(get_unused_capacity_dstring(value) < get_char_count_dstring(&value_encoded) &&
+		!expand_dstring(value, get_char_count_dstring(&value_encoded) - get_unused_capacity_dstring(value)))
 	{
 		deinit_dstring(&key_encoded);
 		deinit_dstring(&value_encoded);
-		return -1;
+		return HTTP_ALLOCATION_ERROR;
 	}
 
-	return 0;
+	error = uri_to_dstring_format(&value_encoded, value);
+	if(error)
+	{
+		deinit_dstring(&key_encoded);
+		deinit_dstring(&value_encoded);
+		return error;
+	}
+
+	return HTTP_NO_ERROR;
 }
 
 int parse_url_encoded_params(stream* rs, dmap* params)
