@@ -343,35 +343,36 @@ int parse_http_path_and_path_params(stream* rs, http_request_head* hr_p)
 
 int serialize_http_path_and_path_params(stream* ws, const http_request_head* hr_p)
 {
-	int error = 0;
+	int stream_error = 0;
 
 	{
 		dstring path_serializable;
 		if(!init_empty_dstring(&path_serializable, get_char_count_dstring(&(hr_p->path))))
-			return -1;
+			return HTTP_ALLOCATION_ERROR;
 		if(!to_serializable_format(&(hr_p->path), 1, &path_serializable))
 		{
 			deinit_dstring(&path_serializable);
-			return -1;
+			return HTTP_ALLOCATION_ERROR;
 		}
-		write_dstring_to_stream(ws, &path_serializable, &error);
+		write_dstring_to_stream(ws, &path_serializable, &stream_error);
 		deinit_dstring(&path_serializable);
-		if(error)
-			return -1;
+		if(stream_error)
+			return HTTP_ERROR_IN_STREAM;
 	}
 
-	// if the hashmap is not empty, then write "?" to the stream
+	// if the hashmap is not empty, then write "?" to the stream and then serialize the path_params
 	if(!is_empty_hashmap(&(hr_p->path_params)))
 	{
-		write_dstring_to_stream(ws, &QM, &error);
+		write_dstring_to_stream(ws, &QM, &stream_error);
+		if(stream_error)
+			return HTTP_ERROR_IN_STREAM;
+
+		int error = serialize_url_encoded_params(ws, &(hr_p->path_params));
 		if(error)
-			return -1;
+			return error;
 	}
 
-	if(serialize_url_encoded_params(ws, &(hr_p->path_params)) == -1)
-		return -1;
-
-	return 0;
+	return HTTP_NO_ERROR;
 }
 
 int serialize_url_encoded_params(stream* ws, const dmap* params)
