@@ -19,22 +19,22 @@ int init_http_request_head_from_uri(http_request_head* hr_p, const dstring* uri_
 	uri uriv;
 	init_uri(&uriv);
 	int parse_error = parse_uri(&uriv, uri_str);
-
 	if(parse_error)
-		return -1;
+		goto ERROR;
 
 	if(!is_empty_dstring(&(uriv.host)) && !insert_in_dmap(&(hr_p->headers), &get_dstring_pointing_to_literal_cstring("host"), &(uriv.host)))
-		return -1;
+		goto ERROR;
 
 	if(!is_empty_dstring(&(uriv.path)))
 	{
-		if(0 == uri_to_dstring_format(&(uriv.path), &(hr_p->path)))
-			return -1;
+		int error = uri_to_dstring_format(&(uriv.path), &(hr_p->path));
+		if(error)
+			goto ERROR;
 	}
 	else
 	{
 		if(!concatenate_dstring(&(hr_p->path), &F_SLSH))
-			return -1;
+			goto ERROR;
 	}
 
 	if(!is_empty_dstring(&(uriv.query)))
@@ -46,21 +46,29 @@ int init_http_request_head_from_uri(http_request_head* hr_p, const dstring* uri_
 
 			// malformed uri
 			if(get_byte_array_dstring(&value) == NULL)
-				return -1;
+				goto ERROR;
 
 			// empty key is error prone
 			if(is_empty_dstring(&key))
 				continue;
 
-			dstring key_;init_empty_dstring(&key_, get_char_count_dstring(&key));
-			dstring value_;init_empty_dstring(&value_, get_char_count_dstring(&value));
+			dstring key_;
+			if(!init_empty_dstring(&key_, get_char_count_dstring(&key)))
+				goto ERROR;
+
+			dstring value_;
+			if(!init_empty_dstring(&value_, get_char_count_dstring(&value)))
+			{
+				deinit_dstring(&key_);
+				goto ERROR;
+			}
 
 			// if we fail converting them to dstring_format OR if the insert fails, then we fail
-			if(!uri_to_dstring_format(&key, &key_) || !uri_to_dstring_format(&value, &value_) || !insert_in_dmap(&(hr_p->path_params), &key_, &value_))
+			if(uri_to_dstring_format(&key, &key_) || uri_to_dstring_format(&value, &value_) || !insert_in_dmap(&(hr_p->path_params), &key_, &value_))
 			{
 				deinit_dstring(&key_);
 				deinit_dstring(&value_);
-				return -1;
+				goto ERROR;
 			}
 
 			deinit_dstring(&key_);
@@ -69,7 +77,11 @@ int init_http_request_head_from_uri(http_request_head* hr_p, const dstring* uri_
 	}
 
 	deinit_uri(&uriv);
+	return 1;
 
+	ERROR :;
+	deinit_uri(&uriv);
+	deinit_http_request_head(hr_p);
 	return 0;
 }
 
