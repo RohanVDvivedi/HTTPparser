@@ -5,6 +5,8 @@
 #include<http_version.h>
 #include<dmap.h>
 
+#include<http_parser_error_codes.h>
+
 typedef struct http_request_head http_request_head;
 struct http_request_head
 {
@@ -28,10 +30,10 @@ int init_http_request_head_from_uri(http_request_head* hr_p, const dstring* uri_
 
 void deinit_http_request_head(http_request_head* hr_p);
 
-// returns -1 for error and 0 for success
+// returns int value, suggesting error, from error codes given in http_parser_error_codes.h
 int parse_http_request_head(stream* rs, http_request_head* hr_p);
 
-// returns -1 for error and 0 for success
+// returns int value, suggesting error, from error codes given in http_parser_error_codes.h
 int serialize_http_request_head(stream* ws, const http_request_head* hr_p);
 
 void print_http_request_head(const http_request_head* hr_p);

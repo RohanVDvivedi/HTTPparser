@@ -16,32 +16,28 @@ void deinit_http_response_head(http_response_head* hr_p)
 
 int parse_http_response_head(stream* rs, http_response_head* hr_p)
 {
-	int error = 0;
-
-	error = parse_http_response_line(rs, hr_p);
+	int error = parse_http_response_line(rs, hr_p);
 	if(error)
-		return -1;
+		return error;
 
 	error = parse_http_headers(rs, &(hr_p->headers));
 	if(error)
-		return -1;
+		return error;
 
-	return 0;
+	return HTTP_NO_ERROR;
 }
 
 int serialize_http_response_head(stream* ws, const http_response_head* hr_p)
 {
-	int error = 0;
-
-	error = serialize_http_response_line(ws, hr_p);
+	int error = serialize_http_response_line(ws, hr_p);
 	if(error)
-		return -1;
+		return error;
 
 	error = serialize_http_headers(ws, &(hr_p->headers));
 	if(error)
-		return -1;
+		return error;
 
-	return 0;
+	return HTTP_NO_ERROR;
 }
 
 #include<stdio.h>
