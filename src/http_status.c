@@ -326,15 +326,14 @@ int parse_http_status_line(stream* rs, int* s)
 
 int serialize_http_status_line(stream* ws, const int* s)
 {
-	int error = 0;
-
 	const char* status_reason_string = get_http_status_line((*s));
 	if(status_reason_string == NULL) // this check ensures that it is a valid status code
-		return -1;
+		return HTTP_OBJECT_INVALID_ERROR;
 
-	write_to_stream_formatted(ws, &error, "%d %s", *s, status_reason_string);
-	if(error)
-		return -1;
+	int stream_error = 0;
+	write_to_stream_formatted(ws, &stream_error, "%d %s", *s, status_reason_string);
+	if(stream_error)
+		return HTTP_ERROR_IN_STREAM;
 
-	return 0;
+	return HTTP_NO_ERROR;
 }
