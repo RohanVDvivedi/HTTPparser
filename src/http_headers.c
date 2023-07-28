@@ -8,18 +8,20 @@
 
 int parse_http_headers(stream* rs, dmap* headers)
 {
-	int error = 0;
+	int stream_error = 0;
 
 	while(1)
 	{
 		// read from stream until CRLF
-		dstring header = read_until_dstring_from_stream(rs, &CRLF, CRLF_spml, 2048, &error);
-		if(error || is_empty_dstring(&header))
-			return -1;
+		dstring header = read_until_dstring_from_stream(rs, &CRLF, CRLF_spml, 2048, &stream_error);
+		if(stream_error)
+			return HTTP_ERROR_IN_STREAM;
+		if(is_empty_dstring(&header))
+			return HTTP_PARSER_ERROR;
 
 		// if we read just CRLF then it is end of headers and start of body
 		if(compare_dstring(&header, &CRLF) == 0)
-			return 0;
+			return HTTP_NO_ERROR;
 
 		// discard the last 2 bytes from header string, which must be CRLF
 		discard_chars_from_back_dstring(&header, get_char_count_dstring(&CRLF));
@@ -33,7 +35,7 @@ int parse_http_headers(stream* rs, dmap* headers)
 		if(is_empty_dstring(&header_key))
 		{
 			deinit_dstring(&header);
-			return -1;
+			return HTTP_PARSER_ERROR;
 		}
 
 		// trim header value of any spaces in the front and back
@@ -43,30 +45,30 @@ int parse_http_headers(stream* rs, dmap* headers)
 		if(!insert_in_dmap(headers, &header_key, &header_value))
 		{
 			deinit_dstring(&header);
-			return -1;
+			return HTTP_ALLOCATION_ERROR;
 		}
 
 		// deinitialize all dstrings you generated, again header_key and header_value need not be deinit-ed
 		deinit_dstring(&header);
 	}
 
-	return 0;
+	return HTTP_NO_ERROR;
 }
 
 int serialize_http_headers(stream* ws, const dmap* headers)
 {
-	int error = 0;
+	int stream_error = HTTP_NO_ERROR;
 
 	for_each_in_dmap(e, headers)
 	{
-		write_to_stream_formatted(ws, &error, printf_dstring_format printf_dstring_format printf_dstring_format printf_dstring_format, printf_dstring_params(&(e->key)), printf_dstring_params(&CLSP), printf_dstring_params(&(e->value)), printf_dstring_params(&CRLF));
-		if(error)
-			return -1;
+		write_to_stream_formatted(ws, &stream_error, printf_dstring_format printf_dstring_format printf_dstring_format printf_dstring_format, printf_dstring_params(&(e->key)), printf_dstring_params(&CLSP), printf_dstring_params(&(e->value)), printf_dstring_params(&CRLF));
+		if(stream_error)
+			return HTTP_ERROR_IN_STREAM;
 	}
 
-	write_dstring_to_stream(ws, &CRLF, &error);
-	if(error)
-		return -1;
+	write_dstring_to_stream(ws, &CRLF, &stream_error);
+	if(stream_error)
+		return HTTP_ERROR_IN_STREAM;
 
-	return 0;
+	return HTTP_NO_ERROR;
 }

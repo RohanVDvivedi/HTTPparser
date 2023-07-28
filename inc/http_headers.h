@@ -3,10 +3,12 @@
 
 #include<dmap.h>
 
-// returns -1 for error and 0 for success
+#include<http_parser_error_codes.h>
+
+// returns int value, suggesting error, from error codes given in http_parser_error_codes.h
 int parse_http_headers(stream* rs, dmap* headers);
 
-// returns -1 for error and 0 for success
+// returns int value, suggesting error, from error codes given in http_parser_error_codes.h
 int serialize_http_headers(stream* ws, const dmap* headers);
 
 #endif
