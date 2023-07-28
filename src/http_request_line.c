@@ -71,28 +71,30 @@ int parse_http_request_line(stream* rs, http_request_head* hr_p)
 
 int serialize_http_request_line(stream* ws, const http_request_head* hr_p)
 {
-	int error = 0;
-
-	if(serialize_http_method(ws, &(hr_p->method)) == -1)
-		return -1;
-
-	write_dstring_to_stream(ws, &SP, &error); // " "
+	int error = serialize_http_method(ws, &(hr_p->method));
 	if(error)
-		return -1;
+		return error;
 
-	if(serialize_http_path_and_path_params(ws, hr_p) == -1)
-		return -1;
+	int stream_error = 0;
+	write_dstring_to_stream(ws, &SP, &stream_error); // " "
+	if(stream_error)
+		return HTTP_ERROR_IN_STREAM;
 
-	write_dstring_to_stream(ws, &SP, &error);  // " "
+	error = serialize_http_path_and_path_params(ws, hr_p);
 	if(error)
-		return -1;
+		return error;
 
-	if(serialize_http_version(ws, &(hr_p->version)) == -1)
-		return -1;
+	write_dstring_to_stream(ws, &SP, &stream_error);  // " "
+	if(stream_error)
+		return HTTP_ERROR_IN_STREAM;
 
-	write_dstring_to_stream(ws, &CRLF, &error); // "\r\n"
+	error = serialize_http_version(ws, &(hr_p->version));
 	if(error)
-		return -1;
+		return error;
 
-	return 0;
+	write_dstring_to_stream(ws, &CRLF, &stream_error); // "\r\n"
+	if(stream_error)
+		return HTTP_ERROR_IN_STREAM;
+
+	return HTTP_NO_ERROR;
 }
