@@ -28,8 +28,7 @@ static int path_and_path_params_characters_allowed_on_stream_unencoded(char c)
 }
 
 // if is_path is set then '/' is left unencoded
-// returns 1 for success and 0 for an error
-// it can only fail on allocation failures
+// returns int value, suggesting error, from error codes given in http_parser_error_codes.h
 static int to_serializable_format(const dstring* str, int is_path, dstring* res)
 {
 	const char* str_data = get_byte_array_dstring(str);
@@ -42,19 +41,19 @@ static int to_serializable_format(const dstring* str, int is_path, dstring* res)
 		if(path_and_path_params_characters_allowed_on_stream_unencoded(str_data[i]) || (is_path && str_data[i] == '/'))
 		{
 			if(!concatenate_char(res, str_data[i]))
-				return 0;
+				return HTTP_ALLOCATION_ERROR;
 		}
 		else
 		{
 			if(!snprintf_dstring(res, "%%%c%c", hex_to_char((str_data[i] >> 4) & 0x0f), hex_to_char(str_data[i] & 0x0f)))
-				return 0;
+				return HTTP_ALLOCATION_ERROR;
 		}
 	}
 
-	return 1;
+	return HTTP_NO_ERROR;
 }
 
-// returns 1 for success and 0 for an error
+// returns int value, suggesting error, from error codes given in http_parser_error_codes.h
 int uri_to_dstring_format(const dstring* str, dstring* res)
 {
 	const char* str_data = get_byte_array_dstring(str);
@@ -71,18 +70,18 @@ int uri_to_dstring_format(const dstring* str, dstring* res)
 			digits[0] = get_digit_from_char(str_data[i++], 16);
 			digits[1] = get_digit_from_char(str_data[i++], 16);
 			if(digits[0] == INVALID_INDEX || digits[1] == INVALID_INDEX)
-				return 0;
+				return HTTP_OBJECT_INVALID_ERROR;
 			if(!concatenate_char(res, (((digits[0] << 4) & 0xf0) | (digits[1] & 0x0f))))
-				return 0;
+				return HTTP_ALLOCATION_ERROR;
 		}
 		else
 		{
 			if(!concatenate_char(res, str_data[i++]))
-				return 0;
+				return HTTP_ALLOCATION_ERROR;
 		}
 	}
 
-	return 1;
+	return HTTP_NO_ERROR;
 }
 
 static int is_end_char_for_param_key(int is_end_of_stream, char c, const void* cntxt)
