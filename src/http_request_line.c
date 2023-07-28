@@ -10,63 +10,43 @@
 
 int parse_http_request_line(stream* rs, http_request_head* hr_p)
 {
-	if(parse_http_method(rs, &(hr_p->method)) == -1)
-		return -1;
+	int error = parse_http_method(rs, &(hr_p->method));
+	if(error)
+		return error;
 
-	int error = 0;
-
-	// skip spaces
-	{
-		#define MAX_SPACES 5
-		size_t space_bytes = skip_whitespaces_from_stream(rs, MAX_SPACES, &error);
-		if(space_bytes == 0 || error)
-			return -1;
-
-		// make sure that the next byte is not a whitespace
-		{
-			char byte;
-			size_t byte_read = read_from_stream(rs, &byte, 1, &error);
-			if(byte_read == 0 || error || isspace(byte))
-				return -1;
-			unread_from_stream(rs, &byte, 1, &error);
-			if(error)
-				return -1;
-		}
-	}
-
-	if(parse_http_path_and_path_params(rs, hr_p) == -1)
-		return -1;
+	int stream_error = 0;
 
 	// skip spaces
-	{
-		#define MAX_SPACES 5
-		size_t space_bytes = skip_whitespaces_from_stream(rs, MAX_SPACES, &error);
-		if(space_bytes == 0 || error)
-			return -1;
+	#define MAX_SPACES 5
+	size_t space_bytes = skip_whitespaces_from_stream(rs, MAX_SPACES, &stream_error);
+	if(stream_error)
+		return HTTP_ERROR_IN_STREAM;
+	if(space_bytes == 0)
+		return HTTP_PARSER_ERROR;
 
-		// make sure that the next byte is not a whitespace
-		{
-			char byte;
-			size_t byte_read = read_from_stream(rs, &byte, 1, &error);
-			if(byte_read == 0 || error || isspace(byte))
-				return -1;
-			unread_from_stream(rs, &byte, 1, &error);
-			if(error)
-				return -1;
-		}
-	}
+	error = parse_http_path_and_path_params(rs, hr_p);
+	if(error)
+		return error;
 
-	if(parse_http_version(rs, &(hr_p->version)) == -1)
-		return -1;
+	// skip spaces
+	space_bytes = skip_whitespaces_from_stream(rs, MAX_SPACES, &stream_error);
+	if(stream_error)
+		return HTTP_ERROR_IN_STREAM;
+	if(space_bytes == 0)
+		return HTTP_PARSER_ERROR;
+
+	error = parse_http_version(rs, &(hr_p->version));
+	if(error)
+		return error;
 
 	// skip reading the "\r\n"
-	{
-		size_t line_end_read = skip_dstring_from_stream(rs, &CRLF, &error);
-		if(line_end_read == 0 || error)
-			return -1;
-	}
+	size_t line_end_read = skip_dstring_from_stream(rs, &CRLF, &stream_error);
+	if(stream_error)
+		return HTTP_ERROR_IN_STREAM;
+	if(line_end_read == 0)
+		return HTTP_PARSER_ERROR;
 
-	return 0;
+	return HTTP_NO_ERROR;
 }
 
 int serialize_http_request_line(stream* ws, const http_request_head* hr_p)
