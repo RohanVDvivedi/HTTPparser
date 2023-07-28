@@ -10,60 +10,52 @@
 
 int parse_http_response_line(stream* rs, http_response_head* hr_p)
 {
-	if(parse_http_version(rs, &(hr_p->version)) == -1)
-		return -1;
+	int error = parse_http_version(rs, &(hr_p->version));
+	if(error)
+		return error;
 
-	int error = 0;
+	int stream_error = 0;
 
-	// skip spaces
-	{
-		#define MAX_SPACES 5
-		size_t space_bytes = skip_whitespaces_from_stream(rs, MAX_SPACES, &error);
-		if(space_bytes == 0 || error)
-			return -1;
+	// skip at most 5 spaces
+	#define MAX_SPACES 5
+	size_t space_bytes = skip_whitespaces_from_stream(rs, MAX_SPACES, &stream_error);
+	if(stream_error)
+		return HTTP_ERROR_IN_STREAM;
+	if(space_bytes == 0)
+		return HTTP_PARSER_ERROR;
 
-		// make sure that the next byte is not a whitespace
-		{
-			char byte;
-			size_t byte_read = read_from_stream(rs, &byte, 1, &error);
-			if(byte_read == 0 || error || isspace(byte))
-				return -1;
-			unread_from_stream(rs, &byte, 1, &error);
-			if(error)
-				return -1;
-		}
-	}
-
-	if(parse_http_status_line(rs, &(hr_p->status)) == -1)
-		return -1;
+	error = parse_http_status_line(rs, &(hr_p->status));
+	if(error)
+		return error;
 
 	// skip reading the "\r\n"
-	{
-		size_t line_end_read = skip_dstring_from_stream(rs, &CRLF, &error);
-		if(line_end_read == 0 || error)
-			return -1;
-	}
+	size_t line_end_read = skip_dstring_from_stream(rs, &CRLF, &stream_error);
+	if(stream_error)
+		return HTTP_ERROR_IN_STREAM;
+	if(line_end_read == 0)
+		return HTTP_PARSER_ERROR;
 
-	return 0;
+	return HTTP_NO_ERROR;
 }
 
 int serialize_http_response_line(stream* ws, const http_response_head* hr_p)
 {
-	int error = 0;
-
-	if(serialize_http_version(ws, &(hr_p->version)) == -1)
-		return -1;
-	
-	write_dstring_to_stream(ws, &SP, &error); // " "
+	int error = serialize_http_version(ws, &(hr_p->version));
 	if(error)
-		return -1;
+		return error;
 
-	if(serialize_http_status_line(ws, &(hr_p->status)) == -1)
-		return -1;
+	int stream_error = 0;
+	write_dstring_to_stream(ws, &SP, &stream_error); // " "
+	if(stream_error)
+		return HTTP_ERROR_IN_STREAM;
 
-	write_dstring_to_stream(ws, &CRLF, &error);	// "\r\n"
+	error = serialize_http_status_line(ws, &(hr_p->status));
 	if(error)
-		return -1;
+		return error;
 
-	return 0;
+	write_dstring_to_stream(ws, &CRLF, &stream_error);	// "\r\n"
+	if(stream_error)
+		return HTTP_ERROR_IN_STREAM;
+
+	return HTTP_NO_ERROR;
 }

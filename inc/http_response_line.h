@@ -5,10 +5,12 @@
 
 #include<http_response.h>
 
-// returns -1 for error and 0 for success
+#include<http_parser_error_codes.h>
+
+// returns int value, suggesting error, from error codes given in http_parser_error_codes.h
 int parse_http_response_line(stream* rs, http_response_head* hr_p);
 
-// returns -1 for error and 0 for success
+// returns int value, suggesting error, from error codes given in http_parser_error_codes.h
 int serialize_http_response_line(stream* ws, const http_response_head* hr_p);
 
 #endif
