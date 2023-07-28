@@ -213,8 +213,6 @@ int parse_url_encoded_param(stream* rs, dstring* key, dstring* value, int is_fir
 
 int parse_url_encoded_params(stream* rs, dmap* params)
 {
-	int error = 0;
-
 	int is_first_param = 1;
 
 	while(1)
@@ -230,7 +228,7 @@ int parse_url_encoded_params(stream* rs, dmap* params)
 		{
 			deinit_dstring(&key);
 			deinit_dstring(&value);
-			break;
+			break; // HTTP_NO_ERROR
 		}
 		else if(error) // for any other error, we quit returning the same error
 		{
@@ -259,24 +257,29 @@ int parse_http_path_and_path_params(stream* rs, http_request_head* hr_p)
 {
 	dstring path_and_params;
 
-	int error = 0;
+	int stream_error = 0;
 
 	// read path and path params from the stream, until " " is encountered
 	{
-		path_and_params = read_until_dstring_from_stream(rs, &SP, SP_spml, 2048, &error);
-		if(error || is_empty_dstring(&path_and_params))
+		path_and_params = read_until_dstring_from_stream(rs, &SP, SP_spml, 2048, &stream_error);
+		if(stream_error)
 		{
 			deinit_dstring(&path_and_params);
-			return -1;
+			return HTTP_ERROR_IN_STREAM;
+		}
+		if(is_empty_dstring(&path_and_params))
+		{
+			deinit_dstring(&path_and_params);
+			return HTTP_PARSER_ERROR;
 		}
 
 		// put SP (" ") back into the stream
 		// and remove SP (" ") from path_and_params
-		unread_dstring_from_stream(rs, &SP, &error);
-		if(error)
+		unread_dstring_from_stream(rs, &SP, &stream_error);
+		if(stream_error)
 		{
 			deinit_dstring(&path_and_params);
-			return -1;
+			return HTTP_ERROR_IN_STREAM;
 		}
 		discard_chars_from_back_dstring(&path_and_params, get_char_count_dstring(&SP));
 	}
@@ -289,22 +292,23 @@ int parse_http_path_and_path_params(stream* rs, http_request_head* hr_p)
 	if(is_empty_dstring(&path))
 	{
 		deinit_dstring(&path_and_params);
-		return -1;
+		return HTTP_PARSER_ERROR;
 	}
 
 	// populate path
 	make_dstring_empty(&(hr_p->path));
-	if(!uri_to_dstring_format(&path, &(hr_p->path)))
+	int error = uri_to_dstring_format(&path, &(hr_p->path));
+	if(error)
 	{
 		deinit_dstring(&path_and_params);
-		return -1;
+		return error;
 	}
 
 	// if there are no params then exit with success
 	if(is_empty_dstring(&params))
 	{
 		deinit_dstring(&path_and_params);
-		return 0;
+		return HTTP_NO_ERROR;
 	}
 
 	// insert params to the hr_p->path_params
@@ -320,7 +324,7 @@ int parse_http_path_and_path_params(stream* rs, http_request_head* hr_p)
 		if(is_empty_dstring(&param_key))
 		{
 			deinit_dstring(&path_and_params);
-			return -1;
+			return HTTP_PARSER_ERROR;
 		}
 
 		// insert param_key and param_value into path_params
@@ -329,13 +333,14 @@ int parse_http_path_and_path_params(stream* rs, http_request_head* hr_p)
 			if(!init_empty_dstring(&param_key_dstring, get_char_count_dstring(&param_key)))
 			{
 				deinit_dstring(&path_and_params);
-				return -1;
+				return HTTP_ALLOCATION_ERROR;
 			}
-			if(!uri_to_dstring_format(&param_key, &param_key_dstring))
+			error = uri_to_dstring_format(&param_key, &param_key_dstring);
+			if(error)
 			{
 				deinit_dstring(&param_key_dstring);
 				deinit_dstring(&path_and_params);
-				return -1;
+				return error;
 			}
 
 			dstring param_value_dstring;
@@ -343,14 +348,15 @@ int parse_http_path_and_path_params(stream* rs, http_request_head* hr_p)
 			{
 				deinit_dstring(&param_key_dstring);
 				deinit_dstring(&path_and_params);
-				return -1;
+				return HTTP_ALLOCATION_ERROR;
 			}
-			if(!uri_to_dstring_format(&param_value, &param_value_dstring))
+			error = uri_to_dstring_format(&param_value, &param_value_dstring);
+			if(error)
 			{
 				deinit_dstring(&param_key_dstring);
 				deinit_dstring(&param_value_dstring);
 				deinit_dstring(&path_and_params);
-				return -1;
+				return error;
 			}
 
 			if(!insert_in_dmap(&(hr_p->path_params), &param_key_dstring, &param_value_dstring))
@@ -358,7 +364,7 @@ int parse_http_path_and_path_params(stream* rs, http_request_head* hr_p)
 				deinit_dstring(&param_key_dstring);
 				deinit_dstring(&param_value_dstring);
 				deinit_dstring(&path_and_params);
-				return -1;
+				return HTTP_ALLOCATION_ERROR;
 			}
 
 			deinit_dstring(&param_key_dstring);
@@ -368,7 +374,7 @@ int parse_http_path_and_path_params(stream* rs, http_request_head* hr_p)
 
 	deinit_dstring(&path_and_params);
 
-	return 0;
+	return HTTP_NO_ERROR;
 }
 
 int serialize_http_path_and_path_params(stream* ws, const http_request_head* hr_p)
