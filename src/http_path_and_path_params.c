@@ -379,12 +379,13 @@ int serialize_url_encoded_params(stream* ws, const dmap* params)
 	int is_first_param = 1;
 	for_each_in_dmap(e, params)
 	{
-		if(serialize_url_encoded_param(ws, &(e->key), &(e->value), is_first_param) == -1)
-			return -1;
+		int error = serialize_url_encoded_param(ws, &(e->key), &(e->value), is_first_param);
+		if(error)
+			return error;
 
 		is_first_param = 0;
 	}
-	return 0;
+	return HTTP_NO_ERROR;
 }
 
 int serialize_url_encoded_param(stream* ws, const dstring* key, const dstring* value, int is_first_param)
