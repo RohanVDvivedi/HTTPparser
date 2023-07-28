@@ -46,23 +46,30 @@ int serialize_http_response_head(stream* ws, const http_response_head* hr_p)
 #include<http_header_util.h>
 #include<http_constant_dstrings.h>
 
-void init_http_response_head_from_http_request_head(http_response_head* hrp_p, const http_request_head* hrq_p, int status, size_t content_length_val)
+int init_http_response_head_from_http_request_head(http_response_head* hrp_p, const http_request_head* hrq_p, int status, size_t content_length_val)
 {
 	init_http_response_head(hrp_p);
 	hrp_p->version = hrq_p->version;
 	hrp_p->status = status;
 	if(content_length_val == TRANSFER_CHUNKED)
 	{
-		insert_in_dmap(&(hrp_p->headers), &transfer_encoding_HKEY, &chunked_te_HVAL);
+		if(!insert_in_dmap(&(hrp_p->headers), &transfer_encoding_HKEY, &chunked_te_HVAL))
+			goto FAILED;
 		const dstring* content_encoding_val = find_acceptable_content_encoding_for_http_response_body(hrq_p);
-		if(content_encoding_val)
-			insert_in_dmap(&(hrp_p->headers), &content_encoding_HKEY, content_encoding_val);
+		if(content_encoding_val && !insert_in_dmap(&(hrp_p->headers), &content_encoding_HKEY, content_encoding_val))
+			goto FAILED;
 	}
 	else
 	{
-		insert_formatted_in_dmap(&(hrp_p->headers), &content_length_HKEY, "%zu", content_length_val);
-		insert_in_dmap(&(hrp_p->headers), &content_encoding_HKEY, &identity_ce_HVAL);
+		if((!insert_formatted_in_dmap(&(hrp_p->headers), &content_length_HKEY, "%zu", content_length_val))
+		 || (!insert_in_dmap(&(hrp_p->headers), &content_encoding_HKEY, &identity_ce_HVAL)))
+			goto FAILED;
 	}
+	return 1;
+
+	FAILED:;
+	deinit_http_response_head(hrp_p);
+	return 0;
 }
 
 void print_http_response_head(const http_response_head* hr_p)
