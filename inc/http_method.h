@@ -3,6 +3,8 @@
 
 #include<stream.h>
 
+#include<http_parser_error_codes.h>
+
 /*
 	to add additional http method
 	update enum http_method and http_method_strings array
@@ -24,10 +26,10 @@ enum http_method
 
 extern const char* http_method_strings[];
 
-// returns -1 for error and 0 for success
+// returns int value, suggesting error, from error codes given in http_parser_error_codes.h
 int parse_http_method(stream* rs, http_method* m);
 
-// returns -1 for error and 0 for success
+// returns int value, suggesting error, from error codes given in http_parser_error_codes.h
 int serialize_http_method(stream* ws, const http_method* m);
 
 #endif
