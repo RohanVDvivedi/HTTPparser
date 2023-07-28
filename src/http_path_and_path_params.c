@@ -29,6 +29,7 @@ static int path_and_path_params_characters_allowed_on_stream_unencoded(char c)
 
 // if is_path is set then '/' is left unencoded
 // returns 1 for success and 0 for an error
+// it can only fail on allocation failures
 static int to_serializable_format(const dstring* str, int is_path, dstring* res)
 {
 	const char* str_data = get_byte_array_dstring(str);
@@ -388,47 +389,47 @@ int serialize_url_encoded_params(stream* ws, const dmap* params)
 
 int serialize_url_encoded_param(stream* ws, const dstring* key, const dstring* value, int is_first_param)
 {
-	int error = 0;
+	int stream_error = 0;
 
 	if(!is_first_param) // write '&' if this is not the first param
 	{
-		write_dstring_to_stream(ws, &AMP, &error);
-		if(error)
-			return -1;
+		write_dstring_to_stream(ws, &AMP, &stream_error);
+		if(stream_error)
+			return HTTP_ERROR_IN_STREAM;
 	}
 
 	{
 		dstring key_serializable;
 		if(!init_empty_dstring(&key_serializable, get_char_count_dstring(key)))
-			return -1;
+			return HTTP_ALLOCATION_ERROR;
 		if(!to_serializable_format(key, 0, &key_serializable))
 		{
 			deinit_dstring(&key_serializable);
-			return -1;
+			return HTTP_ALLOCATION_ERROR;
 		}
-		write_dstring_to_stream(ws, &key_serializable, &error);
+		write_dstring_to_stream(ws, &key_serializable, &stream_error);
 		deinit_dstring(&key_serializable);
-		if(error)
-			return -1;
+		if(stream_error)
+			return HTTP_ERROR_IN_STREAM;
 	}
 
-	write_dstring_to_stream(ws, &EQ, &error); // '='
-	if(error)
-		return -1;
+	write_dstring_to_stream(ws, &EQ, &stream_error); // '='
+	if(stream_error)
+		return HTTP_ERROR_IN_STREAM;
 
 	{
 		dstring value_serializable;
 		if(!init_empty_dstring(&value_serializable, get_char_count_dstring(value)))
-			return -1;
+			return HTTP_ALLOCATION_ERROR;
 		if(!to_serializable_format(value, 0, &value_serializable))
 		{
 			deinit_dstring(&value_serializable);
-			return -1;
+			return HTTP_ALLOCATION_ERROR;
 		}
-		write_dstring_to_stream(ws, &value_serializable, &error);
+		write_dstring_to_stream(ws, &value_serializable, &stream_error);
 		deinit_dstring(&value_serializable);
-		if(error)
-			return -1;
+		if(stream_error)
+			return HTTP_ERROR_IN_STREAM;
 	}
 
 	return 0;
