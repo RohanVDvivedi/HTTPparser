@@ -225,19 +225,25 @@ int parse_url_encoded_params(stream* rs, dmap* params)
 		init_empty_dstring(&key, 0);
 		init_empty_dstring(&value, 0);
 
-		error = parse_url_encoded_param(rs, &key, &value, is_first_param);
-		if(error)
+		int error = parse_url_encoded_param(rs, &key, &value, is_first_param);
+		if(error == HTTP_OBJECT_INVALID_ERROR) // this implies that there are no more url encoded params in the stream
 		{
 			deinit_dstring(&key);
 			deinit_dstring(&value);
 			break;
+		}
+		else if(error) // for any other error, we quit returning the same error
+		{
+			deinit_dstring(&key);
+			deinit_dstring(&value);
+			return error;
 		}
 
 		if(!insert_in_dmap(params, &key, &value))
 		{
 			deinit_dstring(&key);
 			deinit_dstring(&value);
-			return -1;
+			return HTTP_ALLOCATION_ERROR;
 		}
 
 		deinit_dstring(&key);
@@ -246,10 +252,7 @@ int parse_url_encoded_params(stream* rs, dmap* params)
 		is_first_param = 0;
 	}
 
-	if(error == -1) // an error of -2 implies end of params
-		return -1;
-
-	return 0;
+	return HTTP_NO_ERROR;
 }
 
 int parse_http_path_and_path_params(stream* rs, http_request_head* hr_p)
