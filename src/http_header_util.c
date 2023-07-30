@@ -145,7 +145,7 @@ int parse_cookies_from_cookie_header(dmap* cookies, const dmap* headers)
 		for_each_split_by_delim(cookie_value, &(cookie_entry->value), &SCL)
 		{
 			if(INVALID_INDEX == contains_dstring_RK(&cookie_value, &EQ))
-				return -1;
+				return HTTP_PARSER_ERROR;
 
 			dstring cookie_key;
 			dstring cookie_value = split_dstring(&cookie_value, &EQ, &cookie_key);
@@ -154,11 +154,11 @@ int parse_cookies_from_cookie_header(dmap* cookies, const dmap* headers)
 			trim_dstring(&cookie_value);
 
 			if(!insert_in_dmap(cookies, &cookie_key, &cookie_value))
-				return -1;
+				return HTTP_ALLOCATION_ERROR;
 		}
 	}
 
-	return 0;
+	return HTTP_NO_ERROR;
 }
 
 int has_url_encoded_params_in_body(const dmap* headers)

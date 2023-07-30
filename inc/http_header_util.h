@@ -21,7 +21,9 @@ const dstring* find_acceptable_content_encoding_for_http_response_body(const htt
 // check if a given content type is acceptable
 int check_content_type_acceptable(const dstring* content_type, const http_request_head* hrq_p);
 
-// returns -1 on an error and 0 for success
+#include<http_parser_error_codes.h>
+
+// returns int value, suggesting error, from error codes given in http_parser_error_codes.h
 int parse_cookies_from_cookie_header(dmap* cookies, const dmap* headers);
 
 int has_url_encoded_params_in_body(const dmap* headers);
