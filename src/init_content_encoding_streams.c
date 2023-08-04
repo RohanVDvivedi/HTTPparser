@@ -14,8 +14,9 @@ int initialize_readable_content_decoding_stream(stacked_stream* sstrm, const dma
 
 	int return_success = 0;
 
-	stack encodings_stack;
-	initialize_stack(&encodings_stack, 16);
+	arraylist encodings_stack;
+	if(!initialize_arraylist(&encodings_stack, 16))
+		return -2;
 
 	for_each_equals_in_dmap(content_encoding_entry, headers, &content_encoding_HKEY)
 	{
@@ -26,12 +27,12 @@ int initialize_readable_content_decoding_stream(stacked_stream* sstrm, const dma
 			if(	(compare_dstring(&value, &gzip_ce_HVAL) == 0 && (encoding = &gzip_ce_HVAL)) || 
 				(compare_dstring(&value, &deflate_ce_HVAL) == 0 && (encoding = &deflate_ce_HVAL))	)
 			{
-				if(is_full_stack(&encodings_stack) && !expand_stack(&encodings_stack))
+				if(is_full_arraylist(&encodings_stack) && !expand_arraylist(&encodings_stack))
 				{
 					return_success = -2;
 					break;
 				}
-				push_to_stack(&encodings_stack, encoding);
+				push_back_to_arraylist(&encodings_stack, encoding);
 			}
 			else if(0 == compare_dstring(&value, &identity_ce_HVAL))
 				continue;
@@ -45,18 +46,18 @@ int initialize_readable_content_decoding_stream(stacked_stream* sstrm, const dma
 
 	if(return_success < 0)
 	{
-		deinitialize_stack(&encodings_stack);
+		deinitialize_arraylist(&encodings_stack);
 		return return_success;
 	}
 
 	int streams_pushed = 0;
 
 	// init streams based on stack encodings and then push them on stacked_stream
-	while(!is_empty_stack(&encodings_stack))
+	while(!is_empty_arraylist(&encodings_stack))
 	{
 		stream* strm = malloc(sizeof(stream));
-		dstring const * const encoding = get_top_of_stack(&encodings_stack);
-		pop_from_stack(&encodings_stack);
+		dstring const * const encoding = get_back_of_arraylist(&encodings_stack);
+		pop_back_from_arraylist(&encodings_stack);
 		if(encoding == &gzip_ce_HVAL)
 		{
 			if(!initialize_stream_for_zlib_decompression2(strm, get_top_of_stacked_stream(sstrm, READ_STREAMS), 31))
@@ -83,7 +84,7 @@ int initialize_readable_content_decoding_stream(stacked_stream* sstrm, const dma
 		streams_pushed++;
 	}
 
-	deinitialize_stack(&encodings_stack);
+	deinitialize_arraylist(&encodings_stack);
 
 	if(return_success >= 0)
 		return return_success;
@@ -106,8 +107,8 @@ int initialize_writable_content_encoding_stream(stacked_stream* sstrm, const dma
 
 	int return_success = 0;
 
-	stack encodings_stack;
-	initialize_stack(&encodings_stack, 16);
+	arraylist encodings_stack;
+	initialize_arraylist(&encodings_stack, 16);
 
 	for_each_equals_in_dmap(content_encoding_entry, headers, &content_encoding_HKEY)
 	{
@@ -118,12 +119,12 @@ int initialize_writable_content_encoding_stream(stacked_stream* sstrm, const dma
 			if(	(compare_dstring(&value, &gzip_ce_HVAL) == 0 && (encoding = &gzip_ce_HVAL)) || 
 				(compare_dstring(&value, &deflate_ce_HVAL) == 0 && (encoding = &deflate_ce_HVAL))	)
 			{
-				if(is_full_stack(&encodings_stack) && !expand_stack(&encodings_stack))
+				if(is_full_arraylist(&encodings_stack) && !expand_arraylist(&encodings_stack))
 				{
 					return_success = -2;
 					break;
 				}
-				push_to_stack(&encodings_stack, encoding);
+				push_back_to_arraylist(&encodings_stack, encoding);
 			}
 			else if(0 == compare_dstring(&value, &identity_ce_HVAL))
 				continue;
@@ -137,18 +138,18 @@ int initialize_writable_content_encoding_stream(stacked_stream* sstrm, const dma
 
 	if(return_success < 0)
 	{
-		deinitialize_stack(&encodings_stack);
+		deinitialize_arraylist(&encodings_stack);
 		return return_success;
 	}
 
 	int streams_pushed = 0;
 
 	// init streams based on stack encodings and then push them on stacked_stream
-	while(!is_empty_stack(&encodings_stack))
+	while(!is_empty_arraylist(&encodings_stack))
 	{
 		stream* strm = malloc(sizeof(stream));
-		dstring const * const encoding = get_top_of_stack(&encodings_stack);
-		pop_from_stack(&encodings_stack);
+		dstring const * const encoding = get_back_of_arraylist(&encodings_stack);
+		pop_back_from_arraylist(&encodings_stack);
 		if(encoding == &gzip_ce_HVAL)
 		{
 			if(!initialize_stream_for_zlib_compression2(strm, get_top_of_stacked_stream(sstrm, WRITE_STREAMS), Z_DEFAULT_COMPRESSION, Z_DEFLATED, 31, 8, Z_DEFAULT_STRATEGY))
@@ -175,7 +176,7 @@ int initialize_writable_content_encoding_stream(stacked_stream* sstrm, const dma
 		streams_pushed++;
 	}
 
-	deinitialize_stack(&encodings_stack);
+	deinitialize_arraylist(&encodings_stack);
 
 	if(return_success >= 0)
 		return return_success;
