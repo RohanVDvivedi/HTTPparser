@@ -154,15 +154,15 @@ void print_dmap(stream* ws, const dmap* dmap_p)
 	flush_all_from_stream(ws, &error);
 }
 
-static void destroy_dmap_entries_in_dmap(const void* data, const void* additional_params)
+static void on_remove_all_from_dmap_delete_entry(void* resource, const void* _de)
 {
-	dmap_entry* e = (dmap_entry*) data;
+	dmap_entry* e = (dmap_entry*) _de;
 	deinit_dmap_entry(e);
 	free(e);
 }
 
 void deinit_dmap(dmap* dmap_p)
 {
-	for_each_in_hashmap(dmap_p, destroy_dmap_entries_in_dmap, NULL);
+	remove_all_from_hashmap(dmap_p, &((notifier_interface){NULL, on_remove_all_from_dmap_delete_entry}));
 	deinitialize_hashmap(dmap_p);
 }
