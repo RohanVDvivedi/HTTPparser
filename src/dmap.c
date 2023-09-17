@@ -50,8 +50,8 @@ int init_dmap(dmap* dmap_p, int ignore_case_for_key)
 								dmap_p,
 								ROBINHOOD_HASHING,
 								8,
-								ignore_case_for_key ? dstring_key_hash_case : dstring_key_hash,
-								(int (*)(const void*, const void*))(ignore_case_for_key ? case_compare_dstring : compare_dstring),
+								&simple_hasher(ignore_case_for_key ? dstring_key_hash_case : dstring_key_hash),
+								&simple_comparator(((int (*)(const void*, const void*))(ignore_case_for_key ? case_compare_dstring : compare_dstring))),
 								offsetof(dmap_entry, embed_node)
 							);
 }
