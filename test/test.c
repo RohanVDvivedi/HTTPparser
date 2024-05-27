@@ -48,7 +48,7 @@ int main()
 	stream raw_stream;
 	ssl_lib_init();
 	SSL_CTX* ssl_ctx = get_ssl_ctx_for_client(NULL, NULL);
-	if(!make_connection_stream(&raw_stream, &server_address, NULL, ssl_ctx))
+	if(-1 == make_connection_stream(&raw_stream, &server_address, NULL, ssl_ctx))
 	{
 		printf("failed to make connection");
 		goto EXIT_3;
@@ -56,7 +56,9 @@ int main()
 
 	int error = 0;
 
-	if(HTTP_NO_ERROR != serialize_http_request_head(&raw_stream, &hrq))
+	int err = serialize_http_request_head(&raw_stream, &hrq);
+	printf("%d %d\n", err, raw_stream.last_error);
+	if(HTTP_NO_ERROR != err)
 	{
 		printf("error serializing http request head\n");
 		goto EXIT_4;
