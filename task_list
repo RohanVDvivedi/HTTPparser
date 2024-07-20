@@ -1,2 +1,4 @@
+ * if memory allocation in parser fails then return NULL object and error code, but do not kill the process
+
  * implement stream to read/write websocket data -> you can test this with https://www.piesocket.com/websocket-tester client, after integration with Serc on serc-template-application
  * implement stream to read write server sent event data
