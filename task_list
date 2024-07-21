@@ -1,6 +1,7 @@
  * if memory allocation in parser fails then return NULL object and error code, but do not kill the process
  * in header_util.c outputs of parse acceptable values needs to be destroyed, OR initialize it as pointing to dstring
  * in http_multipart_form_data.c, read_prefix_multipart_form_data must take error as input parameter and fail if it could not allocate memory for __boundary, also check other places where this allocation passed unchecked
+ * make test/test.c work, possibly with some another api, and update to corresponding api in Serc
 
  * implement stream to read/write websocket data -> you can test this with https://www.piesocket.com/websocket-tester client, after integration with Serc on serc-template-application
  * implement stream to read write server sent event data
