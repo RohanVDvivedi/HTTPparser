@@ -17,11 +17,17 @@ int parse_http_headers(stream* rs, dmap* headers)
 		if(stream_error)
 			return HTTP_ERROR_IN_STREAM;
 		if(is_empty_dstring(&header))
+		{
+			deinit_dstring(&header);
 			return HTTP_PARSER_ERROR;
+		}
 
 		// if we read just CRLF then it is end of headers and start of body
 		if(compare_dstring(&header, &CRLF) == 0)
+		{
+			deinit_dstring(&header);
 			return HTTP_NO_ERROR;
+		}
 
 		// discard the last 2 bytes from header string, which must be CRLF
 		discard_chars_from_back_dstring(&header, get_char_count_dstring(&CRLF));
