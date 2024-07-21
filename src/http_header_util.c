@@ -9,7 +9,8 @@ int parse_acceptable_value(const dstring* singlular_header_value, acceptable_val
 	trim_dstring(&shv);
 
 	// initialize return value
-	init_empty_dstring(&(av_p->value), 0);
+	if(!init_empty_dstring(&(av_p->value), 0))
+		return -1;
 	av_p->q_value = 1.0;
 
 	// split at ";"" to get to get value
@@ -18,7 +19,7 @@ int parse_acceptable_value(const dstring* singlular_header_value, acceptable_val
 
 	// concatenate split to value
 	if(!concatenate_dstring(&(av_p->value), &split))
-		return -1;
+		goto RETURN_ERROR;
 
 	// trim and check if the remaining is empty, if so this implies that there is only value and no q_value
 	ltrim_dstring(&remaining);
