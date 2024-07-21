@@ -45,6 +45,11 @@ int main()
 		goto EXIT_2;
 	}
 
+	dstring rest;
+	init_empty_dstring(&rest, 0);
+	snprintf_comm_address(&rest, &server_address);
+	printf(printf_dstring_format"\n", printf_dstring_params(&rest));
+
 	stream raw_stream;
 	ssl_lib_init();
 	SSL_CTX* ssl_ctx = get_ssl_ctx_for_client(NULL, NULL);
