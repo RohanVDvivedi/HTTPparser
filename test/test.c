@@ -17,7 +17,7 @@ int main()
 	initialize_stream_for_fd(&ws, 1);
 
 	http_request_head hrq;
-	if(!init_http_request_head_from_uri(&hrq, &get_dstring_pointing_to_literal_cstring("http://api.dictionaryapi.dev/api/v2/entries/en/hello")))
+	if(!init_http_request_head_from_uri(&hrq, &get_dstring_pointing_to_literal_cstring("https://api.dictionaryapi.dev/api/v2/entries/en/hello")))
 	{
 		printf("failed to initialize http request from given uri\n");
 		goto EXIT_0;
@@ -50,7 +50,7 @@ int main()
 	SSL_CTX* ssl_ctx = get_ssl_ctx_for_client(NULL, NULL);
 	if(-1 == make_connection_stream(&raw_stream, &server_address, NULL, ssl_ctx))
 	{
-		printf("failed to make connection");
+		printf("failed to make connection\n");
 		goto EXIT_3;
 	}
 
