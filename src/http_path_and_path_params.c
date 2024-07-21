@@ -220,8 +220,13 @@ int parse_url_encoded_params(stream* rs, dmap* params)
 		dstring key;
 		dstring value;
 
-		init_empty_dstring(&key, 0);
-		init_empty_dstring(&value, 0);
+		if(!init_empty_dstring(&key, 0))
+			return HTTP_ALLOCATION_ERROR;
+		if(!init_empty_dstring(&value, 0))
+		{
+			deinit_dstring(&key);
+			return HTTP_ALLOCATION_ERROR;
+		}
 
 		int error = parse_url_encoded_param(rs, &key, &value, is_first_param);
 		if(error == HTTP_OBJECT_INVALID_ERROR) // this implies that there are no more url encoded params in the stream
