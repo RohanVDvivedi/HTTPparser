@@ -53,7 +53,7 @@ int main()
 	stream raw_stream;
 	ssl_lib_init();
 	SSL_CTX* ssl_ctx = get_ssl_ctx_for_client(NULL, NULL);
-	if(-1 == make_connection_stream(&raw_stream, &server_address, NULL, ssl_ctx))
+	if(-1 == make_connection_stream(&raw_stream, &server_address, "api.dictionaryapi.dev", NULL, ssl_ctx))
 	{
 		printf("failed to make connection\n");
 		goto EXIT_3;
