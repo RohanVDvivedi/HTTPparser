@@ -56,6 +56,11 @@ int initialize_readable_content_decoding_stream(stacked_stream* sstrm, const dma
 	while(!is_empty_arraylist(&encodings_stack))
 	{
 		stream* strm = malloc(sizeof(stream));
+		if(strm == NULL)
+		{
+			return_success = -2;
+			break;
+		}
 		dstring const * const encoding = get_back_of_arraylist(&encodings_stack);
 		pop_back_from_arraylist(&encodings_stack);
 		if(encoding == &gzip_ce_HVAL)
@@ -148,6 +153,11 @@ int initialize_writable_content_encoding_stream(stacked_stream* sstrm, const dma
 	while(!is_empty_arraylist(&encodings_stack))
 	{
 		stream* strm = malloc(sizeof(stream));
+		if(strm == NULL)
+		{
+			return_success = -2;
+			break;
+		}
 		dstring const * const encoding = get_back_of_arraylist(&encodings_stack);
 		pop_back_from_arraylist(&encodings_stack);
 		if(encoding == &gzip_ce_HVAL)
