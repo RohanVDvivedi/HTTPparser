@@ -1,8 +1,8 @@
  * in header_util.c outputs of parse acceptable values needs to be destroyed, OR initialize it as pointing to dstring
  * in http_multipart_form_data.c, read_prefix_multipart_form_data must take error as input parameter and fail if it could not allocate memory for __boundary, also check other places where this allocation passed unchecked
- * also check for init_dmap, in all files, fauilures must be handled
+ * also check for init_dmap, in all files, failures must be handled
  * uri may only be parsed, and we do not need a separate initialize function for it
- * after above chenages ensure that Serc and other dependant libs are updated with the new api
+ * after above changes ensure that Serc and other dependant libs are updated with the new api
 
  * implement stream to read/write websocket data -> you can test this with https://www.piesocket.com/websocket-tester client, after integration with Serc on serc-template-application
  * implement stream to read write server sent event data
