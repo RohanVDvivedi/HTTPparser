@@ -62,7 +62,6 @@ int main()
 	int error = 0;
 
 	int err = serialize_http_request_head(&raw_stream, &hrq);
-	printf("%d %d\n", err, raw_stream.last_error);
 	if(HTTP_NO_ERROR != err)
 	{
 		printf("error serializing http request head\n");
