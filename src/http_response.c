@@ -1,9 +1,11 @@
 #include<http_response.h>
 
-void init_http_response_head(http_response_head* hr_p)
+int init_http_response_head(http_response_head* hr_p)
 {
 	hr_p->version = (http_version){1,1};
-	init_dmap(&(hr_p->headers), 1);
+	if(!init_dmap(&(hr_p->headers), 1))
+		return 0;
+	return 1;
 }
 
 void deinit_http_response_head(http_response_head* hr_p)
@@ -48,7 +50,8 @@ int serialize_http_response_head(stream* ws, const http_response_head* hr_p)
 
 int init_http_response_head_from_http_request_head(http_response_head* hrp_p, const http_request_head* hrq_p, int status, size_t content_length_val)
 {
-	init_http_response_head(hrp_p);
+	if(!init_http_response_head(hrp_p))
+		return 0;
 	hrp_p->version = hrq_p->version;
 	hrp_p->status = status;
 	if(content_length_val == TRANSFER_CHUNKED)

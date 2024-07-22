@@ -19,7 +19,8 @@ struct http_response_head
 	// body stream
 };
 
-void init_http_response_head(http_response_head* hr_p);
+// may fail only dure to memory allocation failure errors
+int init_http_response_head(http_response_head* hr_p);
 
 void deinit_http_response_head(http_response_head* hr_p);
 

@@ -23,7 +23,8 @@ struct http_request_head
 	// body stream
 };
 
-void init_http_request_head(http_request_head* hr_p);
+// may fail only dure to memory allocation failure errors
+int init_http_request_head(http_request_head* hr_p);
 
 // returns 1 for success and 0 for error
 // this is a util function, hence it does not return any error code that might have revealed why it failed

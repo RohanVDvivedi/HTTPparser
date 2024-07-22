@@ -1,11 +1,22 @@
 #include<http_request.h>
 
-void init_http_request_head(http_request_head* hr_p)
+int init_http_request_head(http_request_head* hr_p)
 {
 	hr_p->version = (http_version){1,1};
-	init_empty_dstring(&(hr_p->path), 0);
-	init_dmap(&(hr_p->path_params), 0);
-	init_dmap(&(hr_p->headers), 1);
+	if(!init_empty_dstring(&(hr_p->path), 0))
+		return 0;
+	if(!init_dmap(&(hr_p->path_params), 0))
+	{
+		deinit_dstring(&(hr_p->path));
+		return 0;
+	}
+	if(!init_dmap(&(hr_p->headers), 1))
+	{
+		deinit_dmap(&(hr_p->path_params));
+		deinit_dstring(&(hr_p->path));
+		return 0;
+	}
+	return 1;
 }
 
 #include<uri_parser.h>
@@ -14,7 +25,8 @@ void init_http_request_head(http_request_head* hr_p)
 
 int init_http_request_head_from_uri(http_request_head* hr_p, const dstring* uri_str)
 {
-	init_http_request_head(hr_p);
+	if(!init_http_request_head(hr_p))
+		return 0;
 
 	uri uriv;
 	init_uri(&uriv);
