@@ -1,4 +1,3 @@
- * if memory allocation in parser fails then return NULL object and error code, but do not kill the process
  * in header_util.c outputs of parse acceptable values needs to be destroyed, OR initialize it as pointing to dstring
  * in http_multipart_form_data.c, read_prefix_multipart_form_data must take error as input parameter and fail if it could not allocate memory for __boundary, also check other places where this allocation passed unchecked
  * also check for init_dmap, init_http_request_head, init_http_response_head, in all files, fauilures must be handled
