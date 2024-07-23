@@ -17,7 +17,7 @@ struct uri
 	dstring fragment;
 };
 
-void init_uri(uri* uri_p);
+int init_uri(uri* uri_p);
 
 #define URI_NO_ERROR          0
 #define URI_PARSER_ERROR     -1

@@ -3,15 +3,31 @@
 #include<http_constant_dstrings.h>
 #include<cutlery_math.h>
 
-void init_uri(uri* uri_p)
+int init_uri(uri* uri_p)
 {
-	init_empty_dstring(&(uri_p->scheme), 0);
-	init_empty_dstring(&(uri_p->userinfo), 0);
-	init_empty_dstring(&(uri_p->host), 0);
-	init_empty_dstring(&(uri_p->port), 0);
-	init_empty_dstring(&(uri_p->path), 0);
-	init_empty_dstring(&(uri_p->query), 0);
-	init_empty_dstring(&(uri_p->fragment), 0);
+	if(!init_empty_dstring(&(uri_p->scheme), 0))
+		goto FAIL0;
+	if(!init_empty_dstring(&(uri_p->userinfo), 0))
+		goto FAIL1;
+	if(!init_empty_dstring(&(uri_p->host), 0))
+		goto FAIL2;
+	if(!init_empty_dstring(&(uri_p->port), 0))
+		goto FAIL3;
+	if(!init_empty_dstring(&(uri_p->path), 0))
+		goto FAIL4;
+	if(!init_empty_dstring(&(uri_p->query), 0))
+		goto FAIL5;
+	if(!init_empty_dstring(&(uri_p->fragment), 0))
+		goto FAIL6;
+	return 1;
+
+	FAIL6:;		deinit_dstring(&(uri_p->query));
+	FAIL5:;		deinit_dstring(&(uri_p->path));
+	FAIL4:;		deinit_dstring(&(uri_p->port));
+	FAIL3:;		deinit_dstring(&(uri_p->host));
+	FAIL2:;		deinit_dstring(&(uri_p->userinfo));
+	FAIL1:;		deinit_dstring(&(uri_p->scheme));
+	FAIL0:;		return 0;
 }
 
 int parse_uri(uri* uri_p, const dstring* uri_val)
