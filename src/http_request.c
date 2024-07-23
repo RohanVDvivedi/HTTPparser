@@ -27,9 +27,13 @@ int init_http_request_head_from_uri(http_request_head* hr_p, const dstring* uri_
 {
 	if(!init_http_request_head(hr_p))
 		return 0;
-
 	uri uriv;
-	init_uri(&uriv);
+	if(!init_uri(&uriv))
+	{
+		deinit_http_request_head(hr_p);
+		return 0;
+	}
+
 	int parse_error = parse_uri(&uriv, uri_str);
 	if(parse_error)
 		goto ERROR;
