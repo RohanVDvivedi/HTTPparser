@@ -6,11 +6,12 @@
 typedef struct acceptable_value acceptable_value;
 struct acceptable_value
 {
-	dstring value;
+	dstring value; // this is only a pointing dstring, pointing to your header value
 	double q_value;
 };
 
 // returns -1 for error and 0 for success
+// as explained in comment above you do not need to destroy av_p, or any of its attributes
 int parse_acceptable_value(const dstring* singlular_header_value, acceptable_value* av_p);
 
 #include<http_request.h>
