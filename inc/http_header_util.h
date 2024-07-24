@@ -10,7 +10,7 @@ struct acceptable_value
 	double q_value;
 };
 
-// returns -1 for error and 0 for success
+// returns HTTP_PARSER_ERROR for error and HTTP_NO_ERROR for success
 // as explained in comment above you do not need to destroy av_p, or any of its attributes
 int parse_acceptable_value(const dstring* singlular_header_value, acceptable_value* av_p);
 

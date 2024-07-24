@@ -61,10 +61,10 @@ int parse_acceptable_value(const dstring* singlular_header_value, acceptable_val
 		goto RETURN_ERROR;
 
 	RETURN_SUCCESS:;
-	return 0;
+	return HTTP_NO_ERROR;
 
 	RETURN_ERROR:;
-	return -1;
+	return HTTP_PARSER_ERROR;
 }
 
 const dstring* find_acceptable_content_encoding_for_http_response_body(const http_request_head* hrq_p)
@@ -81,7 +81,7 @@ const dstring* find_acceptable_content_encoding_for_http_response_body(const htt
 			trim_dstring(&value);
 
 			acceptable_value av;
-			if(-1 == parse_acceptable_value(&value, &av))
+			if(HTTP_NO_ERROR != parse_acceptable_value(&value, &av))
 				break;
 
 			// a qvalue of 0 implies do not use it
@@ -120,7 +120,7 @@ int check_content_type_acceptable(const dstring* content_type, const http_reques
 			trim_dstring(&value);
 
 			acceptable_value av;
-			if(-1 == parse_acceptable_value(&value, &av))
+			if(HTTP_NO_ERROR != parse_acceptable_value(&value, &av))
 				break;
 
 			// a qvalue of 0 implies do not use it
