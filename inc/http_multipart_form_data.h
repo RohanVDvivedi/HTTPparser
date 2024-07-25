@@ -37,6 +37,7 @@ multipart_form_data_segment* parse_next_multipart_form_data(stream* strm, const 
 #define NAME_n_FILENAME_PRESENT 0b11
 
 // get name and filename values from content_disposition header value
+// name and will name would be "pointing to" dstrings pointing to the values in the multipart_form_data_segement's header
 int get_name_n_filename_from_content_disposition_header(const multipart_form_data_segment* seg, dstring* name, dstring* filename);
 
 // you must call destroy function on any of multipart_form_data_segment returned by parse_next_multipart_form_data
