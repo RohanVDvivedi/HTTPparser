@@ -164,12 +164,12 @@ int get_name_n_filename_from_content_disposition_header(const multipart_form_dat
 			if(!name_set && 0 == compare_dstring(&cd_key, &get_dstring_pointing_to_literal_cstring("name")))
 			{
 				name_set = 1;
-				concatenate_dstring(name, &cd_value);
+				(*name) = get_dstring_pointing_to_dstring(&cd_value);
 			}
 			else if(!filename_set && 0 == compare_dstring(&cd_key, &get_dstring_pointing_to_literal_cstring("filename")))
 			{
 				filename_set = 1;
-				concatenate_dstring(filename, &cd_value);
+				(*filename) = get_dstring_pointing_to_dstring(&cd_value);
 			}
 
 			if(name_set && filename_set)
