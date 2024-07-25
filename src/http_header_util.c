@@ -198,9 +198,8 @@ int has_multipart_form_data_in_body(const dmap* headers, int* is_boundary_presen
 
 				if(0 == compare_dstring(&key, &get_dstring_pointing_to_literal_cstring("boundary")))
 				{
-					// we will set the is_boundary_present only if we were able to concatenate it to the result variable
-					if(concatenate_dstring(boundary, &val))
-						(*is_boundary_present) = 1;
+					(*boundary) = get_dstring_pointing_to_dstring(&val);
+					(*is_boundary_present) = 1;
 					break;
 				}
 			}
