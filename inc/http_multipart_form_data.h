@@ -14,9 +14,17 @@ struct multipart_form_data_segment
 	stream body_stream;
 };
 
+#define HTTP_MULTIPART_FORM_DATA_NO_ERROR              0
+#define HTTP_MULTIPART_FORM_DATA_PARSER_ERROR         -1
+#define HTTP_MULTIPART_FORM_DATA_ERROR_IN_STREAM      -2
+#define HTTP_MULTIPART_FORM_DATA_ALLOCATION_ERROR     -3
+
+// there is 1-1 correspondence between similar errors of HTTP and HTTP_MULTIPART_FORM_DATA
+// below 2 functions are designed to return any of the above 4 errors, in the error parameter
+
 // return -1 if "--boundary" is not read
 // this function must be called first on the stream (on top of body stream and decoding streams)
-int read_prefix_multipart_form_data(stream* strm, const dstring* boundary, int* error);
+void read_prefix_multipart_form_data(stream* strm, const dstring* boundary, int* error);
 
 // returns NULL if no new segment present, error will be set on an error
 // the contents of the file/field will be inside the body_stream of the returned multipart_form_segment

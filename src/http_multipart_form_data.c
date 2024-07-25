@@ -12,16 +12,34 @@ const dstring __MULTIPART_FORM_DATA = get_dstring_pointing_to_literal_cstring("-
 const dstring MULTIPART_FORM_DATA_end = get_dstring_pointing_to_literal_cstring("--\r\n");
 
 // return -1 if boundary is not read
-int read_prefix_multipart_form_data(stream* strm, const dstring* boundary, int* error)
+void read_prefix_multipart_form_data(stream* strm, const dstring* boundary, int* error)
 {
-	size_t bytes_read = skip_dstring_from_stream(strm, &__MULTIPART_FORM_DATA, error);
-	if((*error) || bytes_read == 0)
-		return -1;
-	bytes_read = skip_dstring_from_stream(strm, boundary, error);
-	if((*error) || bytes_read == 0)
-		return -1;
+	(*error) = HTTP_MULTIPART_FORM_DATA_NO_ERROR;
+	int stream_error = 0;
 
-	return 0;
+	size_t bytes_read = skip_dstring_from_stream(strm, &__MULTIPART_FORM_DATA, &stream_error);
+	if(stream_error)
+	{
+		(*error) = HTTP_MULTIPART_FORM_DATA_ERROR_IN_STREAM;
+		return;
+	}
+	if(bytes_read == 0)
+	{
+		(*error) = HTTP_MULTIPART_FORM_DATA_PARSER_ERROR;
+		return;
+	}
+
+	bytes_read = skip_dstring_from_stream(strm, boundary, error);
+	if(stream_error)
+	{
+		(*error) = HTTP_MULTIPART_FORM_DATA_ERROR_IN_STREAM;
+		return;
+	}
+	if(bytes_read == 0)
+	{
+		(*error) = HTTP_MULTIPART_FORM_DATA_PARSER_ERROR;
+		return;
+	}
 }
 
 static multipart_form_data_segment* new_multipart_form_data_segment()
@@ -31,7 +49,7 @@ static multipart_form_data_segment* new_multipart_form_data_segment()
 		return NULL;
 	if(!init_dmap(&(seg->headers), 1))
 	{
-		free(seg)
+		free(seg);
 		return NULL;
 	}
 	return seg;
@@ -39,31 +57,47 @@ static multipart_form_data_segment* new_multipart_form_data_segment()
 
 multipart_form_data_segment* parse_next_multipart_form_data(stream* strm, const dstring* boundary, int* error)
 {
-	(*error) = 0;
+	(*error) = HTTP_MULTIPART_FORM_DATA_NO_ERROR;
+	int stream_error = 0;
 
-	size_t bytes_read = skip_dstring_from_stream(strm, &MULTIPART_FORM_DATA_end, error);
-	if((*error))
+	size_t bytes_read = skip_dstring_from_stream(strm, &MULTIPART_FORM_DATA_end, &stream_error);
+	if(stream_error)
+	{
+		(*error) = HTTP_MULTIPART_FORM_DATA_ERROR_IN_STREAM;
 		return NULL;
+	}
 	if(bytes_read > 0)
 	{
 		char byte;
-		bytes_read = read_from_stream(strm, &byte, 1, error);
-		if(!(*error) && bytes_read > 0)
-			(*error) = -1;
+		bytes_read = read_from_stream(strm, &byte, 1, &stream_error);
+		if(stream_error)
+			(*error) = HTTP_MULTIPART_FORM_DATA_ERROR_IN_STREAM;
+		if(bytes_read > 0)
+			(*error) = HTTP_MULTIPART_FORM_DATA_PARSER_ERROR;
 		return NULL;
 	}
 
-	bytes_read = skip_dstring_from_stream(strm, &CRLF, error);
-	if((*error))
+	bytes_read = skip_dstring_from_stream(strm, &CRLF, &stream_error);
+	if(stream_error)
+	{
+		(*error) = HTTP_MULTIPART_FORM_DATA_ERROR_IN_STREAM;
 		return NULL;
+	}
 	else if(bytes_read == 0)
 	{
-		(*error) = -1;
+		(*error) = HTTP_MULTIPART_FORM_DATA_PARSER_ERROR;
 		return NULL;
 	}
 
 	multipart_form_data_segment* seg = new_multipart_form_data_segment();
-	if(-1 == ((*error) = parse_http_headers(strm, &(seg->headers))))
+	if(seg == NULL)
+	{
+		(*error) = HTTP_MULTIPART_FORM_DATA_ALLOCATION_ERROR;
+		return NULL;
+	}
+
+	// there is 1-1 correspondence between similar errors of HTTP and HTTP_MULTIPART_FORM_DATA
+	if(HTTP_NO_ERROR != ((*error) = parse_http_headers(strm, &(seg->headers))))
 	{
 		deinit_dmap(&(seg->headers));
 		free(seg);
@@ -71,21 +105,38 @@ multipart_form_data_segment* parse_next_multipart_form_data(stream* strm, const 
 	}
 
 	dstring __boundary;
-	init_empty_dstring(&__boundary, get_char_count_dstring(boundary) + 4);
-	concatenate_dstring(&__boundary, &CRLF);
-	concatenate_dstring(&__boundary, &__MULTIPART_FORM_DATA);
-	concatenate_dstring(&__boundary, boundary);
+	if(!init_empty_dstring(&__boundary, get_char_count_dstring(boundary) + 4))
+		goto FUNC_ALLOCATION_ERROR;
+	if(!concatenate_dstring(&__boundary, &CRLF))
+	{
+		deinit_dstring(&__boundary);
+		goto FUNC_ALLOCATION_ERROR;
+	}
+	if(!concatenate_dstring(&__boundary, &__MULTIPART_FORM_DATA))
+	{
+		deinit_dstring(&__boundary);
+		goto FUNC_ALLOCATION_ERROR;
+	}
+	if(!concatenate_dstring(&__boundary, boundary))
+	{
+		deinit_dstring(&__boundary);
+		goto FUNC_ALLOCATION_ERROR;
+	}
 
 	if(!initialize_stream_for_reading_until_dstring(&(seg->body_stream), strm, &__boundary))
 	{
 		deinit_dstring(&__boundary);
-		deinit_dmap(&(seg->headers));
-		free(seg);
-		return NULL;
+		goto FUNC_ALLOCATION_ERROR;
 	}
 
 	deinit_dstring(&__boundary);
 	return seg;
+
+	FUNC_ALLOCATION_ERROR:;
+	(*error) = HTTP_MULTIPART_FORM_DATA_ALLOCATION_ERROR;
+	deinit_dmap(&(seg->headers));
+	free(seg);
+	return NULL;
 }
 
 int get_name_n_filename_from_content_disposition_header(const multipart_form_data_segment* seg, dstring* name, dstring* filename)
