@@ -12,22 +12,15 @@ const dstring __MULTIPART_FORM_DATA = get_dstring_pointing_to_literal_cstring("-
 const dstring MULTIPART_FORM_DATA_end = get_dstring_pointing_to_literal_cstring("--\r\n");
 
 // return -1 if boundary is not read
-int read_prefix_multipart_form_data(stream* strm, const dstring* boundary)
+int read_prefix_multipart_form_data(stream* strm, const dstring* boundary, int* error)
 {
-	dstring __boundary;
-	init_empty_dstring(&__boundary, get_char_count_dstring(boundary) + 4);
-	concatenate_dstring(&__boundary, &__MULTIPART_FORM_DATA);
-	concatenate_dstring(&__boundary, boundary);
-
-	int error = 0;
-	size_t bytes_read = skip_dstring_from_stream(strm, &__boundary, &error);
-	if(error || bytes_read == 0)
-	{
-		deinit_dstring(&__boundary);
+	size_t bytes_read = skip_dstring_from_stream(strm, &__MULTIPART_FORM_DATA, error);
+	if((*error) || bytes_read == 0)
 		return -1;
-	}
+	bytes_read = skip_dstring_from_stream(strm, boundary, error);
+	if((*error) || bytes_read == 0)
+		return -1;
 
-	deinit_dstring(&__boundary);
 	return 0;
 }
 
