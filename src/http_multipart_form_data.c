@@ -27,7 +27,13 @@ int read_prefix_multipart_form_data(stream* strm, const dstring* boundary, int* 
 static multipart_form_data_segment* new_multipart_form_data_segment()
 {
 	multipart_form_data_segment* seg = malloc(sizeof(multipart_form_data_segment));
-	init_dmap(&(seg->headers), 1);
+	if(seg == NULL)
+		return NULL;
+	if(!init_dmap(&(seg->headers), 1))
+	{
+		free(seg)
+		return NULL;
+	}
 	return seg;
 }
 
