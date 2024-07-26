@@ -134,19 +134,18 @@ int check_content_type_acceptable(const dstring* content_type, const http_reques
 
 	return 0;
 }
-
+#include<stdio.h>
 int parse_cookies_from_cookie_header(dmap* cookies, const dmap* headers)
 {
 	for_each_equals_in_dmap(cookie_entry, headers, &cookie_HKEY)
 	{
-		for_each_split_by_delim(cookie_value, &(cookie_entry->value), &SCL)
+		for_each_split_by_delim(cookie_whole, &(cookie_entry->value), &SCL)
 		{
-			if(INVALID_INDEX == contains_dstring_RK(&cookie_value, &EQ))
+			if(INVALID_INDEX == contains_dstring_RK(&cookie_whole, &EQ))
 				return HTTP_PARSER_ERROR;
 
 			dstring cookie_key;
-			dstring cookie_value = split_dstring(&cookie_value, &EQ, &cookie_key);
-
+			dstring cookie_value = split_dstring(&cookie_whole, &EQ, &cookie_key);
 			trim_dstring(&cookie_key);
 			trim_dstring(&cookie_value);
 
