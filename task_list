@@ -1,5 +1,2 @@
- * after above changes ensure that Serc and serc-template-application and other dependent libs are updated with the new api
-   * especially the nultipart form data
-
  * implement stream to read/write websocket data -> you can test this with https://www.piesocket.com/websocket-tester client, after integration with Serc on serc-template-application
  * implement stream to read write server sent event data
