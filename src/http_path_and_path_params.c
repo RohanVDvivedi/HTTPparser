@@ -118,10 +118,7 @@ int parse_url_encoded_param(stream* rs, dstring* key, dstring* value, int is_fir
 
 	dstring key_encoded = read_until_any_end_chars_from_stream(rs, is_end_char_for_param_key, NULL, &last_byte, 2048, &stream_error);
 	if(stream_error)
-	{
-		deinit_dstring(&key_encoded);
 		return HTTP_ERROR_IN_STREAM;
-	}
 	if(is_empty_dstring(&key_encoded))
 	{
 		deinit_dstring(&key_encoded);
@@ -147,7 +144,6 @@ int parse_url_encoded_param(stream* rs, dstring* key, dstring* value, int is_fir
 	if(stream_error)
 	{
 		deinit_dstring(&key_encoded);
-		deinit_dstring(&value_encoded);
 		return HTTP_ERROR_IN_STREAM;
 	}
 	if(is_empty_dstring(&value_encoded) && last_byte != 256) // a last_byte of 256 implies that the last byte read was end of stream
