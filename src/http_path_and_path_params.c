@@ -268,10 +268,7 @@ int parse_http_path_and_path_params(stream* rs, http_request_head* hr_p)
 	{
 		path_and_params = read_until_dstring_from_stream(rs, &SP, SP_spml, 2048, &stream_error);
 		if(stream_error)
-		{
-			deinit_dstring(&path_and_params);
 			return HTTP_ERROR_IN_STREAM;
-		}
 		if(is_empty_dstring(&path_and_params))
 		{
 			deinit_dstring(&path_and_params);

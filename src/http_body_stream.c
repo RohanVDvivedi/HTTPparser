@@ -53,7 +53,6 @@ static size_t read_body_from_stream_body(void* stream_context, void* data, size_
 				if(u_error)
 				{
 					(*error) = UNDERLYING_STREAM_ERROR;
-					deinit_dstring(&to_discard);
 					return 0;
 				}
 				if(get_char_count_dstring(&to_discard) == 0)
