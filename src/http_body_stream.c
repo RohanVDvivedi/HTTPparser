@@ -228,7 +228,12 @@ int initialize_readable_body_stream(stream* strm, stream* underlying_stream, con
 		return 0;
 	}
 
-	initialize_stream(strm, stream_context, read_body_from_stream_body, NULL, close_readable_stream_context_body_stream, destroy_stream_context_body_stream, NULL, 0);
+	if(!initialize_stream(strm, stream_context, read_body_from_stream_body, NULL, close_readable_stream_context_body_stream, destroy_stream_context_body_stream, NULL, 0))
+	{
+		int error = 0;
+		close_readable_stream_context_body_stream(stream_context, &error);
+		destroy_stream_context_body_stream(stream_context);
+	}
 
 	return 1;
 }
@@ -255,7 +260,12 @@ int initialize_writable_body_stream(stream* strm, stream* underlying_stream, con
 		return 0;
 	}
 
-	initialize_stream(strm, stream_context, NULL, write_body_to_stream_body, close_writable_stream_context_body_stream, destroy_stream_context_body_stream, post_http_body_stream_flush_underlying_stream_flush, WRITE_MAX_CHUNK_SIZE);
+	if(!initialize_stream(strm, stream_context, NULL, write_body_to_stream_body, close_writable_stream_context_body_stream, destroy_stream_context_body_stream, post_http_body_stream_flush_underlying_stream_flush, WRITE_MAX_CHUNK_SIZE))
+	{
+		int error = 0;
+		close_writable_stream_context_body_stream(stream_context, &error);
+		destroy_stream_context_body_stream(stream_context);
+	}
 
 	return 1;
 }
