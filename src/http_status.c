@@ -66,7 +66,8 @@ const int http_status_codes[] =
 	507,
 	508,
 	510,
-	511
+	511,
+	526
 };
 
 const char* http_status_code_reason_strings[] =
@@ -127,7 +128,8 @@ const char* http_status_code_reason_strings[] =
 	/*507*/  "Insufficient Storage",
 	/*508*/  "Loop Detected",
 	/*510*/  "Not Extended",
-	/*511*/  "Network Authentication Required"
+	/*511*/  "Network Authentication Required",
+	/*526*/  "Invalid SSL Certificate"
 };
 
 char* get_http_status_line(int status)
@@ -248,6 +250,8 @@ char* get_http_status_line(int status)
 			return (char*) http_status_code_reason_strings[55];
 		case 511 :
 			return (char*) http_status_code_reason_strings[56];
+		case 526 :
+			return (char*) http_status_code_reason_strings[57];
 		default :
 			return NULL;
 	}
