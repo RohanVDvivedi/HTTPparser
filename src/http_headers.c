@@ -13,7 +13,7 @@ int parse_http_headers(stream* rs, dmap* headers)
 	while(1)
 	{
 		// read from stream until CRLF
-		dstring header = read_until_dstring_from_stream(rs, &CRLF, CRLF_spml, 2048, &stream_error);
+		dstring header = read_until_dstring_from_stream(rs, &CRLF, CRLF_spml, min(2048, MAX_UNREAD_BYTES_COUNT/2), &stream_error);
 		if(stream_error)
 			return HTTP_ERROR_IN_STREAM;
 		if(is_empty_dstring(&header))

@@ -49,7 +49,7 @@ static cy_uint read_body_from_stream_body(void* stream_context, void* data, cy_u
 				stream_context_p->is_closed = 1;
 
 			{
-				dstring to_discard = read_until_dstring_from_stream(stream_context_p->underlying_stream, &CRLF, CRLF_spml, 1024, &u_error);
+				dstring to_discard = read_until_dstring_from_stream(stream_context_p->underlying_stream, &CRLF, CRLF_spml, min(1024, MAX_UNREAD_BYTES_COUNT/2), &u_error);
 				if(u_error)
 				{
 					(*error) = UNDERLYING_STREAM_ERROR;
