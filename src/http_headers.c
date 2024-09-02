@@ -4,6 +4,7 @@
 
 #include<stream_util.h>
 
+#include<cutlery_math.h>
 #include<dstring.h>
 
 int parse_http_headers(stream* rs, dmap* headers)

@@ -2,6 +2,7 @@
 
 #include<http_constant_dstrings.h>
 
+#include<cutlery_math.h>
 #include<stream_util.h>
 
 static char hex_to_char(char hex)
