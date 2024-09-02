@@ -106,6 +106,7 @@ int parse_url_encoded_param(stream* rs, dstring* key, dstring* value, int is_fir
 	make_dstring_empty(key);
 	make_dstring_empty(value);
 
+	// not a first param then skip &ampersand
 	if(!is_first_param)
 	{
 		cy_uint bytes_skipped = skip_dstring_from_stream(rs, &AMP, &stream_error);
