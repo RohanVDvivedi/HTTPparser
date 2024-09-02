@@ -48,7 +48,7 @@ int serialize_http_response_head(stream* ws, const http_response_head* hr_p)
 #include<http_header_util.h>
 #include<http_constant_dstrings.h>
 
-int init_http_response_head_from_http_request_head(http_response_head* hrp_p, const http_request_head* hrq_p, int status, size_t content_length_val)
+int init_http_response_head_from_http_request_head(http_response_head* hrp_p, const http_request_head* hrq_p, int status, unsigned long long int content_length_val)
 {
 	if(!init_http_response_head(hrp_p))
 		return 0;
@@ -64,7 +64,7 @@ int init_http_response_head_from_http_request_head(http_response_head* hrp_p, co
 	}
 	else
 	{
-		if((!insert_formatted_in_dmap(&(hrp_p->headers), &content_length_HKEY, "%zu", content_length_val))
+		if((!insert_formatted_in_dmap(&(hrp_p->headers), &content_length_HKEY, "%llu", content_length_val))
 		 || (!insert_in_dmap(&(hrp_p->headers), &content_encoding_HKEY, &identity_ce_HVAL)))
 			goto FAILED;
 	}
