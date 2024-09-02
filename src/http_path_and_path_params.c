@@ -116,7 +116,7 @@ int parse_url_encoded_param(stream* rs, dstring* key, dstring* value, int is_fir
 
 	int last_byte;
 
-	dstring key_encoded = read_until_any_end_chars_from_stream(rs, is_end_char_for_param_key, NULL, &last_byte, 2048, &stream_error);
+	dstring key_encoded = read_until_any_end_chars_from_stream(rs, is_end_char_for_param_key, NULL, &last_byte, (MAX_UNREAD_BYTES_COUNT/2), &stream_error);
 	if(stream_error)
 		return HTTP_ERROR_IN_STREAM;
 	if(is_empty_dstring(&key_encoded))
@@ -140,7 +140,7 @@ int parse_url_encoded_param(stream* rs, dstring* key, dstring* value, int is_fir
 
 	discard_chars_from_back_dstring(&key_encoded, 1);
 
-	dstring value_encoded = read_until_any_end_chars_from_stream(rs, is_end_char_for_param_value, NULL, &last_byte, 2048, &stream_error);
+	dstring value_encoded = read_until_any_end_chars_from_stream(rs, is_end_char_for_param_value, NULL, &last_byte, (MAX_UNREAD_BYTES_COUNT/2), &stream_error);
 	if(stream_error)
 	{
 		deinit_dstring(&key_encoded);
