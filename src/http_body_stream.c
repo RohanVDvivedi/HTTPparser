@@ -8,7 +8,7 @@
 
 #include<stream_util.h>
 
-static size_t read_body_from_stream_body(void* stream_context, void* data, size_t data_size, int* error)
+static cy_uint read_body_from_stream_body(void* stream_context, void* data, cy_uint data_size, int* error)
 {
 	http_body_stream_context* stream_context_p = stream_context;
 
@@ -19,8 +19,8 @@ static size_t read_body_from_stream_body(void* stream_context, void* data, size_
 
 	if(!stream_context_p->is_chunked)
 	{
-		size_t bytes_to_read = min(data_size, stream_context_p->body_bytes);
-		size_t bytes_read = read_from_stream(stream_context_p->underlying_stream, data, bytes_to_read, &u_error);
+		cy_uint bytes_to_read = min(data_size, stream_context_p->body_bytes);
+		cy_uint bytes_read = read_from_stream(stream_context_p->underlying_stream, data, bytes_to_read, &u_error);
 		if(u_error)
 			(*error) = UNDERLYING_STREAM_ERROR;
 		stream_context_p->body_bytes -= bytes_read;
@@ -33,13 +33,13 @@ static size_t read_body_from_stream_body(void* stream_context, void* data, size_
 		if(stream_context_p->body_bytes == 0)
 		{
 			unsigned long long int body_bytes_val;
-			size_t body_bytes_bytes_read = read_unsigned_long_long_int_from_stream(stream_context_p->underlying_stream, HEXADECIMAL, &body_bytes_val, &u_error);
+			cy_uint body_bytes_bytes_read = read_unsigned_long_long_int_from_stream(stream_context_p->underlying_stream, HEXADECIMAL, &body_bytes_val, &u_error);
 			if(u_error)
 			{
 				(*error) = UNDERLYING_STREAM_ERROR;
 				return 0;
 			}
-			if(body_bytes_bytes_read == 0 || body_bytes_val > SIZE_MAX)
+			if(body_bytes_bytes_read == 0)
 			{
 				(*error) = -1;
 				return 0;
@@ -65,14 +65,14 @@ static size_t read_body_from_stream_body(void* stream_context, void* data, size_
 			}
 		}
 
-		size_t bytes_to_read = min(stream_context_p->body_bytes, data_size);
-		size_t bytes_read = read_from_stream(stream_context_p->underlying_stream, data, bytes_to_read, &u_error);
+		cy_uint bytes_to_read = min(stream_context_p->body_bytes, data_size);
+		cy_uint bytes_read = read_from_stream(stream_context_p->underlying_stream, data, bytes_to_read, &u_error);
 		stream_context_p->body_bytes -= bytes_read;
 		if(u_error)
 			(*error) = UNDERLYING_STREAM_ERROR;
 		if(stream_context_p->body_bytes == 0)
 		{
-			size_t crlf_bytes_read = skip_dstring_from_stream(stream_context_p->underlying_stream, &CRLF, &u_error);
+			cy_uint crlf_bytes_read = skip_dstring_from_stream(stream_context_p->underlying_stream, &CRLF, &u_error);
 			if(u_error)
 				(*error) = UNDERLYING_STREAM_ERROR;
 			else if(crlf_bytes_read == 0)
@@ -87,7 +87,7 @@ static size_t read_body_from_stream_body(void* stream_context, void* data, size_
 // must be lesser than INT_MAX
 #define WRITE_MAX_CHUNK_SIZE 8192
 
-static size_t write_body_to_stream_body(void* stream_context, const void* data, size_t data_size, int* error)
+static cy_uint write_body_to_stream_body(void* stream_context, const void* data, cy_uint data_size, int* error)
 {
 	http_body_stream_context* stream_context_p = stream_context;
 
@@ -104,7 +104,7 @@ static size_t write_body_to_stream_body(void* stream_context, const void* data, 
 
 	if(!stream_context_p->is_chunked)
 	{
-		size_t bytes_to_write = min(data_size, stream_context_p->body_bytes);
+		cy_uint bytes_to_write = min(data_size, stream_context_p->body_bytes);
 		write_to_stream(stream_context_p->underlying_stream, data, bytes_to_write, &u_error);
 		if(u_error)
 		{
@@ -118,7 +118,7 @@ static size_t write_body_to_stream_body(void* stream_context, const void* data, 
 	}
 	else
 	{
-		size_t bytes_to_write = min(WRITE_MAX_CHUNK_SIZE, data_size);
+		cy_uint bytes_to_write = min(WRITE_MAX_CHUNK_SIZE, data_size);
 		write_to_stream_formatted(stream_context_p->underlying_stream, &u_error, "%zx\r\n", bytes_to_write);
 		if(u_error)
 		{
