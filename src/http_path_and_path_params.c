@@ -147,7 +147,7 @@ int parse_url_encoded_param(stream* rs, dstring* key, dstring* value, int is_fir
 		deinit_dstring(&key_encoded);
 		return HTTP_ERROR_IN_STREAM;
 	}
-	if(is_empty_dstring(&value_encoded))
+	if(is_empty_dstring(&value_encoded) && last_byte != 256) // a last_byte of 256 implies that the last byte read was end of stream, the end case handles case when an empty string follows a EOF, which is a valid value
 	{
 		deinit_dstring(&key_encoded);
 		deinit_dstring(&value_encoded);
