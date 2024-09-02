@@ -18,7 +18,7 @@ int parse_http_request_line(stream* rs, http_request_head* hr_p)
 
 	// skip spaces
 	#define MAX_SPACES 5
-	size_t space_bytes = skip_whitespaces_from_stream(rs, MAX_SPACES, &stream_error);
+	cy_uint space_bytes = skip_whitespaces_from_stream(rs, MAX_SPACES, &stream_error);
 	if(stream_error)
 		return HTTP_ERROR_IN_STREAM;
 	if(space_bytes == 0)
@@ -40,7 +40,7 @@ int parse_http_request_line(stream* rs, http_request_head* hr_p)
 		return error;
 
 	// skip reading the "\r\n"
-	size_t line_end_read = skip_dstring_from_stream(rs, &CRLF, &stream_error);
+	cy_uint line_end_read = skip_dstring_from_stream(rs, &CRLF, &stream_error);
 	if(stream_error)
 		return HTTP_ERROR_IN_STREAM;
 	if(line_end_read == 0)

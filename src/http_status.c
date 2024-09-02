@@ -265,7 +265,7 @@ int parse_http_status_line(stream* rs, int* s)
 	{
 		(*s) = 0;
 		unsigned long long int status_code_val;
-		size_t status_code_bytes = read_unsigned_long_long_int_from_stream(rs, DECIMAL, &status_code_val, &stream_error);
+		cy_uint status_code_bytes = read_unsigned_long_long_int_from_stream(rs, DECIMAL, &status_code_val, &stream_error);
 		if(stream_error)
 			return HTTP_ERROR_IN_STREAM;
 		if(status_code_bytes == 0 || status_code_val > 1000)
@@ -279,7 +279,7 @@ int parse_http_status_line(stream* rs, int* s)
 
 	// skip spaces
 	#define MAX_SPACES 5
-	size_t space_bytes = skip_whitespaces_from_stream(rs, MAX_SPACES, &stream_error);
+	cy_uint space_bytes = skip_whitespaces_from_stream(rs, MAX_SPACES, &stream_error);
 	if(stream_error)
 		return HTTP_ERROR_IN_STREAM;
 	if(space_bytes == 0)
@@ -290,13 +290,13 @@ int parse_http_status_line(stream* rs, int* s)
 	#define largest_reason_phrase 64
 
 	int last_char_CR = 0;
-	size_t reason_phrase_bytes_read = 0;
+	cy_uint reason_phrase_bytes_read = 0;
 	int status_line_end_reached = 0;
 
 	while(reason_phrase_bytes_read < largest_reason_phrase)
 	{
 		char byte;
-		size_t byte_read = read_from_stream(rs, &byte, 1, &stream_error);
+		cy_uint byte_read = read_from_stream(rs, &byte, 1, &stream_error);
 		if(stream_error)
 			return HTTP_ERROR_IN_STREAM;
 		if(byte_read == 0)

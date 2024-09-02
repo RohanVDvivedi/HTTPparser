@@ -17,7 +17,7 @@ void read_prefix_multipart_form_data(stream* strm, const dstring* boundary, int*
 	(*error) = HTTP_MULTIPART_FORM_DATA_NO_ERROR;
 	int stream_error = 0;
 
-	size_t bytes_read = skip_dstring_from_stream(strm, &__MULTIPART_FORM_DATA, &stream_error);
+	cy_uint bytes_read = skip_dstring_from_stream(strm, &__MULTIPART_FORM_DATA, &stream_error);
 	if(stream_error)
 	{
 		(*error) = HTTP_MULTIPART_FORM_DATA_ERROR_IN_STREAM;
@@ -60,7 +60,7 @@ multipart_form_data_segment* parse_next_multipart_form_data(stream* strm, const 
 	(*error) = HTTP_MULTIPART_FORM_DATA_NO_ERROR;
 	int stream_error = 0;
 
-	size_t bytes_read = skip_dstring_from_stream(strm, &MULTIPART_FORM_DATA_end, &stream_error);
+	cy_uint bytes_read = skip_dstring_from_stream(strm, &MULTIPART_FORM_DATA_end, &stream_error);
 	if(stream_error)
 	{
 		(*error) = HTTP_MULTIPART_FORM_DATA_ERROR_IN_STREAM;

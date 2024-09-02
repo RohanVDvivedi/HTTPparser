@@ -107,7 +107,7 @@ int parse_url_encoded_param(stream* rs, dstring* key, dstring* value, int is_fir
 
 	if(!is_first_param)
 	{
-		size_t bytes_skipped = skip_dstring_from_stream(rs, &AMP, &stream_error);
+		cy_uint bytes_skipped = skip_dstring_from_stream(rs, &AMP, &stream_error);
 		if(stream_error)
 			return HTTP_ERROR_IN_STREAM;
 		if(bytes_skipped == 0) // a not first param must start with an ampersand, an absence of that implies end of params
