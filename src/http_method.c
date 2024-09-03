@@ -1,6 +1,5 @@
 #include<http_method.h>
 
-#include<string.h>
 #include<dstring.h>
 
 #include<stream_util.h>

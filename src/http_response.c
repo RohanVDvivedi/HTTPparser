@@ -42,9 +42,6 @@ int serialize_http_response_head(stream* ws, const http_response_head* hr_p)
 	return HTTP_NO_ERROR;
 }
 
-#include<stdio.h>
-#include<stdint.h>
-
 #include<http_header_util.h>
 #include<http_constant_dstrings.h>
 
@@ -74,6 +71,8 @@ int init_http_response_head_from_http_request_head(http_response_head* hrp_p, co
 	deinit_http_response_head(hrp_p);
 	return 0;
 }
+
+#include<stdio.h>
 
 void print_http_response_head(const http_response_head* hr_p)
 {

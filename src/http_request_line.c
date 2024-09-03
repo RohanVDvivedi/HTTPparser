@@ -6,8 +6,6 @@
 
 #include<stream_util.h>
 
-#include<ctype.h>
-
 int parse_http_request_line(stream* rs, http_request_head* hr_p)
 {
 	int error = parse_http_method(rs, &(hr_p->method));

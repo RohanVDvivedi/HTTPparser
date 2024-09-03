@@ -4,10 +4,6 @@
 
 #include<stream_util.h>
 
-#include<string.h>
-#include<stdio.h>
-#include<ctype.h>
-
 const int http_status_codes[] =
 {
 	100,

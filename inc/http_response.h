@@ -37,7 +37,7 @@ void print_http_response_head(const http_response_head* hr_p);
 
 #include<http_request.h>
 
-#define TRANSFER_CHUNKED SIZE_MAX
+#define TRANSFER_CHUNKED CY_UINT_MAX
 
 // returns 1 for success and 0 for failure
 // it is a util function, hence it does not return any error code to specify why it failed

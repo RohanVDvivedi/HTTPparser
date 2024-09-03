@@ -1,7 +1,6 @@
 #include<dmap.h>
 
 #include<stdlib.h>
-#include<ctype.h>
 
 static int init_dmap_entry(dmap_entry* dmap_entry_p, const dstring* key, const dstring* value)
 {
@@ -29,7 +28,7 @@ static cy_uint dstring_key_hash_case(const void* element)
 	cy_uint key_size = get_char_count_dstring(&(ent->key));
 	cy_uint hash = 0;
 	for(cy_uint i = 0; i < key_size; i++)
-		hash += ((((cy_uint)(tolower(key_data[i]))) * i) ^ 0xf0f0f0f0);
+		hash += ((((cy_uint)(to_lowercase_char(key_data[i]))) * i) ^ 0xf0f0f0f0);
 	return hash;
 }
 

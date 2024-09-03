@@ -4,10 +4,6 @@
 
 #include<stream_util.h>
 
-#include<string.h>
-#include<stdio.h>
-#include<stdint.h>
-
 const http_version valid_http_versions[] = 
 {
 	{1,0},
