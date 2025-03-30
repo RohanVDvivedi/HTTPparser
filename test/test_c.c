@@ -1,14 +1,14 @@
 #include<stdio.h>
 #include<stdlib.h>
 
-#include<http_request.h>
-#include<http_response.h>
-#include<http_header_util.h>
+#include<httpparser/http_request.h>
+#include<httpparser/http_response.h>
+#include<httpparser/http_header_util.h>
 
-#include<comm_address.h>
-#include<client.h>
-#include<ssl_ctx_helper.h>
-#include<stream_for_file_descriptor.h>
+#include<connman/comm_address.h>
+#include<connman/client.h>
+#include<connman/ssl_ctx_helper.h>
+#include<cutlery/stream_for_file_descriptor.h>
 
 int main()
 {

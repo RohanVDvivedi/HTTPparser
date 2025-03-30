@@ -1,7 +1,7 @@
 #ifndef HTTP_CONSTANT_DSTRINGS_H
 #define HTTP_CONSTANT_DSTRINGS_H
 
-#include<dstring.h>
+#include<cutlery/dstring.h>
 
 extern const dstring CRLF;					// "\r\n"
 extern const dstring SP;					// " "

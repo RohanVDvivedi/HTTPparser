@@ -1,8 +1,8 @@
-#include<http_status.h>
+#include<httpparser/http_status.h>
 
-#include<http_constant_dstrings.h>
+#include<httpparser/http_constant_dstrings.h>
 
-#include<stream_util.h>
+#include<cutlery/stream_util.h>
 
 const int http_status_codes[] =
 {

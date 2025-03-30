@@ -1,6 +1,6 @@
-#include<file_handling_util.h>
+#include<httpparser/file_handling_util.h>
 
-#include<http_constant_dstrings.h>
+#include<httpparser/http_constant_dstrings.h>
 
 dstring get_extension_from_file_path(const dstring* file_path)
 {

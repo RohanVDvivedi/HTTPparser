@@ -1,12 +1,12 @@
-#include<http_body_stream.h>
+#include<httpparser/http_body_stream.h>
 
-#include<http_constant_dstrings.h>
+#include<httpparser/http_constant_dstrings.h>
 
 #include<stdlib.h>
 
-#include<cutlery_math.h>
+#include<cutlery/cutlery_math.h>
 
-#include<stream_util.h>
+#include<cutlery/stream_util.h>
 
 static cy_uint read_body_from_stream_body(void* stream_context, void* data, cy_uint data_size, int* error)
 {

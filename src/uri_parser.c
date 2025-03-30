@@ -1,7 +1,7 @@
-#include<uri_parser.h>
+#include<httpparser/uri_parser.h>
 
-#include<http_constant_dstrings.h>
-#include<cutlery_math.h>
+#include<httpparser/http_constant_dstrings.h>
+#include<cutlery/cutlery_math.h>
 
 int init_uri(uri* uri_p)
 {

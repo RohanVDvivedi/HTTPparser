@@ -1,4 +1,4 @@
-#include<dmap.h>
+#include<httpparser/dmap.h>
 
 #include<stdlib.h>
 
@@ -139,7 +139,7 @@ int delete_from_dmap_key(dmap* dmap_p, dmap_entry* dmap_entry_p)
 	return 0;
 }
 
-#include<stream_util.h>
+#include<cutlery/stream_util.h>
 
 void print_dmap(stream* ws, const dmap* dmap_p)
 {

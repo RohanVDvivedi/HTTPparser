@@ -1,11 +1,11 @@
 #ifndef HTTP_REQUEST_H
 #define HTTP_REQUEST_H
 
-#include<http_method.h>
-#include<http_version.h>
-#include<dmap.h>
+#include<httpparser/http_method.h>
+#include<httpparser/http_version.h>
+#include<httpparser/dmap.h>
 
-#include<http_parser_error_codes.h>
+#include<httpparser/http_parser_error_codes.h>
 
 typedef struct http_request_head http_request_head;
 struct http_request_head

@@ -1,11 +1,11 @@
 #ifndef HTTP_RESPONSE_H
 #define HTTP_RESPONSE_H
 
-#include<http_version.h>
-#include<http_status.h>
-#include<dmap.h>
+#include<httpparser/http_version.h>
+#include<httpparser/http_status.h>
+#include<httpparser/dmap.h>
 
-#include<http_parser_error_codes.h>
+#include<httpparser/http_parser_error_codes.h>
 
 typedef struct http_response_head http_response_head;
 struct http_response_head
@@ -35,7 +35,7 @@ void print_http_response_head(const http_response_head* hr_p);
 
 // additional utility functions
 
-#include<http_request.h>
+#include<httpparser/http_request.h>
 
 #define TRANSFER_CHUNKED CY_UINT_MAX
 

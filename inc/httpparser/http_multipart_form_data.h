@@ -1,8 +1,8 @@
 #ifndef HTTP_MULTIPART_FORM_DATA_H
 #define HTTP_MULTIPART_FORM_DATA_H
 
-#include<dmap.h>
-#include<dstring.h>
+#include<httpparser/dmap.h>
+#include<cutlery/dstring.h>
 
 typedef struct multipart_form_data_segment multipart_form_data_segment;
 struct multipart_form_data_segment

@@ -1,9 +1,9 @@
 #include<stdio.h>
 #include<stdlib.h>
 
-#include<http_path_and_path_params.h>
+#include<httpparser/http_path_and_path_params.h>
 
-#include<stream_for_file_descriptor.h>
+#include<cutlery/stream_for_file_descriptor.h>
 
 int main()
 {

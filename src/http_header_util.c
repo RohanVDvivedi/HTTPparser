@@ -1,6 +1,6 @@
-#include<http_header_util.h>
+#include<httpparser/http_header_util.h>
 
-#include<http_constant_dstrings.h>
+#include<httpparser/http_constant_dstrings.h>
 
 int parse_acceptable_value(const dstring* singlular_header_value, acceptable_value* av_p)
 {
@@ -109,7 +109,7 @@ const dstring* find_acceptable_content_encoding_for_http_response_body(const htt
 	return result_encoding;
 }
 
-#include<file_handling_util.h>
+#include<httpparser/file_handling_util.h>
 
 int check_content_type_acceptable(const dstring* content_type, const http_request_head* hrq_p)
 {
@@ -208,8 +208,8 @@ int has_multipart_form_data_in_body(const dmap* headers, int* is_boundary_presen
 	return is_multi_part_form_data;
 }
 
-#include<http_body_stream.h>
-#include<init_content_encoding_streams.h>
+#include<httpparser/http_body_stream.h>
+#include<httpparser/init_content_encoding_streams.h>
 
 #include<stdlib.h>
 

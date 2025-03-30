@@ -1,7 +1,7 @@
 #ifndef URI_PARSER_H
 #define URI_PARSER_H
 
-#include<dstring.h>
+#include<cutlery/dstring.h>
 
 // scheme ":" [ "//" [ userinfo "@" ] host [ ":" port ] ] path [ "?" query ] [ "#" fragment ]
 

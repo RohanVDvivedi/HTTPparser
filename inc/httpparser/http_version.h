@@ -1,9 +1,9 @@
 #ifndef HTTP_VERSION_H
 #define HTTP_VERSION_H
 
-#include<stream.h>
+#include<cutlery/stream.h>
 
-#include<http_parser_error_codes.h>
+#include<httpparser/http_parser_error_codes.h>
 
 typedef struct http_version http_version;
 struct http_version

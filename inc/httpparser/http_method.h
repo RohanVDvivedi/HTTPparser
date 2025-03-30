@@ -1,9 +1,9 @@
 #ifndef HTTP_REQUEST_METHOD_H
 #define HTTP_REQUEST_METHOD_H
 
-#include<stream.h>
+#include<cutlery/stream.h>
 
-#include<http_parser_error_codes.h>
+#include<httpparser/http_parser_error_codes.h>
 
 /*
 	to add additional http method

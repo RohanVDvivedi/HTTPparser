@@ -1,8 +1,8 @@
 #ifndef INIT_CONTENT_ENCODING_STREAMS_H
 #define INIT_CONTENT_ENCODING_STREAMS_H
 
-#include<dmap.h>
-#include<stacked_stream.h>
+#include<httpparser/dmap.h>
+#include<connman/stacked_stream.h>
 
 // return value is the number of encodings stacked in the stacked_stream sstrm
 // return >= 0 success

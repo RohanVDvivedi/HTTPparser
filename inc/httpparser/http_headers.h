@@ -1,9 +1,9 @@
 #ifndef HTTP_HEADERS_H
 #define HTTP_HEADERS_H
 
-#include<dmap.h>
+#include<httpparser/dmap.h>
 
-#include<http_parser_error_codes.h>
+#include<httpparser/http_parser_error_codes.h>
 
 // returns int value, suggesting error, from error codes given in http_parser_error_codes.h
 int parse_http_headers(stream* rs, dmap* headers);

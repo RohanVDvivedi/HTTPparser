@@ -1,8 +1,8 @@
 #ifndef DMAP_H
 #define DMAP_H
 
-#include<dstring.h>
-#include<hashmap.h>
+#include<cutlery/dstring.h>
+#include<cutlery/hashmap.h>
 
 typedef struct dmap_entry dmap_entry;
 struct dmap_entry
@@ -32,7 +32,7 @@ dmap_entry* insert_formatted_in_dmap(dmap* dmap_p, const dstring* key, const cha
 
 int delete_from_dmap(dmap* dmap_p, const dmap_entry* dmap_entry_p);
 
-#include<stream.h>
+#include<cutlery/stream.h>
 
 void print_dmap(stream* ws, const dmap* dmap_p);
 

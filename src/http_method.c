@@ -1,8 +1,8 @@
-#include<http_method.h>
+#include<httpparser/http_method.h>
 
-#include<dstring.h>
+#include<cutlery/dstring.h>
 
-#include<stream_util.h>
+#include<cutlery/stream_util.h>
 
 const char* http_method_strings[] = {
 	"GET",

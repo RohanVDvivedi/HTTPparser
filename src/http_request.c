@@ -1,4 +1,4 @@
-#include<http_request.h>
+#include<httpparser/http_request.h>
 
 int init_http_request_head(http_request_head* hr_p)
 {
@@ -19,9 +19,9 @@ int init_http_request_head(http_request_head* hr_p)
 	return 1;
 }
 
-#include<uri_parser.h>
-#include<http_constant_dstrings.h>
-#include<http_path_and_path_params.h>
+#include<httpparser/uri_parser.h>
+#include<httpparser/http_constant_dstrings.h>
+#include<httpparser/http_path_and_path_params.h>
 
 int init_http_request_head_from_uri(http_request_head* hr_p, const dstring* uri_str)
 {
@@ -108,8 +108,8 @@ void deinit_http_request_head(http_request_head* hr_p)
 	deinit_dmap(&(hr_p->headers));
 }
 
-#include<http_request_line.h>
-#include<http_headers.h>
+#include<httpparser/http_request_line.h>
+#include<httpparser/http_headers.h>
 
 int parse_http_request_head(stream* rs, http_request_head* hr_p)
 {

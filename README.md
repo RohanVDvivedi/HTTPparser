@@ -20,11 +20,11 @@ A C library to parse HTTP 1.0 and 1.1 protocol over a stream (ConnMan stream). I
 ## Using The library
  * add `-lhttpparser -lconnman -lcutlery -lssl -lz` linker flag, while compiling your application
  * do not forget to include appropriate public api headers as and when needed. this includes
-   * `#include<http_parser.h>`
-   * `#include<http_serializer.h>`
-   * `#include<http_body_stream.h>`
-   * `#include<init_content_encoding_streams.h>`
-   * `#include<flie_handling_util.h>`
+   * `#include<httpparser/http_parser.h>`
+   * `#include<httpparser/http_serializer.h>`
+   * `#include<httpparser/http_body_stream.h>`
+   * `#include<httpparser/init_content_encoding_streams.h>`
+   * `#include<httpparser/file_handling_util.h>`
 
 ## Instructions for uninstalling library
 

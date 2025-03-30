@@ -1,9 +1,9 @@
 #ifndef HTTP_PATH_AND_PATH_PARAMS_H
 #define HTTP_PATH_AND_PATH_PARAMS_H
 
-#include<http_request.h>
+#include<httpparser/http_request.h>
 
-#include<http_parser_error_codes.h>
+#include<httpparser/http_parser_error_codes.h>
 
 // returns int value, suggesting error, from error codes given in http_parser_error_codes.h
 int parse_http_path_and_path_params(stream* rs, http_request_head* hr_p);

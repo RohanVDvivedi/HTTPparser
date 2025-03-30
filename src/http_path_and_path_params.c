@@ -1,9 +1,9 @@
-#include<http_path_and_path_params.h>
+#include<httpparser/http_path_and_path_params.h>
 
-#include<http_constant_dstrings.h>
+#include<httpparser/http_constant_dstrings.h>
 
-#include<cutlery_math.h>
-#include<stream_util.h>
+#include<cutlery/cutlery_math.h>
+#include<cutlery/stream_util.h>
 
 static char hex_to_char(char hex)
 {

@@ -1,9 +1,9 @@
 #ifndef HTTP_STATUS_H
 #define HTTP_STATUS_H
 
-#include<stream.h>
+#include<cutlery/stream.h>
 
-#include<http_parser_error_codes.h>
+#include<httpparser/http_parser_error_codes.h>
 
 extern const int http_status_codes[];
 extern const char* http_status_code_reason_strings[];

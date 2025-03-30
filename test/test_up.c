@@ -1,7 +1,7 @@
 #include<stdio.h>
 #include<stdlib.h>
 
-#include<uri_parser.h>
+#include<httpparser/uri_parser.h>
 
 int main(int argc, char** argv)
 {

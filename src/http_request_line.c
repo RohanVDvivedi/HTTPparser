@@ -1,10 +1,10 @@
-#include<http_request_line.h>
+#include<httpparser/http_request_line.h>
 
-#include<http_constant_dstrings.h>
-#include<http_path_and_path_params.h>
-#include<http_version.h>
+#include<httpparser/http_constant_dstrings.h>
+#include<httpparser/http_path_and_path_params.h>
+#include<httpparser/http_version.h>
 
-#include<stream_util.h>
+#include<cutlery/stream_util.h>
 
 int parse_http_request_line(stream* rs, http_request_head* hr_p)
 {

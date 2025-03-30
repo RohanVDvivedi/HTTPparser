@@ -1,11 +1,11 @@
-#include<init_content_encoding_streams.h>
+#include<httpparser/init_content_encoding_streams.h>
 
-#include<http_constant_dstrings.h>
+#include<httpparser/http_constant_dstrings.h>
 
 #include<stdlib.h>
 
-#include<zlib_readable_decompression_stream.h>
-#include<zlib_writable_compression_stream.h>
+#include<connman/zlib_readable_decompression_stream.h>
+#include<connman/zlib_writable_compression_stream.h>
 
 int initialize_readable_content_decoding_stream(stacked_stream* sstrm, const dmap* headers)
 {

@@ -1,11 +1,11 @@
-#include<http_headers.h>
+#include<httpparser/http_headers.h>
 
-#include<http_constant_dstrings.h>
+#include<httpparser/http_constant_dstrings.h>
 
-#include<stream_util.h>
+#include<cutlery/stream_util.h>
 
-#include<cutlery_math.h>
-#include<dstring.h>
+#include<cutlery/cutlery_math.h>
+#include<cutlery/dstring.h>
 
 int parse_http_headers(stream* rs, dmap* headers)
 {
