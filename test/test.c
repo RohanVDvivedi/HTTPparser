@@ -14,7 +14,7 @@
 
 int main()
 {
-	NEW_DEFERRED_CALLS(10);
+	NEW_DEFERRED_CALLS(16);
 
 	stream rs, ws;
 	initialize_stream_for_fd(&rs, 0);DEFER(deinitialize_stream, &rs);
