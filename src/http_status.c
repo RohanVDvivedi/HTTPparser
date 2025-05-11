@@ -66,7 +66,7 @@ const int http_status_codes[] =
 	526
 };
 
-const char* http_status_code_reason_strings[] =
+char const * const http_status_code_reason_strings[] =
 {
 	/*100*/  "Continue",
 	/*101*/  "Switching Protocols",
@@ -128,7 +128,7 @@ const char* http_status_code_reason_strings[] =
 	/*526*/  "Invalid SSL Certificate"
 };
 
-char* get_http_status_line(int status)
+const char* get_http_status_line(int status)
 {
 	switch(status)
 	{

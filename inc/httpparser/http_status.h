@@ -6,9 +6,9 @@
 #include<httpparser/http_parser_error_codes.h>
 
 extern const int http_status_codes[];
-extern const char* http_status_code_reason_strings[];
+extern char const * const http_status_code_reason_strings[];
 
-char* get_http_status_line(int status);
+const char* get_http_status_line(int status);
 
 // returns int value, suggesting error, from error codes given in http_parser_error_codes.h
 int parse_http_status_line(stream* rs, int* s);
