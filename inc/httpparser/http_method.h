@@ -24,7 +24,7 @@ enum http_method
 	CONNECT = 8
 };
 
-extern const char* http_method_strings[];
+extern char const * const http_method_strings[];
 
 // returns int value, suggesting error, from error codes given in http_parser_error_codes.h
 int parse_http_method(stream* rs, http_method* m);

@@ -4,7 +4,7 @@
 
 #include<cutlery/stream_util.h>
 
-const char* http_method_strings[] = {
+char const * const http_method_strings[] = {
 	"GET",
 	"POST",
 	"PUT",
