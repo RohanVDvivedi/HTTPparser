@@ -5,15 +5,15 @@
 #include<cutlery/stream_util.h>
 
 char const * const http_method_strings[] = {
-	"GET",
-	"POST",
-	"PUT",
-	"HEAD",
-	"DELETE",
-	"PATCH",
-	"OPTIONS",
-	"TRACE",
-	"CONNECT"
+	[GET]     = "GET",
+	[POST]    = "POST",
+	[PUT]     = "PUT",
+	[HEAD]    = "HEAD",
+	[DELETE]  = "DELETE",
+	[PATCH]   = "PATCH",
+	[OPTIONS] = "OPTIONS",
+	[TRACE]   = "TRACE",
+	[CONNECT] = "CONNECT"
 };
 
 int parse_http_method(stream* rs, http_method* m)
