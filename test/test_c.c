@@ -56,7 +56,7 @@ int main()
 	SSL_CTX* ssl_ctx = get_ssl_ctx_for_client(NULL, NULL);
 	if(ssl_ctx)
 		DEFER(destroy_ssl_ctx, ssl_ctx);
-	if(-1 == make_connection_stream(&raw_stream, &server_address, "bing.com", NULL, ssl_ctx))
+	if(-1 == make_connection_stream(&raw_stream, &server_address, "bing.com", NULL, ssl_ctx, 3000)) // socket timeout of 3 seconds
 	{
 		printf("failed to make connection");
 		goto EXIT;
