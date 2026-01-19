@@ -67,10 +67,10 @@ int uri_to_dstring_format(const dstring* str, dstring* res)
 		if(str_data[i] == '%' && (str_size - i) >= 3)
 		{
 			i++;
-			unsigned int digits[2];
+			int digits[2];
 			digits[0] = get_digit_from_char(str_data[i++], 16);
 			digits[1] = get_digit_from_char(str_data[i++], 16);
-			if(digits[0] == INVALID_INDEX || digits[1] == INVALID_INDEX)
+			if(digits[0] == -1 || digits[1] == -1)
 				return HTTP_OBJECT_INVALID_ERROR;
 			if(!concatenate_char(res, (((digits[0] << 4) & 0xf0) | (digits[1] & 0x0f))))
 				return HTTP_ALLOCATION_ERROR;
