@@ -39,7 +39,7 @@ int parse_http_version(stream* rs, http_version* v)
 	// parse version major
 	{
 		unsigned long long int v_major;
-		cy_uint v_major_bytes = read_unsigned_long_long_int_from_stream(rs, DECIMAL, &v_major, &stream_error);
+		cy_uint v_major_bytes = read_unsigned_long_long_int_from_stream(rs, RADIX_DECIMAL, &v_major, &stream_error);
 		if(stream_error)
 			return HTTP_ERROR_IN_STREAM;
 		if(v_major_bytes == 0 || v_major > 100)
@@ -57,7 +57,7 @@ int parse_http_version(stream* rs, http_version* v)
 	// parse version minor
 	{
 		unsigned long long int v_minor;
-		cy_uint v_minor_bytes = read_unsigned_long_long_int_from_stream(rs, DECIMAL, &v_minor, &stream_error);
+		cy_uint v_minor_bytes = read_unsigned_long_long_int_from_stream(rs, RADIX_DECIMAL, &v_minor, &stream_error);
 		if(stream_error)
 			return HTTP_ERROR_IN_STREAM;
 		if(v_minor_bytes == 0 || v_minor > 100)

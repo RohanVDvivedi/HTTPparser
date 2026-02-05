@@ -33,7 +33,7 @@ static cy_uint read_body_from_stream_body(void* stream_context, void* data, cy_u
 		if(stream_context_p->body_bytes == 0)
 		{
 			unsigned long long int body_bytes_val;
-			cy_uint body_bytes_bytes_read = read_unsigned_long_long_int_from_stream(stream_context_p->underlying_stream, HEXADECIMAL, &body_bytes_val, &u_error);
+			cy_uint body_bytes_bytes_read = read_unsigned_long_long_int_from_stream(stream_context_p->underlying_stream, RADIX_HEXADECIMAL, &body_bytes_val, &u_error);
 			if(u_error)
 			{
 				(*error) = UNDERLYING_STREAM_ERROR;
@@ -189,7 +189,7 @@ static int init_body_stream_context(http_body_stream_context* stream_context_p, 
 	{
 		dstring clv = get_dstring_pointing_to_dstring(&(content_length_entry->value));
 		trim_dstring(&clv);
-		if(is_empty_dstring(&clv) || !get_unsigned_long_long_int_from_dstring(&clv, DECIMAL, &(stream_context_p->body_bytes)))
+		if(is_empty_dstring(&clv) || !get_unsigned_long_long_int_from_dstring(&clv, RADIX_DECIMAL, &(stream_context_p->body_bytes)))
 			return 0;
 		return 1;
 	}

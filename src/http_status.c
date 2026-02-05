@@ -261,7 +261,7 @@ int parse_http_status_line(stream* rs, int* s)
 	{
 		(*s) = 0;
 		unsigned long long int status_code_val;
-		cy_uint status_code_bytes = read_unsigned_long_long_int_from_stream(rs, DECIMAL, &status_code_val, &stream_error);
+		cy_uint status_code_bytes = read_unsigned_long_long_int_from_stream(rs, RADIX_DECIMAL, &status_code_val, &stream_error);
 		if(stream_error)
 			return HTTP_ERROR_IN_STREAM;
 		if(status_code_bytes == 0 || status_code_val > 1000)
