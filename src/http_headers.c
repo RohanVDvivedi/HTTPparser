@@ -46,6 +46,7 @@ int parse_http_headers(stream* rs, dmap* headers)
 		}
 
 		// trim header value of any spaces in the front and back
+		trim_dstring(&header_key);
 		trim_dstring(&header_value);
 
 		// insert then both in the headers dmap
