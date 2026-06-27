@@ -233,6 +233,7 @@ int initialize_readable_body_stream(stream* strm, stream* underlying_stream, con
 		int error = 0;
 		close_readable_stream_context_body_stream(stream_context, &error);
 		destroy_stream_context_body_stream(stream_context);
+		return 0;
 	}
 
 	return 1;
@@ -265,6 +266,7 @@ int initialize_writable_body_stream(stream* strm, stream* underlying_stream, con
 		int error = 0;
 		close_writable_stream_context_body_stream(stream_context, &error);
 		destroy_stream_context_body_stream(stream_context);
+		return 0;
 	}
 
 	return 1;
