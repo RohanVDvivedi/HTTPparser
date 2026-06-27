@@ -184,6 +184,15 @@ static int init_body_stream_context(http_body_stream_context* stream_context_p, 
 	stream_context_p->body_bytes = 0;
 	stream_context_p->is_chunked = 0;
 
+	for_each_equals_in_dmap(transfer_encoding_entry, headers, &transfer_encoding_HKEY)
+	{
+		if(contains_dstring_KMP(&(transfer_encoding_entry->value), &chunked_te_HVAL, chunked_spml) != INVALID_INDEX)
+		{
+			stream_context_p->is_chunked = 1;
+			return 1;
+		}
+	}
+
 	dmap_entry* content_length_entry = get_from_dmap(headers, &content_length_HKEY);
 	if(content_length_entry != NULL)
 	{
@@ -192,15 +201,6 @@ static int init_body_stream_context(http_body_stream_context* stream_context_p, 
 		if(is_empty_dstring(&clv) || !get_unsigned_long_long_int_from_dstring(&clv, RADIX_DECIMAL, &(stream_context_p->body_bytes)))
 			return 0;
 		return 1;
-	}
-
-	for_each_equals_in_dmap(transfer_encoding_entry, headers, &transfer_encoding_HKEY)
-	{
-		if(contains_dstring_KMP(&(transfer_encoding_entry->value), &chunked_te_HVAL, chunked_spml) != INVALID_INDEX)
-		{
-			stream_context_p->is_chunked = 1;
-			return 1;
-		}
 	}
 
 	return 0;

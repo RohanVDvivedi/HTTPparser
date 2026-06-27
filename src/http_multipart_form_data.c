@@ -29,7 +29,7 @@ void read_prefix_multipart_form_data(stream* strm, const dstring* boundary, int*
 		return;
 	}
 
-	bytes_read = skip_dstring_from_stream(strm, boundary, error);
+	bytes_read = skip_dstring_from_stream(strm, boundary, &stream_error);
 	if(stream_error)
 	{
 		(*error) = HTTP_MULTIPART_FORM_DATA_ERROR_IN_STREAM;
