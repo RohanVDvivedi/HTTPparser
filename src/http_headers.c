@@ -38,16 +38,16 @@ int parse_http_headers(stream* rs, dmap* headers)
 		dstring header_value = split_dstring(&header, &CL, &header_key);
 		// note: header_key and header_value are POINT_DSTR, hence we need not deinit them
 
+		// trim header value of any spaces in the front and back
+		trim_dstring(&header_key);
+		trim_dstring(&header_value);
+
 		// header key must not be empty
 		if(is_empty_dstring(&header_key))
 		{
 			deinit_dstring(&header);
 			return HTTP_PARSER_ERROR;
 		}
-
-		// trim header value of any spaces in the front and back
-		trim_dstring(&header_key);
-		trim_dstring(&header_value);
 
 		// insert then both in the headers dmap
 		if(!insert_in_dmap(headers, &header_key, &header_value))
